@@ -3,6 +3,19 @@ export default async (request: Request) => {
 
   // Strip the /dayzer prefix so upstream receives root-relative paths
   let upstreamPath = url.pathname.replace(/^\/dayzer(\/)?/, '/');
+  // If the browser requests root-level assets (/_astro/*, /assets/*) from a /dayzer page,
+  // proxy them to the upstream root without prefixing, so they resolve correctly.
+  const referer = request.headers.get('referer') || '';
+  const isFromDayzer = referer.includes('/dayzer');
+  const isRootAsset = url.pathname.startsWith('/_astro/')
+    || url.pathname.startsWith('/assets/')
+    || url.pathname.startsWith('/favicon')
+    || url.pathname.startsWith('/images/')
+    || url.pathname.endsWith('.js')
+    || url.pathname.endsWith('.css');
+  if (isFromDayzer && isRootAsset && !url.pathname.startsWith('/dayzer/')) {
+    upstreamPath = url.pathname;
+  }
   if (upstreamPath === '') upstreamPath = '/';
   const upstream = new URL(`https://gridstordayzer.netlify.app${upstreamPath}${url.search}`);
 
