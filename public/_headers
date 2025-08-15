@@ -1,9 +1,18 @@
-# Security headers
+# Global security headers (applied to all paths)
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
 
-# Authentication headers for protected sub-sites only
+# Dayzer - public access, no authentication, minimal restrictions
+/dayzer
+  # Remove any inherited authentication
+  # Allow embedding for seamless proxy
+
+/dayzer/*
+  # Remove any inherited authentication
+  # Allow embedding for seamless proxy
+
+# Curve Viewer - protected access
 /curve-viewer/*
   Basic-Auth: username:password
   X-Frame-Options: SAMEORIGIN
