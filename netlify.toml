@@ -27,19 +27,14 @@
 # 1. Password protection is set to "Visitor access" not "Deploy previews"
 # 2. No conflicting edge functions that might interfere with /dayzer paths
 
-# Seamless proxy configuration for public access
-# Dayzer sub-site - assumes Dayzer builds with base "/dayzer"
-[[redirects]]
-  from = "/dayzer"
-  to = "https://gridstordayzer.netlify.app"
-  status = 200
-  force = true
+# Seamless proxy via Edge Function (no redirects)
+[[edge_functions]]
+  path = "/dayzer"
+  function = "dayzer"
 
-[[redirects]]
-  from = "/dayzer/*"
-  to = "https://gridstordayzer.netlify.app/:splat"
-  status = 200
-  force = true
+[[edge_functions]]
+  path = "/dayzer/*"
+  function = "dayzer"
 
 # Curve Viewer - requires authentication (redirects to external site)
 [[redirects]]
