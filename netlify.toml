@@ -28,20 +28,18 @@
 # 2. No conflicting edge functions that might interfere with /dayzer paths
 
 # Seamless proxy configuration for public access
-# Dayzer sub-site - keeps gridstoranalytics.com URL with proper headers
+# Dayzer sub-site - assumes Dayzer builds with base "/dayzer"
 [[redirects]]
   from = "/dayzer"
-  to = "https://gridstordayzer.netlify.app/"
+  to = "https://gridstordayzer.netlify.app/dayzer/"
   status = 200
   force = true
-  headers = {X-Forwarded-Host = "gridstordayzer.netlify.app"}
 
 [[redirects]]
   from = "/dayzer/*"
-  to = "https://gridstordayzer.netlify.app/:splat"
+  to = "https://gridstordayzer.netlify.app/dayzer/:splat"
   status = 200
   force = true
-  headers = {X-Forwarded-Host = "gridstordayzer.netlify.app"}
 
 # Curve Viewer - requires authentication (redirects to external site)
 [[redirects]]

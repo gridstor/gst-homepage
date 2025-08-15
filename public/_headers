@@ -3,14 +3,10 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
 
-# Dayzer - public access, no authentication, minimal restrictions
+# Dayzer - public access; no auth headers applied; allow proxying of assets
 /dayzer
-  # Remove any inherited authentication
-  # Allow embedding for seamless proxy
 
 /dayzer/*
-  # Remove any inherited authentication
-  # Allow embedding for seamless proxy
 
 # Curve Viewer - protected access
 /curve-viewer/*
