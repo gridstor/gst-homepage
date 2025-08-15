@@ -55,12 +55,23 @@ The `netlify.toml` file contains redirects that:
 - Include security headers for frame protection
 
 ## Expected User Flow
+
+### Public Access (Dayzer)
 1. User visits `gridstoranalytics.com`
 2. User clicks "Launch Dayzer" button
-3. User is redirected to `gridstoranalytics.com/dayzer`
-4. If not authenticated, user sees login page
-5. After login, user can navigate seamlessly between all tools
-6. Authentication is shared across all GridStor platforms
+3. User is redirected directly to `gridstordayzer.netlify.app`
+4. **No authentication required** - public access
+
+### Protected Access (Curve Viewer)
+1. User visits `gridstoranalytics.com`
+2. User clicks "Launch Curve Viewer" button  
+3. User is redirected to `gridstor.netlify.app/curve-viewer`
+4. User authenticates on the target site if required
+
+### Main Site Authentication
+- Main homepage may have password protection
+- `/dayzer` paths bypass authentication (public access)
+- Other paths may require authentication based on configuration
 
 ## Updating Sub-sites
 To update the URLs of the sub-sites:

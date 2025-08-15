@@ -1,9 +1,9 @@
-# Authentication headers for sub-site access
+# Authentication headers for protected sub-sites
 /curve-viewer/*
   Basic-Auth: username:password
 
-/dayzer/*
-  Basic-Auth: username:password
+# Dayzer is public - no authentication required
+# /dayzer/* - commented out for public access
 
 # Security headers
 /*

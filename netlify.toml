@@ -24,7 +24,21 @@
 # Netlify Dashboard Configuration:
 # Set password in Site Settings > Access control > Password protection
 
-# Try 302 redirects instead of proxying for authentication compatibility
+# Public access redirects (no authentication required)
+# Dayzer sub-site - public access via 302 redirect
+[[redirects]]
+  from = "/dayzer/*"
+  to = "https://gridstordayzer.netlify.app/:splat"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/dayzer"
+  to = "https://gridstordayzer.netlify.app/"
+  status = 302
+  force = true
+
+# Curve Viewer - requires authentication (redirects to external site)
 [[redirects]]
   from = "/curve-viewer/*"
   to = "https://gridstor.netlify.app/curve-viewer/:splat"
@@ -36,20 +50,6 @@
   to = "https://gridstor.netlify.app/curve-viewer"
   status = 302
   force = true
-
-[[redirects]]
-  from = "/dayzer/*"
-  to = "https://gridstordayzer.netlify.app/:splat"
-  status = 200
-  force = true
-  headers = {X-Frame-Options = "SAMEORIGIN"}
-
-[[redirects]]
-  from = "/dayzer"
-  to = "https://gridstordayzer.netlify.app/"
-  status = 200
-  force = true
-  headers = {X-Frame-Options = "SAMEORIGIN"}
 
 [[redirects]]
   from = "/*"
