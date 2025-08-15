@@ -36,6 +36,15 @@
   path = "/dayzer/*"
   function = "dayzer"
 
+# Also handle root-level asset requests for pages under /dayzer
+[[edge_functions]]
+  path = "_astro/*"
+  function = "dayzer"
+
+[[edge_functions]]
+  path = "/assets/*"
+  function = "dayzer"
+
 # Curve Viewer - requires authentication (redirects to external site)
 [[redirects]]
   from = "/curve-viewer/*"
