@@ -1,0 +1,12 @@
+# Authentication headers for sub-site access
+/curve-viewer/*
+  Basic-Auth: username:password
+
+/dayzer/*
+  Basic-Auth: username:password
+
+# Security headers
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
