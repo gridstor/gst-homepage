@@ -1,15 +1,9 @@
-# Authentication headers for protected sub-sites
-/curve-viewer/*
-  Basic-Auth: username:password
-
-# Dayzer is public - explicitly no authentication required
-/dayzer
-  ! Basic-Auth
-/dayzer/*
-  ! Basic-Auth
-
-# Security headers for all paths except public ones
+# Security headers
 /*
-  X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+
+# Authentication headers for protected sub-sites only
+/curve-viewer/*
+  Basic-Auth: username:password
+  X-Frame-Options: SAMEORIGIN
