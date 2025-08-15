@@ -25,18 +25,20 @@
 # Set password in Site Settings > Access control > Password protection
 
 # Public access redirects (no authentication required)
-# Dayzer sub-site - public access via 302 redirect
+# Dayzer sub-site - seamless proxy (keeps gridstoranalytics.com URL)
 [[redirects]]
   from = "/dayzer/*"
   to = "https://gridstordayzer.netlify.app/:splat"
-  status = 302
+  status = 200
   force = true
+  headers = {X-Frame-Options = "SAMEORIGIN"}
 
 [[redirects]]
   from = "/dayzer"
   to = "https://gridstordayzer.netlify.app/"
-  status = 302
+  status = 200
   force = true
+  headers = {X-Frame-Options = "SAMEORIGIN"}
 
 # Curve Viewer - requires authentication (redirects to external site)
 [[redirects]]

@@ -2,10 +2,13 @@
 /curve-viewer/*
   Basic-Auth: username:password
 
-# Dayzer is public - no authentication required
-# /dayzer/* - commented out for public access
+# Dayzer is public - explicitly no authentication required
+/dayzer
+  ! Basic-Auth
+/dayzer/*
+  ! Basic-Auth
 
-# Security headers
+# Security headers for all paths except public ones
 /*
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff

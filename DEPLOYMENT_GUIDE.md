@@ -59,8 +59,9 @@ The `netlify.toml` file contains redirects that:
 ### Public Access (Dayzer)
 1. User visits `gridstoranalytics.com`
 2. User clicks "Launch Dayzer" button
-3. User is redirected directly to `gridstordayzer.netlify.app`
-4. **No authentication required** - public access
+3. User stays at `gridstoranalytics.com/dayzer` (seamless proxy)
+4. Content is served from `gridstordayzer.netlify.app` behind the scenes
+5. **No authentication required** - public access
 
 ### Protected Access (Curve Viewer)
 1. User visits `gridstoranalytics.com`
