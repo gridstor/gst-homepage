@@ -38,14 +38,14 @@
 
 [[redirects]]
   from = "/dayzer/*"
-  to = "https://dayzer--gridstoranalytics.netlify.app/:splat"
+  to = "https://gridstordayzer.netlify.app/:splat"
   status = 200
   force = true
   headers = {X-Frame-Options = "SAMEORIGIN"}
 
 [[redirects]]
   from = "/dayzer"
-  to = "https://dayzer--gridstoranalytics.netlify.app/"
+  to = "https://gridstordayzer.netlify.app/"
   status = 200
   force = true
   headers = {X-Frame-Options = "SAMEORIGIN"}

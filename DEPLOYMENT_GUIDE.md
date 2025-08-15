@@ -6,7 +6,7 @@ This is the main homepage for GridStor Analytics that acts as a central hub for 
 ## Architecture
 - **Main Site**: GridStor Analytics homepage (this repository)
 - **Curve Viewer**: Proxied from `https://gridstor.netlify.app/curve-viewer`
-- **Dayzer**: Proxied from `https://dayzer--gridstoranalytics.netlify.app/`
+- **Dayzer**: Proxied from `https://gridstordayzer.netlify.app/`
 
 ## Updated Integration Notes
 The Dayzer sub-site has been updated to use the new deployment URL and enhanced security configuration with shared authentication across all GridStor platforms.
