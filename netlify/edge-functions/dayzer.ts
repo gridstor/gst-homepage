@@ -7,14 +7,15 @@ export default async (request: Request) => {
   // proxy them to the upstream root without prefixing, so they resolve correctly.
   const referer = request.headers.get('referer') || '';
   const isFromDayzer = referer.includes('/dayzer');
-  const isRootAsset = url.pathname.startsWith('/_astro/')
-    || url.pathname.startsWith('/assets/')
+  const isRootAsset = url.pathname.startsWith('/dayzer/_astro/')
+    || url.pathname.startsWith('/dayzer/assets/')
     || url.pathname.startsWith('/favicon')
     || url.pathname.startsWith('/images/')
     || url.pathname.endsWith('.js')
     || url.pathname.endsWith('.css');
-  if (isFromDayzer && isRootAsset && !url.pathname.startsWith('/dayzer/')) {
-    upstreamPath = url.pathname;
+  if (isFromDayzer && isRootAsset) {
+    // Map /dayzer/_astro/* -> /_astro/* for upstream
+    upstreamPath = url.pathname.replace(/^\/dayzer\//, '/');
   }
   if (upstreamPath === '') upstreamPath = '/';
   const upstream = new URL(`https://gridstordayzer.netlify.app${upstreamPath}${url.search}`);
