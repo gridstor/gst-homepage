@@ -1,0 +1,60 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>{title} | GridStor Analytics</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	</head>
+	<body>
+		<header class="bg-white border-b border-gray-200">
+			<nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex justify-between h-16">
+					<div class="flex">
+						<div class="flex-shrink-0 flex items-center">
+							<img src="/favicon.svg" alt="GridStor Analytics" class="h-8 w-auto">
+							<span class="ml-2 text-xl font-semibold text-gray-900">GridStor Analytics</span>
+						</div>
+						<div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+							<a href="/" class={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${currentPath === '/' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}>
+								Home
+							</a>
+							<a href="/curve-viewer" class={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${currentPath === '/curve-viewer' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}>
+								Curve Viewer
+							</a>
+							<a href="/dayzer" class={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${currentPath === '/dayzer' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}>
+								Dayzer
+							</a>
+							<a href="/about" class={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${currentPath === '/about' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}>
+								About
+							</a>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</header>
+
+		<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<slot />
+		</main>
+	</body>
+</html>
+
+<style is:global>
+	html {
+		font-family: 'Inter', system-ui, sans-serif;
+		background: #f9fafb;
+	}
+</style>
