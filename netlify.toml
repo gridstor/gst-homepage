@@ -36,6 +36,14 @@
   path = "/dayzer/*"
   function = "dayzer"
 
+# Proxy root-level assets from Dayzer to avoid 404s
+# Since main site uses different asset names, this won't conflict
+[[redirects]]
+  from = "/_astro/*"
+  to = "https://gridstordayzer.netlify.app/_astro/:splat"
+  status = 200
+  force = false
+
 # Curve Viewer - requires authentication (redirects to external site)
 [[redirects]]
   from = "/curve-viewer/*"

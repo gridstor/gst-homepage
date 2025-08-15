@@ -61,7 +61,8 @@ export default async (request: Request) => {
     return new Response(rewritten, {
       status: upstreamResponse.status,
       headers: {
-        'content-type': contentType
+        'content-type': contentType,
+        'Set-Cookie': 'netlify-dayzer-active=true; Path=/; Max-Age=3600; SameSite=Lax'
       }
     });
   }
