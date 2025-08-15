@@ -31,13 +31,13 @@
 # Dayzer sub-site - assumes Dayzer builds with base "/dayzer"
 [[redirects]]
   from = "/dayzer"
-  to = "https://gridstordayzer.netlify.app/dayzer/"
+  to = "https://gridstordayzer.netlify.app"
   status = 200
   force = true
 
 [[redirects]]
   from = "/dayzer/*"
-  to = "https://gridstordayzer.netlify.app/dayzer/:splat"
+  to = "https://gridstordayzer.netlify.app/:splat"
   status = 200
   force = true
 
