@@ -6,7 +6,10 @@ This is the main homepage for GridStor Analytics that acts as a central hub for 
 ## Architecture
 - **Main Site**: GridStor Analytics homepage (this repository)
 - **Curve Viewer**: Proxied from `https://gridstor.netlify.app/curve-viewer`
-- **Dayzer**: Proxied from `https://gridstordayzer.netlify.app/`
+- **Dayzer**: Proxied from `https://dayzer--gridstoranalytics.netlify.app/`
+
+## Updated Integration Notes
+The Dayzer sub-site has been updated to use the new deployment URL and enhanced security configuration with shared authentication across all GridStor platforms.
 
 ## Deployment Steps
 
@@ -18,12 +21,20 @@ This is the main homepage for GridStor Analytics that acts as a central hub for 
    - Build command: `npm run build`
    - Publish directory: `dist`
 
-### 2. Configure Password Protection
-1. Go to your Netlify site dashboard
-2. Navigate to **Site Settings** > **Access Control**
-3. Enable **Password Protection**
-4. Set a password for site access
-5. Choose protection scope (entire site recommended)
+### 2. Configure Shared Authentication
+1. **Set Environment Variables** in Netlify dashboard:
+   - `SITE_PASSWORD=your_secure_password_here`
+   - Use the same password across all GridStor sites
+
+2. **Configure Password Protection**:
+   - Go to **Site Settings** > **Access Control**
+   - Enable **Password Protection**
+   - Set the same password as the environment variable
+   - Choose protection scope (entire site recommended)
+
+3. **Cookie Configuration** (for custom auth if needed):
+   - Cookie name: `site-auth`
+   - Settings: `httpOnly`, `secure`, `sameSite: 'strict'`
 
 ### 3. Domain Configuration
 1. In Netlify DNS settings, add your domain
@@ -39,8 +50,17 @@ After deployment, test these URLs:
 ## Redirects Configuration
 The `netlify.toml` file contains redirects that:
 - Route `/curve-viewer/*` to the curve viewer Netlify site
-- Route `/dayzer/*` to the dayzer Netlify site
+- Route `/dayzer/*` to the dayzer Netlify site (updated URL)
 - Preserve the URL structure for seamless navigation
+- Include security headers for frame protection
+
+## Expected User Flow
+1. User visits `gridstoranalytics.com`
+2. User clicks "Launch Dayzer" button
+3. User is redirected to `gridstoranalytics.com/dayzer`
+4. If not authenticated, user sees login page
+5. After login, user can navigate seamlessly between all tools
+6. Authentication is shared across all GridStor platforms
 
 ## Updating Sub-sites
 To update the URLs of the sub-sites:
