@@ -8,7 +8,9 @@
 
 /dayzer/*
 
-# Curve Viewer - protected access
+# Curve Viewer - let edge function handle all requests without authentication conflicts
+/curve-viewer
+  # Remove any inherited authentication to prevent conflicts with edge function
+
 /curve-viewer/*
-  Basic-Auth: username:password
-  X-Frame-Options: SAMEORIGIN
+  # Remove any inherited authentication to prevent conflicts with edge function
