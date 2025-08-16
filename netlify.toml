@@ -222,18 +222,22 @@
   status = 200
   force = false
 
-# Curve Viewer - requires authentication (redirects to external site)
-[[redirects]]
-  from = "/curve-viewer/*"
-  to = "https://gridstor.netlify.app/curve-viewer/:splat"
-  status = 302
-  force = true
+# Curve Viewer - comprehensive proxy configuration for seamless integration
+[[edge_functions]]
+  path = "/curve-viewer"
+  function = "curve-viewer"
 
+[[edge_functions]]
+  path = "/curve-viewer/*"
+  function = "curve-viewer"
+
+# Add fallback redirects for curve viewer assets if they're not caught by main site
+# Note: These have lower priority due to position, so main site assets take precedence
 [[redirects]]
-  from = "/curve-viewer"
-  to = "https://gridstor.netlify.app/curve-viewer"
-  status = 302
-  force = true
+  from = "/curve-viewer-assets/*"
+  to = "https://gridstor.netlify.app/curve-viewer/:splat"
+  status = 200
+  force = false
 
 [[redirects]]
   from = "/*"
