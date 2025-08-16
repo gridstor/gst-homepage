@@ -231,11 +231,177 @@
   path = "/curve-viewer/*"
   function = "curve-viewer"
 
-# Add fallback redirects for curve viewer assets if they're not caught by main site
-# Note: These have lower priority due to position, so main site assets take precedence
+# Comprehensive proxy configuration for Curve Viewer assets and routes
+# This covers all possible file types and routes used by the Curve Viewer application
+
+# JavaScript and CSS assets (Astro generated) - specific to curve viewer
 [[redirects]]
-  from = "/curve-viewer-assets/*"
-  to = "https://gridstor.netlify.app/curve-viewer/:splat"
+  from = "/curve-viewer/_astro/*"
+  to = "https://gridstor.netlify.app/_astro/:splat"
+  status = 200
+  force = false
+
+# Static assets and images - specific to curve viewer
+[[redirects]]
+  from = "/curve-viewer/assets/*"
+  to = "https://gridstor.netlify.app/assets/:splat"
+  status = 200
+  force = false
+
+# API routes - specific to curve viewer
+[[redirects]]
+  from = "/curve-viewer/api/*"
+  to = "https://gridstor.netlify.app/api/:splat"
+  status = 200
+  force = false
+
+# Common image formats - specific to curve viewer
+[[redirects]]
+  from = "/curve-viewer/*.svg"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.png"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.jpg"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.jpeg"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.gif"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.webp"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.ico"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+# Font files - specific to curve viewer
+[[redirects]]
+  from = "/curve-viewer/*.woff"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.woff2"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.ttf"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.eot"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+# JavaScript and CSS files (if not caught by _astro) - specific to curve viewer
+[[redirects]]
+  from = "/curve-viewer/*.js"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.css"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.mjs"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+# JSON and data files - specific to curve viewer
+[[redirects]]
+  from = "/curve-viewer/*.json"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/*.xml"
+  to = "https://gridstor.netlify.app/:splat"
+  status = 200
+  force = false
+
+# Common root files - specific to curve viewer
+[[redirects]]
+  from = "/curve-viewer/favicon.ico"
+  to = "https://gridstor.netlify.app/favicon.ico"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/robots.txt"
+  to = "https://gridstor.netlify.app/robots.txt"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/sitemap.xml"
+  to = "https://gridstor.netlify.app/sitemap.xml"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/manifest.json"
+  to = "https://gridstor.netlify.app/manifest.json"
+  status = 200
+  force = false
+
+# Specific routes that might be accessed directly (based on curve viewer structure)
+[[redirects]]
+  from = "/curve-viewer/curve-schedule"
+  to = "https://gridstor.netlify.app/curve-schedule"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/curve-schedule/*"
+  to = "https://gridstor.netlify.app/curve-schedule/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/curve-tracker"
+  to = "https://gridstor.netlify.app/curve-tracker"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/curve-viewer/curve-tracker/*"
+  to = "https://gridstor.netlify.app/curve-tracker/:splat"
   status = 200
   force = false
 

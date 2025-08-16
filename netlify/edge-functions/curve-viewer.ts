@@ -18,7 +18,7 @@ export default async (request: Request) => {
     upstreamPath = url.pathname.replace(/^\/curve-viewer\//, '/');
   }
   if (upstreamPath === '') upstreamPath = '/';
-  const upstream = new URL(`https://gridstor.netlify.app/curve-viewer${upstreamPath}${url.search}`);
+  const upstream = new URL(`https://gridstor.netlify.app${upstreamPath}${url.search}`);
 
   // Proxy the request to the upstream Curve Viewer site
   const upstreamResponse = await fetch(upstream.toString(), {
