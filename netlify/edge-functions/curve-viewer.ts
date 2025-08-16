@@ -3,20 +3,6 @@ export default async (request: Request) => {
 
   // Strip the /curve-viewer prefix so upstream receives root-relative paths
   let upstreamPath = url.pathname.replace(/^\/curve-viewer(\/)?/, '/');
-  // If the browser requests root-level assets from a /curve-viewer page,
-  // proxy them to the upstream root without prefixing, so they resolve correctly.
-  const referer = request.headers.get('referer') || '';
-  const isFromCurveViewer = referer.includes('/curve-viewer');
-  const isRootAsset = url.pathname.startsWith('/curve-viewer/_astro/')
-    || url.pathname.startsWith('/curve-viewer/assets/')
-    || url.pathname.startsWith('/favicon')
-    || url.pathname.startsWith('/images/')
-    || url.pathname.endsWith('.js')
-    || url.pathname.endsWith('.css');
-  if (isFromCurveViewer && isRootAsset) {
-    // Map /curve-viewer/_astro/* -> /_astro/* for upstream
-    upstreamPath = url.pathname.replace(/^\/curve-viewer\//, '/');
-  }
   if (upstreamPath === '') upstreamPath = '/';
   const upstream = new URL(`https://gridstor.netlify.app${upstreamPath}${url.search}`);
 
@@ -61,8 +47,7 @@ export default async (request: Request) => {
     return new Response(rewritten, {
       status: upstreamResponse.status,
       headers: {
-        'content-type': contentType,
-        'Set-Cookie': 'netlify-curve-viewer-active=true; Path=/; Max-Age=3600; SameSite=Lax'
+        'content-type': contentType
       }
     });
   }
