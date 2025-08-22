@@ -53,8 +53,20 @@
 **Font Specifications:**
 - **Primary font:** Inter (400, 500, 600, 700 weights)
 - **Monospace font:** JetBrains Mono (400, 500 weights)
-- **Logo text:** `text-xl font-bold` (Inter, 20px, 700 weight)
-- **Navigation links:** `font-medium` (Inter, 500 weight)
+
+## 📏 Font Sizes (CRITICAL - Match Exactly!)
+
+**Logo Text:**
+- **Class:** `text-xl font-bold`
+- **Size:** 20px (1.25rem)
+- **Weight:** 700 (bold)
+- **Font:** Inter
+
+**Navigation Links:**
+- **Class:** `font-medium` (no text-size class)
+- **Size:** 16px (1rem) - browser default
+- **Weight:** 500 (medium)
+- **Font:** Inter
 
 ## 🎯 Navigation Link Styling
 
@@ -114,12 +126,12 @@
 - `hidden lg:flex` - Responsive visibility
 - `hover:text-gray-300` - Hover effect
 - `transition-colors` - Smooth transitions
-- `text-xl font-bold` - Logo text styling
+- `text-xl font-bold` - Logo text styling (20px, 700 weight)
 - `bg-white` - White square background for logo
 - `p-1` - Padding inside white square (4px)
 - `w-6 h-6` - Logo image size (24x24px)
 - `gap-3` - Space between logo and text
-- `font-medium` - Navigation link weight
+- `font-medium` - Navigation link weight (16px default, 500 weight)
 
 ## 📱 Responsive Behavior
 

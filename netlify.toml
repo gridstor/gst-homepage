@@ -56,10 +56,48 @@
 # Comprehensive proxy configuration for assets and routes
 # This covers all possible file types and routes used by the sub-applications
 
-# Astro assets - prioritize Fundamentals site assets
+# Market Ops specific assets (new hashes)
+[[redirects]]
+  from = "/_astro/index.B9qVpYRV.css"
+  to = "https://gridstordayzer.netlify.app/_astro/index.B9qVpYRV.css"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/MECOverviewChart.BGgdQn-a.js"
+  to = "https://gridstordayzer.netlify.app/_astro/MECOverviewChart.BGgdQn-a.js"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/Navbar.DNiuerQ1.js"
+  to = "https://gridstordayzer.netlify.app/_astro/Navbar.DNiuerQ1.js"
+  status = 200
+  force = true
+
+# Fundamentals specific assets (fallback for other patterns)
+[[redirects]]
+  from = "/_astro/*.css"
+  to = "https://gst-fundamentals.netlify.app/_astro/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/_astro/*Navbar*.js"
+  to = "https://gst-fundamentals.netlify.app/_astro/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/_astro/client*.js"
+  to = "https://gst-fundamentals.netlify.app/_astro/:splat"
+  status = 200
+  force = false
+
+# General Astro assets fallback to Market Ops
 [[redirects]]
   from = "/_astro/*"
-  to = "https://gst-fundamentals.netlify.app/_astro/:splat"
+  to = "https://gridstordayzer.netlify.app/_astro/:splat"
   status = 200
   force = false
 
