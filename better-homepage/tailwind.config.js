@@ -2,8 +2,11 @@
 export default {
   darkMode: ["class"],
   content: [
-    './src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}',
-    '!**/node_modules/**'
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+    './*.{ts,tsx}',
   ],
   prefix: "",
   theme: {
@@ -16,9 +19,6 @@ export default {
     },
     extend: {
       colors: {
-        'gs-dark': '#2A2A2A',
-        'gs-blue': '#34D5ED',
-        'gs-light': '#FFFFFF',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -52,10 +52,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-      },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
       },
       borderRadius: {
         lg: "var(--radius)",

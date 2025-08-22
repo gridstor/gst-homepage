@@ -1,4 +1,6 @@
 ---
+import '../styles/globals.css';
+
 interface Props {
 	title: string;
 }
@@ -16,37 +18,55 @@ const currentPath = Astro.url.pathname;
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	</head>
 	<body>
-		<header class="bg-white border-b border-gray-200">
-			<nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="flex justify-between h-16">
-					<div class="flex">
-						<div class="flex-shrink-0 flex items-center">
-							<img src="/favicon.svg" alt="GridStor Analytics" class="h-8 w-auto">
-							<span class="ml-2 text-xl font-semibold text-gray-900">GridStor Analytics</span>
+		<header class="bg-[#2A2A2A] text-white shadow-sm">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex justify-between items-center py-4">
+					<div class="flex items-center gap-6">
+						<div class="text-xl font-bold">GridStor Analytics</div>
+					</div>
+					<nav class="hidden lg:flex items-center gap-8">
+						<a href="/" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/' ? 'text-gray-300' : ''}`}>
+							Home
+						</a>
+						<a href="/curve-viewer" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/curve-viewer' ? 'text-gray-300' : ''}`}>
+							Curve Viewer
+						</a>
+						<a href="/dayzer" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/dayzer' ? 'text-gray-300' : ''}`}>
+							Dayzer
+						</a>
+						<a href="/about" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/about' ? 'text-gray-300' : ''}`}>
+							About
+						</a>
+						<div class="flex items-center gap-2 ml-4">
+							<button class="p-2 hover:bg-gray-700 rounded-md transition-colors">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+								</svg>
+							</button>
+							<button class="p-2 hover:bg-gray-700 rounded-md transition-colors">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+								</svg>
+							</button>
 						</div>
-						<div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-							<a href="/" class={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${currentPath === '/' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}>
-								Home
-							</a>
-							<a href="/curve-viewer" class={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${currentPath === '/curve-viewer' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}>
-								Curve Viewer
-							</a>
-							<a href="/dayzer" class={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${currentPath === '/dayzer' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}>
-								Dayzer
-							</a>
-							<a href="/about" class={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${currentPath === '/about' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}>
-								About
-							</a>
-						</div>
+					</nav>
+					<div class="lg:hidden">
+						<button class="text-white hover:text-gray-300 focus:outline-none">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+							</svg>
+						</button>
 					</div>
 				</div>
-			</nav>
+			</div>
 		</header>
 
-		<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+		<main>
 			<slot />
 		</main>
 	</body>
@@ -55,6 +75,5 @@ const currentPath = Astro.url.pathname;
 <style is:global>
 	html {
 		font-family: 'Inter', system-ui, sans-serif;
-		background: #f9fafb;
 	}
 </style>
