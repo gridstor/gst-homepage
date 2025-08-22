@@ -19,14 +19,19 @@ const currentPath = Astro.url.pathname;
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/svg+xml" href="/GST_logo.svg" />
 	</head>
 	<body>
 		<header class="bg-[#2A2A2A] text-white shadow-sm">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div class="flex justify-between items-center py-4">
 					<div class="flex items-center gap-8">
-						<a href="/" class="text-xl font-bold hover:text-gray-300 transition-colors">GridStor Analytics</a>
+						<a href="/" class="flex items-center gap-3 text-xl font-bold hover:text-gray-300 transition-colors">
+							<div class="bg-white p-1 flex items-center justify-center">
+								<img src="/GST_logo.svg" alt="GridStor Analytics Logo" class="w-6 h-6" />
+							</div>
+							GridStor Analytics
+						</a>
 						<nav class="hidden lg:flex items-center gap-8">
 							<a href="/revenue-forecasts" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/revenue-forecasts') ? 'text-gray-300' : ''}`}>
 								Revenue Forecasts

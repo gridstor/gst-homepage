@@ -1,7 +1,7 @@
 /* empty css                                */
 import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_D0YNkI8Y.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_BTJ9zKVa.mjs';
+import { $ as $$Layout } from '../chunks/Layout_CphUXtV0.mjs';
 import { jsx, jsxs } from 'react/jsx-runtime';
 import { useState } from 'react';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
