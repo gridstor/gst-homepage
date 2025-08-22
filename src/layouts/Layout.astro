@@ -32,14 +32,20 @@ const currentPath = Astro.url.pathname;
 						<a href="/" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/' ? 'text-gray-300' : ''}`}>
 							Home
 						</a>
-						<a href="/curve-viewer" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/curve-viewer' ? 'text-gray-300' : ''}`}>
-							Curve Viewer
+						<a href="/revenue-forecasts" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/revenue-forecasts') ? 'text-gray-300' : ''}`}>
+							Revenue Forecasts
 						</a>
+						<span class="text-gray-400 font-medium cursor-not-allowed">
+							Risk
+						</span>
+						<span class="text-gray-400 font-medium cursor-not-allowed">
+							Fundamentals
+						</span>
 						<a href="/market-ops" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/market-ops') ? 'text-gray-300' : ''}`}>
 							Market Ops
 						</a>
-						<a href="/about" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/about' ? 'text-gray-300' : ''}`}>
-							About
+						<a href="/docs" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/docs' ? 'text-gray-300' : ''}`}>
+							Docs
 						</a>
 						<div class="flex items-center gap-2 ml-4">
 							<button class="p-2 hover:bg-gray-700 rounded-md transition-colors">

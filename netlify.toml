@@ -202,6 +202,19 @@
   status = 301
   force = true
 
+# Temporary redirect - Revenue Forecasts points to existing Curve Viewer
+[[redirects]]
+  from = "/revenue-forecasts"
+  to = "/curve-viewer"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/revenue-forecasts/*"
+  to = "/curve-viewer/:splat"
+  status = 302
+  force = true
+
 # Curve Viewer - comprehensive proxy configuration for seamless integration
 [[edge_functions]]
   path = "/curve-viewer"
