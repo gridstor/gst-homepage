@@ -25,16 +25,14 @@
 # Set password in Site Settings > Access control > Password protection
 # IMPORTANT: For seamless proxy to work, ensure:
 # 1. Password protection is set to "Visitor access" not "Deploy previews"
-# 2. No conflicting edge functions that might interfere with /dayzer paths
+# 2. No conflicting edge functions that might interfere with /market-ops paths
 
-# Seamless proxy via Edge Function (no redirects)
-[[edge_functions]]
-  path = "/dayzer"
-  function = "dayzer"
-
-[[edge_functions]]
-  path = "/dayzer/*"
-  function = "dayzer"
+# Market Ops redirect configuration
+[[redirects]]
+  from = "/market-ops/*"
+  to = "https://gridstordayzer.netlify.app/market-ops/:splat"
+  status = 301
+  force = true
 
 # Comprehensive proxy configuration for Dayzer assets and routes
 # This covers all possible file types and routes used by the Dayzer application
@@ -185,42 +183,18 @@
   status = 200
   force = false
 
-# Specific routes that might be accessed directly (based on Dayzer structure)
+# Legacy Dayzer routes - redirect to Market Ops structure
 [[redirects]]
-  from = "/likeday"
-  to = "https://gridstordayzer.netlify.app/likeday"
-  status = 200
-  force = false
+  from = "/dayzer"
+  to = "/market-ops"
+  status = 301
+  force = true
 
 [[redirects]]
-  from = "/likeday/*"
-  to = "https://gridstordayzer.netlify.app/likeday/:splat"
-  status = 200
-  force = false
-
-[[redirects]]
-  from = "/caiso-fundamentals"
-  to = "https://gridstordayzer.netlify.app/caiso-fundamentals"
-  status = 200
-  force = false
-
-[[redirects]]
-  from = "/caiso-fundamentals/*"
-  to = "https://gridstordayzer.netlify.app/caiso-fundamentals/:splat"
-  status = 200
-  force = false
-
-[[redirects]]
-  from = "/goletea"
-  to = "https://gridstordayzer.netlify.app/goletea"
-  status = 200
-  force = false
-
-[[redirects]]
-  from = "/goletea/*"
-  to = "https://gridstordayzer.netlify.app/goletea/:splat"
-  status = 200
-  force = false
+  from = "/dayzer/*"
+  to = "/market-ops/:splat"
+  status = 301
+  force = true
 
 # Curve Viewer - comprehensive proxy configuration for seamless integration
 [[edge_functions]]

@@ -35,8 +35,8 @@ const currentPath = Astro.url.pathname;
 						<a href="/curve-viewer" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/curve-viewer' ? 'text-gray-300' : ''}`}>
 							Curve Viewer
 						</a>
-						<a href="/dayzer" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/dayzer' ? 'text-gray-300' : ''}`}>
-							Dayzer
+						<a href="/market-ops" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/market-ops') ? 'text-gray-300' : ''}`}>
+							Market Ops
 						</a>
 						<a href="/about" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === '/about' ? 'text-gray-300' : ''}`}>
 							About
