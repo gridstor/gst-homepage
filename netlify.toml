@@ -27,15 +27,21 @@
 # 1. Password protection is set to "Visitor access" not "Deploy previews"
 # 2. No conflicting edge functions that might interfere with /market-ops paths
 
-# Market Ops redirect configuration
+# Market Ops proxy configuration (seamless integration)
+[[redirects]]
+  from = "/market-ops"
+  to = "https://gridstordayzer.netlify.app/market-ops/"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/market-ops/*"
   to = "https://gridstordayzer.netlify.app/market-ops/:splat"
-  status = 301
+  status = 200
   force = true
 
-# Comprehensive proxy configuration for Dayzer assets and routes
-# This covers all possible file types and routes used by the Dayzer application
+# Comprehensive proxy configuration for Market Ops assets and routes
+# This covers all possible file types and routes used by the Market Ops application
 
 # JavaScript and CSS assets (Astro generated)
 [[redirects]]

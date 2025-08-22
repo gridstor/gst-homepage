@@ -1,0 +1,421 @@
+---
+import Layout from '../layouts/Layout.astro';
+import RevenueForcastMap from '../components/RevenueForcastMap.tsx';
+---
+
+<Layout title="Home">
+	<div class="min-h-full bg-white">
+		{/* Hero Section */}
+		<section class="bg-[#F9FAFB] py-16">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="text-center">
+					<h1 class="text-4xl lg:text-5xl font-bold text-[#2A2A2A] mb-6" style="font-size: 2.25rem; line-height: 1.2;">
+						GridStor Analytics Intelligence Platform
+					</h1>
+					<p class="text-lg text-gray-600 max-w-4xl mx-auto mb-8" style="font-size: 1.125rem;">
+						Real-time market intelligence and revenue forecasting for utility-scale battery storage across CAISO, ERCOT, and SPP markets.
+					</p>
+					<div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm">
+						<div class="flex items-center gap-2">
+							<div class="w-2 h-2 bg-green-500 rounded-full"></div>
+							<span class="text-gray-700 font-medium">System Status: Online</span>
+						</div>
+						<div class="flex items-center gap-2">
+							<svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+							</svg>
+							<span class="text-gray-600">Last Updated: 2 minutes ago</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* Compact Revenue Forecasting Map */}
+		<section class="py-8 bg-white border-b">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="mb-4">
+					<h2 class="text-xl font-bold text-[#2A2A2A] mb-1">Revenue Forecasting Map</h2>
+					<p class="text-sm text-gray-600">Interactive energy arbitrage forecasting across market locations</p>
+				</div>
+				
+				<RevenueForcastMap client:load />
+			</div>
+		</section>
+
+		{/* Market Performance Overview */}
+		<section class="py-12 bg-white">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="mb-8">
+					<h2 class="text-2xl font-bold text-[#2A2A2A] mb-2">Market Performance Overview</h2>
+					<p class="text-gray-600">Energy arbitrage analytics and forecasting updated monthly</p>
+				</div>
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+					{/* CAISO Card */}
+					<div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500 transition-all duration-200 hover:shadow-lg">
+						<div class="mb-4 pb-3 border-b border-gray-100">
+							<div class="text-xs text-gray-500 flex items-center gap-1">
+								<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								</svg>
+								<span>Last updated: Dec 28, 2024 8:45 AM</span>
+							</div>
+						</div>
+
+						<div class="flex justify-between items-start mb-6">
+							<div class="flex items-center gap-3">
+								<h3 class="text-xl font-bold text-gray-800">CAISO</h3>
+								<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">TB4</span>
+							</div>
+							<div class="flex items-center gap-1 text-sm font-semibold text-green-600">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+								</svg>
+								<span>+4.2% YoY</span>
+							</div>
+						</div>
+
+						<div class="grid grid-cols-2 gap-4 mb-6">
+							<div class="bg-gray-50 rounded-md p-3">
+								<div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD TB4</div>
+								<div class="text-lg font-bold text-gray-900 font-mono">$7.85</div>
+								<div class="text-xs text-gray-600">$/kW-month</div>
+							</div>
+							<div class="bg-gray-50 rounded-md p-3">
+								<div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">Year Ahead</div>
+								<div class="text-lg font-bold text-gray-900 font-mono">$8.20</div>
+								<div class="text-xs text-gray-600">$/kW-month</div>
+							</div>
+						</div>
+
+						<div class="text-center">
+							<a href="/curve-viewer" class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium text-sm">
+								View Details
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+								</svg>
+							</a>
+						</div>
+					</div>
+
+					{/* ERCOT Card */}
+					<div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-red-500 transition-all duration-200 hover:shadow-lg">
+						<div class="mb-4 pb-3 border-b border-gray-100">
+							<div class="text-xs text-gray-500 flex items-center gap-1">
+								<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								</svg>
+								<span>Last updated: Dec 28, 2024 9:15 AM</span>
+							</div>
+						</div>
+
+						<div class="flex justify-between items-start mb-6">
+							<div class="flex items-center gap-3">
+								<h3 class="text-xl font-bold text-gray-800">ERCOT</h3>
+								<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">TB2</span>
+							</div>
+							<div class="flex items-center gap-1 text-sm font-semibold text-green-600">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+								</svg>
+								<span>+7.8% YoY</span>
+							</div>
+						</div>
+
+						<div class="grid grid-cols-2 gap-4 mb-6">
+							<div class="bg-gray-50 rounded-md p-3">
+								<div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD TB2</div>
+								<div class="text-lg font-bold text-gray-900 font-mono">$9.12</div>
+								<div class="text-xs text-gray-600">$/kW-month</div>
+							</div>
+							<div class="bg-gray-50 rounded-md p-3">
+								<div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">Year Ahead</div>
+								<div class="text-lg font-bold text-gray-900 font-mono">$8.75</div>
+								<div class="text-xs text-gray-600">$/kW-month</div>
+							</div>
+						</div>
+
+						<div class="text-center">
+							<a href="/market-ops" class="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors font-medium text-sm">
+								View Details
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+								</svg>
+							</a>
+						</div>
+					</div>
+
+					{/* SPP Card */}
+					<div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500 transition-all duration-200 hover:shadow-lg">
+						<div class="mb-4 pb-3 border-b border-gray-100">
+							<div class="text-xs text-gray-500 flex items-center gap-1">
+								<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								</svg>
+								<span>Last updated: Dec 28, 2024 7:30 AM</span>
+							</div>
+						</div>
+
+						<div class="flex justify-between items-start mb-6">
+							<div class="flex items-center gap-3">
+								<h3 class="text-xl font-bold text-gray-800">SPP</h3>
+								<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">TB4</span>
+							</div>
+							<div class="flex items-center gap-1 text-sm font-semibold text-red-600">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+								</svg>
+								<span>-1.8% YoY</span>
+							</div>
+						</div>
+
+						<div class="grid grid-cols-2 gap-4 mb-6">
+							<div class="bg-gray-50 rounded-md p-3">
+								<div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD TB4</div>
+								<div class="text-lg font-bold text-gray-900 font-mono">$6.43</div>
+								<div class="text-xs text-gray-600">$/kW-month</div>
+							</div>
+							<div class="bg-gray-50 rounded-md p-3">
+								<div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">Year Ahead</div>
+								<div class="text-lg font-bold text-gray-900 font-mono">$6.90</div>
+								<div class="text-xs text-gray-600">$/kW-month</div>
+							</div>
+						</div>
+
+						<div class="text-center">
+							<a href="/about" class="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors font-medium text-sm">
+								View Details
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+								</svg>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* Analytics Tools Section */}
+		<section class="py-16 bg-[#F9FAFB]">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="text-center mb-12">
+					<h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Analytics Tools</h2>
+					<p class="text-lg text-gray-600 max-w-3xl mx-auto">
+						Comprehensive suite of analysis tools for battery storage market intelligence
+					</p>
+				</div>
+				
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					{/* Curve Viewer */}
+					<div class="bg-white rounded-lg shadow-sm p-8 border border-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+						<div class="flex items-center gap-3 mb-4">
+							<div class="text-blue-600">
+								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+								</svg>
+							</div>
+							<h3 class="text-xl font-semibold text-gray-800">Curve Viewer</h3>
+						</div>
+						<p class="text-gray-600 mb-6 leading-relaxed">
+							Advanced curve analysis and visualization tools for complex data patterns and market forecasting.
+						</p>
+						<ul class="space-y-2 mb-6">
+							<li class="flex items-start gap-2 text-gray-600">
+								<span class="text-blue-600 mt-1">•</span>
+								Interactive curve visualization
+							</li>
+							<li class="flex items-start gap-2 text-gray-600">
+								<span class="text-blue-600 mt-1">•</span>
+								Historical data analysis
+							</li>
+							<li class="flex items-start gap-2 text-gray-600">
+								<span class="text-blue-600 mt-1">•</span>
+								Trend identification and forecasting
+							</li>
+						</ul>
+						<a href="/curve-viewer" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium">
+							Launch Curve Viewer
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+							</svg>
+						</a>
+					</div>
+
+					{/* Market Ops */}
+					<div class="bg-white rounded-lg shadow-sm p-8 border border-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+						<div class="flex items-center gap-3 mb-4">
+							<div class="text-green-600">
+								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+								</svg>
+							</div>
+							<h3 class="text-xl font-semibold text-gray-800">Market Ops</h3>
+						</div>
+						<p class="text-gray-600 mb-6 leading-relaxed">
+							Comprehensive market operations analysis tools for tracking performance, forecasting, and optimization opportunities.
+						</p>
+						<ul class="space-y-2 mb-6">
+							<li class="flex items-start gap-2 text-gray-600">
+								<span class="text-green-600 mt-1">•</span>
+								Market performance tracking
+							</li>
+							<li class="flex items-start gap-2 text-gray-600">
+								<span class="text-green-600 mt-1">•</span>
+								PCM forecasting and analysis
+							</li>
+							<li class="flex items-start gap-2 text-gray-600">
+								<span class="text-green-600 mt-1">•</span>
+								Revenue optimization insights
+							</li>
+						</ul>
+						<a href="/market-ops" class="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors font-medium">
+							Launch Market Ops
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+							</svg>
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* Markets We Serve */}
+		<section class="py-16 bg-white">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="text-center mb-12">
+					<h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Markets We Serve</h2>
+					<p class="text-lg text-gray-600 max-w-3xl mx-auto">
+						Deep expertise across the three major electricity markets where GridStor operates
+					</p>
+				</div>
+				
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+					{/* CAISO */}
+					<div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 transition-all duration-200 hover:-translate-y-1">
+						<div class="bg-blue-500 h-2"></div>
+						<div class="p-6">
+							<h3 class="text-2xl font-bold text-gray-800 mb-3">CAISO</h3>
+							<p class="text-gray-600 mb-4 leading-relaxed">California's grid operator serving 80% of the state</p>
+							<div class="bg-gray-50 rounded-md p-3">
+								<span class="text-sm font-medium text-gray-700">45 GW battery storage target</span>
+							</div>
+						</div>
+					</div>
+
+					{/* ERCOT */}
+					<div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 transition-all duration-200 hover:-translate-y-1">
+						<div class="bg-red-500 h-2"></div>
+						<div class="p-6">
+							<h3 class="text-2xl font-bold text-gray-800 mb-3">ERCOT</h3>
+							<p class="text-gray-600 mb-4 leading-relaxed">Texas's grid operator serving 26M customers</p>
+							<div class="bg-gray-50 rounded-md p-3">
+								<span class="text-sm font-medium text-gray-700">12 GW battery storage target</span>
+							</div>
+						</div>
+					</div>
+
+					{/* SPP */}
+					<div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 transition-all duration-200 hover:-translate-y-1">
+						<div class="bg-green-500 h-2"></div>
+						<div class="p-6">
+							<h3 class="text-2xl font-bold text-gray-800 mb-3">SPP</h3>
+							<p class="text-gray-600 mb-4 leading-relaxed">Southwest Power Pool serving 17 states</p>
+							<div class="bg-gray-50 rounded-md p-3">
+								<span class="text-sm font-medium text-gray-700">8 GW battery storage target</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{/* System Status */}
+		<section class="py-16 bg-[#F9FAFB]">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="text-center mb-12">
+					<h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Current System Status</h2>
+					<p class="text-lg text-gray-600 max-w-3xl mx-auto">
+						Real-time monitoring of platform health and recent analytics updates
+					</p>
+				</div>
+				
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+					{/* System Health */}
+					<div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+						<h3 class="text-lg font-semibold text-gray-800 mb-4">System Health</h3>
+						<div class="space-y-3">
+							<div class="flex items-start gap-3">
+								<svg class="w-4 h-4 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+								</svg>
+								<span class="text-gray-600 text-sm leading-relaxed">All systems operational</span>
+							</div>
+							<div class="flex items-start gap-3">
+								<svg class="w-4 h-4 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+								</svg>
+								<span class="text-gray-600 text-sm leading-relaxed">Last data refresh: 2 minutes ago</span>
+							</div>
+							<div class="flex items-start gap-3">
+								<svg class="w-4 h-4 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+								</svg>
+								<span class="text-gray-600 text-sm leading-relaxed">99.8% uptime this month</span>
+							</div>
+						</div>
+					</div>
+
+					{/* Recent Updates */}
+					<div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+						<h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Updates</h3>
+						<div class="space-y-3">
+							<div class="flex items-start gap-3">
+								<svg class="w-4 h-4 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+								</svg>
+								<span class="text-gray-600 text-sm leading-relaxed">Curve analysis updated 15 minutes ago</span>
+							</div>
+							<div class="flex items-start gap-3">
+								<svg class="w-4 h-4 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+								</svg>
+								<span class="text-gray-600 text-sm leading-relaxed">Market forecasts refreshed 1 hour ago</span>
+							</div>
+							<div class="flex items-start gap-3">
+								<svg class="w-4 h-4 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								</svg>
+								<span class="text-gray-600 text-sm leading-relaxed">Daily analysis completed</span>
+							</div>
+						</div>
+					</div>
+
+					{/* Active Alerts */}
+					<div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+						<h3 class="text-lg font-semibold text-gray-800 mb-4">Active Alerts</h3>
+						<div class="space-y-3">
+							<div class="flex items-start gap-3">
+								<svg class="w-4 h-4 text-orange-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+									<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+								</svg>
+								<span class="text-gray-600 text-sm leading-relaxed">ERCOT: High volatility expected 3-5 PM today</span>
+							</div>
+							<div class="flex items-start gap-3">
+								<svg class="w-4 h-4 text-blue-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+									<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+								</svg>
+								<span class="text-gray-600 text-sm leading-relaxed">SPP: Maintenance window scheduled this weekend</span>
+							</div>
+							<div class="flex items-start gap-3">
+								<svg class="w-4 h-4 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+								</svg>
+								<span class="text-gray-600 text-sm leading-relaxed">CAISO: All systems normal</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</Layout>
