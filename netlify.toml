@@ -53,10 +53,35 @@
   status = 200
   force = true
 
-# Comprehensive proxy configuration for Market Ops assets and routes
-# This covers all possible file types and routes used by the Market Ops application
+# Comprehensive proxy configuration for assets and routes
+# This covers all possible file types and routes used by the sub-applications
 
-# JavaScript and CSS assets (Astro generated)
+# Fundamentals assets - specific patterns that only come from Fundamentals
+[[redirects]]
+  from = "/_astro/index.Z19iNosH.css"
+  to = "https://gst-fundamentals.netlify.app/_astro/index.Z19iNosH.css"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/index.BeH2Pwq7.css"
+  to = "https://gst-fundamentals.netlify.app/_astro/index.BeH2Pwq7.css"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/client.BxCTEn3I.js"
+  to = "https://gst-fundamentals.netlify.app/_astro/client.BxCTEn3I.js"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/Navbar.C9xkgjRc.js"
+  to = "https://gst-fundamentals.netlify.app/_astro/Navbar.C9xkgjRc.js"
+  status = 200
+  force = true
+
+# JavaScript and CSS assets (Astro generated) - Market Ops fallback
 [[redirects]]
   from = "/_astro/*"
   to = "https://gridstordayzer.netlify.app/_astro/:splat"
