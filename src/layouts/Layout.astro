@@ -38,9 +38,9 @@ const currentPath = Astro.url.pathname;
 						<span class="text-gray-400 font-medium cursor-not-allowed">
 							Risk
 						</span>
-						<span class="text-gray-400 font-medium cursor-not-allowed">
+						<a href="/fundamentals" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/fundamentals') ? 'text-gray-300' : ''}`}>
 							Fundamentals
-						</span>
+						</a>
 						<a href="/market-ops" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/market-ops') ? 'text-gray-300' : ''}`}>
 							Market Ops
 						</a>

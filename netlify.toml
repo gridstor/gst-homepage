@@ -40,6 +40,19 @@
   status = 200
   force = true
 
+# Fundamentals proxy configuration (seamless integration)
+[[redirects]]
+  from = "/fundamentals"
+  to = "https://gst-fundamentals.netlify.app/fundamentals/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/fundamentals/*"
+  to = "https://gst-fundamentals.netlify.app/fundamentals/:splat"
+  status = 200
+  force = true
+
 # Comprehensive proxy configuration for Market Ops assets and routes
 # This covers all possible file types and routes used by the Market Ops application
 

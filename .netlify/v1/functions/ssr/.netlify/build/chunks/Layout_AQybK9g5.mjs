@@ -1,7 +1,7 @@
 import { e as createComponent, f as createAstro, l as renderHead, h as addAttribute, n as renderSlot, r as renderTemplate } from './astro/server_D0YNkI8Y.mjs';
 import 'kleur/colors';
 import 'clsx';
-/* empty css                         */
+/* empty css                        */
 
 const $$Astro = createAstro();
 const $$Layout = createComponent(($$result, $$props, $$slots) => {
@@ -15,9 +15,9 @@ Home
 Revenue Forecasts
 </a> <span class="text-gray-400 font-medium cursor-not-allowed">
 Risk
-</span> <span class="text-gray-400 font-medium cursor-not-allowed">
+</span> <a href="/fundamentals"${addAttribute(`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith("/fundamentals") ? "text-gray-300" : ""}`, "class")}>
 Fundamentals
-</span> <a href="/market-ops"${addAttribute(`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith("/market-ops") ? "text-gray-300" : ""}`, "class")}>
+</a> <a href="/market-ops"${addAttribute(`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith("/market-ops") ? "text-gray-300" : ""}`, "class")}>
 Market Ops
 </a> <a href="/docs"${addAttribute(`text-white hover:text-gray-300 transition-colors font-medium ${currentPath === "/docs" ? "text-gray-300" : ""}`, "class")}>
 Docs
