@@ -145,6 +145,52 @@
 - Logo and icons still visible
 - Implement mobile menu as needed for your site
 
+## 🚨 CRITICAL - Container Width & Dark Background
+
+**IMPORTANT:** The dark background width is controlled by the container classes:
+
+```html
+<header class="bg-[#2A2A2A] text-white shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+```
+
+**Key Points:**
+- `max-w-7xl` = Maximum width of 80rem (1280px)
+- `mx-auto` = Centers the container
+- **The dark background (`bg-[#2A2A2A]`) fills the entire header width**
+- **The content is constrained to `max-w-7xl` and centered**
+
+**Common Mistakes:**
+- ❌ Using `max-w-6xl` or other widths (makes narrower)
+- ❌ Missing `mx-auto` (content not centered)
+- ❌ Wrong background color (not `#2A2A2A`)
+- ❌ Adding extra containers or wrappers
+
+## 📐 Exact HTML Structure (COPY EXACTLY)
+
+**Critical:** The HTML structure must be EXACTLY as shown. Pay attention to:
+
+1. **Container nesting:** `header > div.max-w-7xl > div.flex`
+2. **Left side:** `div.flex.items-center.gap-8` containing logo + nav
+3. **Right side:** `div.flex.items-center.gap-2.ml-4` containing buttons
+4. **No extra divs or wrappers**
+5. **Proper closing tags**
+
+```html
+<header class="bg-[#2A2A2A] text-white shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center py-4">
+      <div class="flex items-center gap-8">
+        <!-- Logo + Nav here -->
+      </div>
+      <div class="flex items-center gap-2 ml-4">
+        <!-- Buttons here -->
+      </div>
+    </div>
+  </div>
+</header>
+```
+
 ## 🔧 Implementation Notes
 
 1. **Replace `[SITE NAME HERE]`** with your specific site name (e.g., "Market Ops", "Fundamentals", etc.)
@@ -153,6 +199,7 @@
 4. **Copy GST_logo.svg** to your `public/` directory for the favicon
 5. **Maintain exact spacing** with `gap-8` between elements
 6. **Keep hover effects** and transitions for professional feel
+7. **DO NOT modify container width classes** - use exactly `max-w-7xl mx-auto`
 
 ## ✅ Testing Checklist
 
