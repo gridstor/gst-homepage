@@ -75,6 +75,25 @@
   status = 200
   force = true
 
+# Fundamentals specific assets (new hashes)
+[[redirects]]
+  from = "/_astro/index.BLBjlnYQ.css"
+  to = "https://gst-fundamentals.netlify.app/_astro/index.BLBjlnYQ.css"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/index.OU9ZdyBe.css"
+  to = "https://gst-fundamentals.netlify.app/_astro/index.OU9ZdyBe.css"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/Navbar.Cro_pm-Z.js"
+  to = "https://gst-fundamentals.netlify.app/_astro/Navbar.Cro_pm-Z.js"
+  status = 200
+  force = true
+
 # Fundamentals specific assets (fallback for other patterns)
 [[redirects]]
   from = "/_astro/*.css"
