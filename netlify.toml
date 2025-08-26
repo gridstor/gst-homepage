@@ -132,7 +132,20 @@
   status = 200
   force = false
 
-# API routes
+# API routes - try Fundamentals first for delivery APIs
+[[redirects]]
+  from = "/api/delivery*"
+  to = "https://gst-fundamentals.netlify.app/api/delivery:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/delivery-request/*"
+  to = "https://gst-fundamentals.netlify.app/api/delivery-request/:splat"
+  status = 200
+  force = true
+
+# General API routes fallback to Market Ops
 [[redirects]]
   from = "/api/*"
   to = "https://gridstordayzer.netlify.app/api/:splat"
@@ -213,6 +226,13 @@
   to = "https://gridstordayzer.netlify.app/:splat"
   status = 200
   force = false
+
+# Delivery management JavaScript (Fundamentals)
+[[redirects]]
+  from = "/delivery-management.js"
+  to = "https://gst-fundamentals.netlify.app/delivery-management.js"
+  status = 200
+  force = true
 
 # JavaScript and CSS files (if not caught by _astro)
 [[redirects]]
