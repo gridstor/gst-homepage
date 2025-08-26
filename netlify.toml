@@ -119,6 +119,30 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/_astro/api-client.Dq3dca7d.js"
+  to = "https://gridstor.netlify.app/_astro/api-client.Dq3dca7d.js"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/jsx-runtime.D3GSbgeI.js"
+  to = "https://gridstor.netlify.app/_astro/jsx-runtime.D3GSbgeI.js"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/index.KqMXKjf4.js"
+  to = "https://gridstor.netlify.app/_astro/index.KqMXKjf4.js"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/index.yBjzXJbu.js"
+  to = "https://gridstor.netlify.app/_astro/index.yBjzXJbu.js"
+  status = 200
+  force = true
+
 # Fundamentals specific assets (fallback for other patterns)
 [[redirects]]
   from = "/_astro/*.css"
