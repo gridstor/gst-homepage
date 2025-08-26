@@ -132,16 +132,17 @@
   status = 200
   force = false
 
-# API routes - try Fundamentals first for delivery APIs
+# API routes - Delivery APIs should go to gridstor (curve-viewer backend)
+# These APIs are used by the curve-viewer for delivery request management
 [[redirects]]
   from = "/api/delivery*"
-  to = "https://gst-fundamentals.netlify.app/api/delivery:splat"
+  to = "https://gridstor.netlify.app/api/delivery:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/delivery-request/*"
-  to = "https://gst-fundamentals.netlify.app/api/delivery-request/:splat"
+  to = "https://gridstor.netlify.app/api/delivery-request/:splat"
   status = 200
   force = true
 
