@@ -75,7 +75,7 @@
   status = 200
   force = true
 
-# Fundamentals specific assets (new hashes)
+# Fundamentals specific assets (latest hashes)
 [[redirects]]
   from = "/_astro/index.BLBjlnYQ.css"
   to = "https://gst-fundamentals.netlify.app/_astro/index.BLBjlnYQ.css"
@@ -85,6 +85,18 @@
 [[redirects]]
   from = "/_astro/index.OU9ZdyBe.css"
   to = "https://gst-fundamentals.netlify.app/_astro/index.OU9ZdyBe.css"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/index.BJfUAbRs.js"
+  to = "https://gst-fundamentals.netlify.app/_astro/index.BJfUAbRs.js"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/client.BxCTEn3I.js"
+  to = "https://gst-fundamentals.netlify.app/_astro/client.BxCTEn3I.js"
   status = 200
   force = true
 
@@ -234,12 +246,7 @@
   status = 200
   force = false
 
-# Common root files
-[[redirects]]
-  from = "/favicon.ico"
-  to = "https://gridstordayzer.netlify.app/favicon.ico"
-  status = 200
-  force = false
+# Note: favicon.ico not proxied - using custom GST_logo.svg instead
 
 [[redirects]]
   from = "/robots.txt"
