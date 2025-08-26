@@ -4,17 +4,35 @@
 import type { MiddlewareHandler } from 'astro';
 
 export const authMiddleware: MiddlewareHandler = (context, next) => {
-  const { url } = context;
+  const { url, request } = context;
+  
+  // Allow proxy requests from GridStor Analytics main site
+  const userAgent = request.headers.get('User-Agent');
+  const referer = request.headers.get('Referer');
+  
+  if (userAgent?.includes('GridStor-Analytics-Proxy') || 
+      referer?.includes('gridstoranalytics.com') ||
+      userAgent?.includes('Mozilla/5.0')) {
+    // Allow requests from main site or browser requests
+    return next();
+  }
   
   // Public paths that don't require authentication
   const publicPaths = [
     '/dayzer',
     '/dayzer/',
+    '/curve-viewer',
+    '/curve-viewer/',
+    '/',
   ];
   
   // Paths that start with these prefixes are public
   const publicPrefixes = [
     '/dayzer/',
+    '/curve-viewer/',
+    '/_astro/',
+    '/assets/',
+    '/api/',
   ];
   
   // Check if current path is public
