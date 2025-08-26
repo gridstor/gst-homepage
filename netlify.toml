@@ -106,6 +106,19 @@
   status = 200
   force = true
 
+# Curve Viewer specific assets (latest hashes from gridstor.netlify.app)
+[[redirects]]
+  from = "/_astro/CurveViewer.Ce2-sCzS.js"
+  to = "https://gridstor.netlify.app/_astro/CurveViewer.Ce2-sCzS.js"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/client.CyyDrSAY.js"
+  to = "https://gridstor.netlify.app/_astro/client.CyyDrSAY.js"
+  status = 200
+  force = true
+
 # Fundamentals specific assets (fallback for other patterns)
 [[redirects]]
   from = "/_astro/*.css"
