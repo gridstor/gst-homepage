@@ -13,13 +13,29 @@ export default async (request: Request) => {
 
   try {
     // Proxy the request to the upstream Curve Viewer site
+    // Use proper browser headers to avoid bot detection/access controls
+    const proxyHeaders = {
+      'User-Agent': request.headers.get('User-Agent') || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': request.headers.get('Accept') || 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+      'Accept-Language': request.headers.get('Accept-Language') || 'en-US,en;q=0.9',
+      'Accept-Encoding': request.headers.get('Accept-Encoding') || 'gzip, deflate, br',
+      'Cache-Control': request.headers.get('Cache-Control') || 'no-cache',
+      'Pragma': request.headers.get('Pragma') || 'no-cache',
+      'Sec-Fetch-Dest': request.headers.get('Sec-Fetch-Dest') || 'document',
+      'Sec-Fetch-Mode': request.headers.get('Sec-Fetch-Mode') || 'navigate',
+      'Sec-Fetch-Site': request.headers.get('Sec-Fetch-Site') || 'none',
+    };
+
+    // Remove undefined headers
+    Object.keys(proxyHeaders).forEach(key => {
+      if (proxyHeaders[key] === undefined || proxyHeaders[key] === null) {
+        delete proxyHeaders[key];
+      }
+    });
+
     const upstreamResponse = await fetch(upstream.toString(), {
       method: request.method,
-      headers: {
-        'User-Agent': 'GridStor-Analytics-Proxy/1.0',
-        'Accept': request.headers.get('Accept') || '*/*',
-        'Accept-Language': request.headers.get('Accept-Language') || 'en-US,en;q=0.9',
-      },
+      headers: proxyHeaders,
       redirect: 'follow' // Changed from 'manual' to 'follow' to handle redirects properly
     });
 
