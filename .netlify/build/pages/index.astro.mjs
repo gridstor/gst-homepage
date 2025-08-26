@@ -1,15 +1,16 @@
 /* empty css                                */
 import { e as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_D0YNkI8Y.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_DKyi81V7.mjs';
+import { $ as $$Layout } from '../chunks/Layout_CBfVHUVC.mjs';
 import { jsx, jsxs } from 'react/jsx-runtime';
 import { useState } from 'react';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import { geoAlbersUsa } from 'd3-geo';
 import * as SelectPrimitive from '@radix-ui/react-select';
-import { ChevronDownIcon, CheckIcon, ChevronUpIcon, Download } from 'lucide-react';
+import { ChevronDownIcon, CheckIcon, ChevronUpIcon, Download, Clock, TrendingUp, TrendingDown } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { motion } from 'framer-motion';
 export { renderers } from '../renderers.mjs';
 
 function cn(...inputs) {
@@ -557,18 +558,159 @@ function RevenueForcastMap() {
   ] });
 }
 
+function MarketAnalyticsCard({
+  market,
+  tbType,
+  locations,
+  lastUpdated,
+  ytdTB,
+  yearAheadForecast,
+  pValue,
+  pValueAmount,
+  boyForecast,
+  neededToMeet,
+  neededPValue,
+  projectedTotal,
+  yoyChange,
+  asProportion,
+  accent,
+  accentColor
+}) {
+  const [selectedLocation, setSelectedLocation] = useState(locations[0]);
+  const isPositive = yoyChange.startsWith("+");
+  const isOverForecast = pValueAmount.startsWith("+");
+  parseInt(pValue.replace("P", ""));
+  const totalWithAS = (parseFloat(projectedTotal) * parseFloat(asProportion)).toFixed(2);
+  return /* @__PURE__ */ jsxs(
+    motion.div,
+    {
+      whileHover: { y: -3, boxShadow: "0 12px 30px rgba(0,0,0,0.1)" },
+      className: `bg-white rounded-lg shadow-sm p-6 border-l-4 ${accent} transition-all duration-200`,
+      children: [
+        /* @__PURE__ */ jsx("div", { className: "mb-4 pb-3 border-b border-gray-100", children: /* @__PURE__ */ jsxs("div", { className: "text-xs text-gray-500 flex items-center gap-1", children: [
+          /* @__PURE__ */ jsx(Clock, { size: 12 }),
+          /* @__PURE__ */ jsxs("span", { children: [
+            "Last updated: ",
+            lastUpdated
+          ] })
+        ] }) }),
+        /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-start mb-6", children: [
+          /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3", children: [
+            /* @__PURE__ */ jsx("h3", { className: "text-xl font-bold text-gray-800", style: { fontSize: "1.25rem", fontWeight: "600" }, children: market }),
+            /* @__PURE__ */ jsx("span", { className: "text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono", children: tbType })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: `flex items-center gap-1 text-sm font-semibold ${isPositive ? "text-green-600" : "text-red-600"}`, children: [
+            isPositive ? /* @__PURE__ */ jsx(TrendingUp, { size: 16 }) : /* @__PURE__ */ jsx(TrendingDown, { size: 16 }),
+            /* @__PURE__ */ jsxs("span", { children: [
+              yoyChange,
+              " YoY"
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "mb-4", children: /* @__PURE__ */ jsxs(Select, { value: selectedLocation, onValueChange: setSelectedLocation, children: [
+          /* @__PURE__ */ jsx(SelectTrigger, { className: "w-full bg-gray-50 border-gray-200", children: /* @__PURE__ */ jsx(SelectValue, {}) }),
+          /* @__PURE__ */ jsx(SelectContent, { children: locations.map((location) => /* @__PURE__ */ jsx(SelectItem, { value: location, children: location }, location)) })
+        ] }) }),
+        /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 gap-4 mb-6", children: [
+          /* @__PURE__ */ jsxs("div", { className: "bg-gray-50 rounded-md p-3", children: [
+            /* @__PURE__ */ jsxs("div", { className: "text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium", children: [
+              "YTD ",
+              tbType
+            ] }),
+            /* @__PURE__ */ jsxs("div", { className: "text-lg font-bold text-gray-900 font-mono", style: { fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }, children: [
+              "$",
+              ytdTB
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600", children: "$/kW-month" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "bg-gray-50 rounded-md p-3", children: [
+            /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium", children: "Year Ahead Forecast" }),
+            /* @__PURE__ */ jsxs("div", { className: "text-lg font-bold text-gray-900 font-mono", style: { fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }, children: [
+              "$",
+              yearAheadForecast
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600", children: "$/kW-month" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "bg-gray-50 rounded-md p-3", children: [
+            /* @__PURE__ */ jsxs("div", { className: "text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium", children: [
+              pValue,
+              " YTD"
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: `text-sm font-semibold ${isOverForecast ? "text-green-600" : "text-red-600"}`, children: pValueAmount }),
+            /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600", children: "vs forecast" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "bg-gray-50 rounded-md p-3", children: [
+            /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium", children: "BOY Forecast" }),
+            /* @__PURE__ */ jsxs("div", { className: "text-lg font-bold text-gray-900 font-mono", style: { fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }, children: [
+              "$",
+              boyForecast
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600", children: "$/kW-month" })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx("div", { className: "grid grid-cols-1 gap-3 mb-6", children: /* @__PURE__ */ jsxs("div", { className: "bg-yellow-50 rounded-md p-3", children: [
+          /* @__PURE__ */ jsxs("div", { className: "text-xs text-gray-600 uppercase tracking-wider mb-1 font-medium", children: [
+            "Needed to Meet ",
+            neededPValue
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "text-base font-bold text-gray-900 font-mono", style: { fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }, children: [
+            "$",
+            neededToMeet
+          ] }),
+          /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600", children: "$/kW-month" })
+        ] }) }),
+        /* @__PURE__ */ jsx("div", { className: "border-t border-gray-200 pt-4 mb-4", children: /* @__PURE__ */ jsxs("div", { className: "flex justify-between items-center", children: [
+          /* @__PURE__ */ jsxs("div", { children: [
+            /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-500 font-medium", children: "Projected Total (YTD + BOY)" }),
+            /* @__PURE__ */ jsxs("div", { className: "text-xl font-bold text-gray-900 font-mono", style: { fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }, children: [
+              "$",
+              projectedTotal
+            ] }),
+            /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600", children: "$/kW-month" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "text-right", children: [
+            /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-500 mb-1", children: "vs Forecast" }),
+            /* @__PURE__ */ jsxs("div", { className: `text-sm font-semibold ${parseFloat(projectedTotal) > parseFloat(yearAheadForecast) ? "text-green-600" : "text-red-600"}`, children: [
+              parseFloat(projectedTotal) > parseFloat(yearAheadForecast) ? "+" : "",
+              (parseFloat(projectedTotal) - parseFloat(yearAheadForecast)).toFixed(2)
+            ] })
+          ] })
+        ] }) }),
+        /* @__PURE__ */ jsxs("div", { className: "bg-green-50 rounded-md p-4", children: [
+          /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600 uppercase tracking-wider mb-2 font-medium", children: "Estimated AS Proportion" }),
+          /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-2 gap-4", children: [
+            /* @__PURE__ */ jsxs("div", { children: [
+              /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-600", children: "Multiplier" }),
+              /* @__PURE__ */ jsxs("div", { className: "text-base font-bold text-gray-900 font-mono", style: { fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }, children: [
+                asProportion,
+                "x"
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxs("div", { children: [
+              /* @__PURE__ */ jsx("div", { className: "text-sm text-gray-600", children: "Energy Arb + AS Revenue" }),
+              /* @__PURE__ */ jsxs("div", { className: "text-base font-bold text-green-600 font-mono", style: { fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }, children: [
+                "$",
+                totalWithAS
+              ] }),
+              /* @__PURE__ */ jsx("div", { className: "text-xs text-gray-600", children: "$/kW-month" })
+            ] })
+          ] })
+        ] })
+      ]
+    }
+  );
+}
+
 const $$Index = createComponent(($$result, $$props, $$slots) => {
-  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Home" }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<div class="min-h-full bg-white">  <section class="bg-[#F9FAFB] py-16"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center"> <h1 class="text-4xl lg:text-5xl font-bold text-[#2A2A2A] mb-6" style="font-size: 2.25rem; line-height: 1.2;">
-GridStor Analytics Intelligence Platform
-</h1> <p class="text-lg text-gray-600 max-w-4xl mx-auto mb-8" style="font-size: 1.125rem;">
-Real-time market intelligence and revenue forecasting for utility-scale battery storage across CAISO, ERCOT, and SPP markets.
-</p> <div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm"> <div class="flex items-center gap-2"> <div class="w-2 h-2 bg-green-500 rounded-full"></div> <span class="text-gray-700 font-medium">System Status: Online</span> </div> <div class="flex items-center gap-2"> <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg> <span class="text-gray-600">Last Updated: 2 minutes ago</span> </div> </div> </div> </div> </section>  <section class="py-8 bg-white border-b"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="mb-4"> <h2 class="text-xl font-bold text-[#2A2A2A] mb-1">Revenue Forecasting Map</h2> <p class="text-sm text-gray-600">Interactive energy arbitrage forecasting across market locations</p> </div> ${renderComponent($$result2, "RevenueForcastMap", RevenueForcastMap, { "client:load": true, "client:component-hydration": "load", "client:component-path": "C:/Users/Administrator/Documents/gst-homepage/gst-homepage/src/components/RevenueForcastMap.tsx", "client:component-export": "default" })} </div> </section>  <section class="py-12 bg-white"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="mb-8"> <h2 class="text-2xl font-bold text-[#2A2A2A] mb-2">Market Performance Overview</h2> <p class="text-gray-600">Energy arbitrage analytics and forecasting updated monthly</p> </div> <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">  <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500 transition-all duration-200 hover:shadow-lg"> <div class="mb-4 pb-3 border-b border-gray-100"> <div class="text-xs text-gray-500 flex items-center gap-1"> <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg> <span>Last updated: Dec 28, 2024 8:45 AM</span> </div> </div> <div class="flex justify-between items-start mb-6"> <div class="flex items-center gap-3"> <h3 class="text-xl font-bold text-gray-800">CAISO</h3> <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">TB4</span> </div> <div class="flex items-center gap-1 text-sm font-semibold text-green-600"> <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path> </svg> <span>+4.2% YoY</span> </div> </div> <div class="grid grid-cols-2 gap-4 mb-6"> <div class="bg-gray-50 rounded-md p-3"> <div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD TB4</div> <div class="text-lg font-bold text-gray-900 font-mono">$7.85</div> <div class="text-xs text-gray-600">$/kW-month</div> </div> <div class="bg-gray-50 rounded-md p-3"> <div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">Year Ahead</div> <div class="text-lg font-bold text-gray-900 font-mono">$8.20</div> <div class="text-xs text-gray-600">$/kW-month</div> </div> </div> <div class="text-center"> <a href="/curve-viewer" class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium text-sm">
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Home" }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<div class="min-h-full bg-white">  <section class="py-8 bg-white border-b"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="mb-4"> <h2 class="text-xl font-bold text-[#2A2A2A] mb-1">Revenue Forecasting Map</h2> <p class="text-sm text-gray-600">Interactive energy arbitrage forecasting across market locations</p> </div> ${renderComponent($$result2, "RevenueForcastMap", RevenueForcastMap, { "client:load": true, "client:component-hydration": "load", "client:component-path": "C:/Users/Administrator/Documents/gst-homepage/gst-homepage/src/components/RevenueForcastMap.tsx", "client:component-export": "default" })} </div> </section>  <section class="py-12 bg-white"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="mb-8"> <h2 class="text-2xl font-bold text-[#2A2A2A] mb-2">Market Performance Overview</h2> <p class="text-gray-600">Energy arbitrage analytics and forecasting updated monthly</p> </div> <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"> ${renderComponent($$result2, "MarketAnalyticsCard", MarketAnalyticsCard, { "client:load": true, "market": "CAISO", "tbType": "TB4", "locations": ["Goleta", "SP15", "NP15"], "lastUpdated": "Dec 28, 2024 8:45 AM", "ytdTB": "7.85", "yearAheadForecast": "8.20", "pValue": "P35", "pValueAmount": "+0.45", "boyForecast": "8.45", "neededToMeet": "8.55", "neededPValue": "P25", "projectedTotal": "8.32", "yoyChange": "+4.2%", "asProportion": "1.10", "accent": "border-blue-500", "accentColor": "blue", "client:component-hydration": "load", "client:component-path": "C:/Users/Administrator/Documents/gst-homepage/gst-homepage/src/components/MarketAnalyticsCard.tsx", "client:component-export": "default" })} ${renderComponent($$result2, "MarketAnalyticsCard", MarketAnalyticsCard, { "client:load": true, "market": "ERCOT", "tbType": "TB2", "locations": ["Houston Hub", "Hidden Lakes", "Gunnar", "South Hub"], "lastUpdated": "Dec 28, 2024 9:15 AM", "ytdTB": "9.12", "yearAheadForecast": "8.75", "pValue": "P65", "pValueAmount": "+1.24", "boyForecast": "8.95", "neededToMeet": "8.38", "neededPValue": "P85", "projectedTotal": "9.05", "yoyChange": "+7.8%", "asProportion": "1.25", "accent": "border-red-500", "accentColor": "red", "client:component-hydration": "load", "client:component-path": "C:/Users/Administrator/Documents/gst-homepage/gst-homepage/src/components/MarketAnalyticsCard.tsx", "client:component-export": "default" })} ${renderComponent($$result2, "MarketAnalyticsCard", MarketAnalyticsCard, { "client:load": true, "market": "SPP", "tbType": "TB4", "locations": ["North Hub", "South Hub"], "lastUpdated": "Dec 28, 2024 7:30 AM", "ytdTB": "6.43", "yearAheadForecast": "6.90", "pValue": "P20", "pValueAmount": "-0.82", "boyForecast": "7.10", "neededToMeet": "7.37", "neededPValue": "P15", "projectedTotal": "6.73", "yoyChange": "-1.8%", "asProportion": "1.34", "accent": "border-green-500", "accentColor": "green", "client:component-hydration": "load", "client:component-path": "C:/Users/Administrator/Documents/gst-homepage/gst-homepage/src/components/MarketAnalyticsCard.tsx", "client:component-export": "default" })} </div> </div> </section>  <section class="py-16 bg-[#F9FAFB]"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-12"> <h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Analytics Tools</h2> <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+Comprehensive suite of analysis tools for battery storage market intelligence
+</p> </div> <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">  <div class="mb-4 pb-3 border-b border-gray-100"> <div class="text-xs text-gray-500 flex items-center gap-1"> <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg> <span>Last updated: Dec 28, 2024 8:45 AM</span> </div> </div> <div class="flex justify-between items-start mb-6"> <div class="flex items-center gap-3"> <h3 class="text-xl font-bold text-gray-800">CAISO</h3> <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">TB4</span> </div> <div class="flex items-center gap-1 text-sm font-semibold text-green-600"> <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path> </svg> <span>+4.2% YoY</span> </div> </div> <div class="grid grid-cols-2 gap-4 mb-6"> <div class="bg-gray-50 rounded-md p-3"> <div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD TB4</div> <div class="text-lg font-bold text-gray-900 font-mono">$7.85</div> <div class="text-xs text-gray-600">$/kW-month</div> </div> <div class="bg-gray-50 rounded-md p-3"> <div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">Year Ahead</div> <div class="text-lg font-bold text-gray-900 font-mono">$8.20</div> <div class="text-xs text-gray-600">$/kW-month</div> </div> </div> <div class="text-center"> <a href="/curve-viewer" class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium text-sm">
 View Details
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path> </svg> </a> </div> </div>  <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-red-500 transition-all duration-200 hover:shadow-lg"> <div class="mb-4 pb-3 border-b border-gray-100"> <div class="text-xs text-gray-500 flex items-center gap-1"> <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg> <span>Last updated: Dec 28, 2024 9:15 AM</span> </div> </div> <div class="flex justify-between items-start mb-6"> <div class="flex items-center gap-3"> <h3 class="text-xl font-bold text-gray-800">ERCOT</h3> <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">TB2</span> </div> <div class="flex items-center gap-1 text-sm font-semibold text-green-600"> <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path> </svg> <span>+7.8% YoY</span> </div> </div> <div class="grid grid-cols-2 gap-4 mb-6"> <div class="bg-gray-50 rounded-md p-3"> <div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD TB2</div> <div class="text-lg font-bold text-gray-900 font-mono">$9.12</div> <div class="text-xs text-gray-600">$/kW-month</div> </div> <div class="bg-gray-50 rounded-md p-3"> <div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">Year Ahead</div> <div class="text-lg font-bold text-gray-900 font-mono">$8.75</div> <div class="text-xs text-gray-600">$/kW-month</div> </div> </div> <div class="text-center"> <a href="/market-ops" class="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors font-medium text-sm">
 View Details
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path> </svg> </a> </div> </div>  <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500 transition-all duration-200 hover:shadow-lg"> <div class="mb-4 pb-3 border-b border-gray-100"> <div class="text-xs text-gray-500 flex items-center gap-1"> <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg> <span>Last updated: Dec 28, 2024 7:30 AM</span> </div> </div> <div class="flex justify-between items-start mb-6"> <div class="flex items-center gap-3"> <h3 class="text-xl font-bold text-gray-800">SPP</h3> <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">TB4</span> </div> <div class="flex items-center gap-1 text-sm font-semibold text-red-600"> <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path> </svg> <span>-1.8% YoY</span> </div> </div> <div class="grid grid-cols-2 gap-4 mb-6"> <div class="bg-gray-50 rounded-md p-3"> <div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD TB4</div> <div class="text-lg font-bold text-gray-900 font-mono">$6.43</div> <div class="text-xs text-gray-600">$/kW-month</div> </div> <div class="bg-gray-50 rounded-md p-3"> <div class="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">Year Ahead</div> <div class="text-lg font-bold text-gray-900 font-mono">$6.90</div> <div class="text-xs text-gray-600">$/kW-month</div> </div> </div> <div class="text-center"> <a href="/about" class="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors font-medium text-sm">
 View Details
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path> </svg> </a> </div> </div> </div> </div> </section>  <section class="py-16 bg-[#F9FAFB]"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-12"> <h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Analytics Tools</h2> <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path> </svg> </a> </div> </div> </div> </section></div> <section class="py-16 bg-[#F9FAFB]"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-12"> <h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Analytics Tools</h2> <p class="text-lg text-gray-600 max-w-3xl mx-auto">
 Comprehensive suite of analysis tools for battery storage market intelligence
 </p> </div> <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">  <div class="bg-white rounded-lg shadow-sm p-8 border border-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-1"> <div class="flex items-center gap-3 mb-4"> <div class="text-blue-600"> <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path> </svg> </div> <h3 class="text-xl font-semibold text-gray-800">Curve Viewer</h3> </div> <p class="text-gray-600 mb-6 leading-relaxed">
 Advanced curve analysis and visualization tools for complex data patterns and market forecasting.
@@ -590,11 +732,11 @@ PCM forecasting and analysis
 Revenue optimization insights
 </li> </ul> <a href="/market-ops" class="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors font-medium">
 Launch Market Ops
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path> </svg> </a> </div> </div> </div> </section>  <section class="py-16 bg-white"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-12"> <h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Markets We Serve</h2> <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path> </svg> </a> </div> </div> </div> </section> <section class="py-16 bg-white"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-12"> <h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Markets We Serve</h2> <p class="text-lg text-gray-600 max-w-3xl mx-auto">
 Deep expertise across the three major electricity markets where GridStor operates
-</p> </div> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">  <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 transition-all duration-200 hover:-translate-y-1"> <div class="bg-blue-500 h-2"></div> <div class="p-6"> <h3 class="text-2xl font-bold text-gray-800 mb-3">CAISO</h3> <p class="text-gray-600 mb-4 leading-relaxed">California's grid operator serving 80% of the state</p> <div class="bg-gray-50 rounded-md p-3"> <span class="text-sm font-medium text-gray-700">45 GW battery storage target</span> </div> </div> </div>  <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 transition-all duration-200 hover:-translate-y-1"> <div class="bg-red-500 h-2"></div> <div class="p-6"> <h3 class="text-2xl font-bold text-gray-800 mb-3">ERCOT</h3> <p class="text-gray-600 mb-4 leading-relaxed">Texas's grid operator serving 26M customers</p> <div class="bg-gray-50 rounded-md p-3"> <span class="text-sm font-medium text-gray-700">12 GW battery storage target</span> </div> </div> </div>  <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 transition-all duration-200 hover:-translate-y-1"> <div class="bg-green-500 h-2"></div> <div class="p-6"> <h3 class="text-2xl font-bold text-gray-800 mb-3">SPP</h3> <p class="text-gray-600 mb-4 leading-relaxed">Southwest Power Pool serving 17 states</p> <div class="bg-gray-50 rounded-md p-3"> <span class="text-sm font-medium text-gray-700">8 GW battery storage target</span> </div> </div> </div> </div> </div> </section>  <section class="py-16 bg-[#F9FAFB]"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-12"> <h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Current System Status</h2> <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+</p> </div> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">  <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 transition-all duration-200 hover:-translate-y-1"> <div class="bg-blue-500 h-2"></div> <div class="p-6"> <h3 class="text-2xl font-bold text-gray-800 mb-3">CAISO</h3> <p class="text-gray-600 mb-4 leading-relaxed">California's grid operator serving 80% of the state</p> <div class="bg-gray-50 rounded-md p-3"> <span class="text-sm font-medium text-gray-700">45 GW battery storage target</span> </div> </div> </div>  <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 transition-all duration-200 hover:-translate-y-1"> <div class="bg-red-500 h-2"></div> <div class="p-6"> <h3 class="text-2xl font-bold text-gray-800 mb-3">ERCOT</h3> <p class="text-gray-600 mb-4 leading-relaxed">Texas's grid operator serving 26M customers</p> <div class="bg-gray-50 rounded-md p-3"> <span class="text-sm font-medium text-gray-700">12 GW battery storage target</span> </div> </div> </div>  <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 transition-all duration-200 hover:-translate-y-1"> <div class="bg-green-500 h-2"></div> <div class="p-6"> <h3 class="text-2xl font-bold text-gray-800 mb-3">SPP</h3> <p class="text-gray-600 mb-4 leading-relaxed">Southwest Power Pool serving 17 states</p> <div class="bg-gray-50 rounded-md p-3"> <span class="text-sm font-medium text-gray-700">8 GW battery storage target</span> </div> </div> </div> </div> </div> </section> <section class="py-16 bg-[#F9FAFB]"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-12"> <h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Current System Status</h2> <p class="text-lg text-gray-600 max-w-3xl mx-auto">
 Real-time monitoring of platform health and recent analytics updates
-</p> </div> <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200"> <h3 class="text-lg font-semibold text-gray-800 mb-4">System Health</h3> <div class="space-y-3"> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">All systems operational</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">Last data refresh: 2 minutes ago</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">99.8% uptime this month</span> </div> </div> </div>  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200"> <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Updates</h3> <div class="space-y-3"> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">Curve analysis updated 15 minutes ago</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">Market forecasts refreshed 1 hour ago</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">Daily analysis completed</span> </div> </div> </div>  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200"> <h3 class="text-lg font-semibold text-gray-800 mb-4">Active Alerts</h3> <div class="space-y-3"> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-orange-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">ERCOT: High volatility expected 3-5 PM today</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-blue-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">SPP: Maintenance window scheduled this weekend</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">CAISO: All systems normal</span> </div> </div> </div> </div> </div> </section> </div> ` })}`;
+</p> </div> <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200"> <h3 class="text-lg font-semibold text-gray-800 mb-4">System Health</h3> <div class="space-y-3"> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">All systems operational</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">Last data refresh: 2 minutes ago</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">99.8% uptime this month</span> </div> </div> </div>  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200"> <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Updates</h3> <div class="space-y-3"> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">Curve analysis updated 15 minutes ago</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">Market forecasts refreshed 1 hour ago</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">Daily analysis completed</span> </div> </div> </div>  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200"> <h3 class="text-lg font-semibold text-gray-800 mb-4">Active Alerts</h3> <div class="space-y-3"> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-orange-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">ERCOT: High volatility expected 3-5 PM today</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-blue-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">SPP: Maintenance window scheduled this weekend</span> </div> <div class="flex items-start gap-3"> <svg class="w-4 h-4 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path> </svg> <span class="text-gray-600 text-sm leading-relaxed">CAISO: All systems normal</span> </div> </div> </div> </div> </div> </section> ` })}`;
 }, "C:/Users/Administrator/Documents/gst-homepage/gst-homepage/src/pages/index.astro", void 0);
 
 const $$file = "C:/Users/Administrator/Documents/gst-homepage/gst-homepage/src/pages/index.astro";
