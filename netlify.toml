@@ -350,17 +350,18 @@
   status = 302
   force = true
 
-# Curve Viewer - comprehensive proxy configuration for seamless integration
-[[edge_functions]]
-  path = "/curve-viewer"
-  function = "curve-viewer"
+# Curve Viewer - redirect to static iframe page to avoid edge function issues
+[[redirects]]
+  from = "/curve-viewer"
+  to = "/curve-viewer-iframe.html"
+  status = 200
+  force = true
 
-[[edge_functions]]
-  path = "/curve-viewer/*"
-  function = "curve-viewer"
-
-# Note: All /curve-viewer/* requests are handled by the curve-viewer edge function
-# No redirects needed here as the edge function handles both HTML and assets
+[[redirects]]
+  from = "/curve-viewer/*"
+  to = "/curve-viewer-iframe.html"
+  status = 200
+  force = true
 
 [[redirects]]
   from = "/*"
