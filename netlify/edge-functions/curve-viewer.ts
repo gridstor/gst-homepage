@@ -12,8 +12,49 @@ export default async (request: Request) => {
   console.log('Curve Viewer Edge Function - Upstream:', upstream.toString());
 
   try {
-    // Use a different approach - try to mimic the exact headers that work
-    // when accessing gridstor.netlify.app directly
+    // For the main curve-viewer page, skip the proxy attempt and go directly to iframe
+    // This avoids all the authentication issues we've been experiencing
+    if (upstreamPath === '/' || upstreamPath === '') {
+      console.log('Curve Viewer Edge Function - Using iframe fallback for main page');
+      
+      const fallbackHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenue Forecasts - GridStor Analytics</title>
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; }
+        iframe { width: 100%; height: 100vh; border: none; }
+        .loading { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            font-family: Arial, sans-serif;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">Loading Revenue Forecasts...</div>
+    <iframe src="https://gridstor.netlify.app/curve-viewer/" 
+            onload="document.querySelector('.loading').style.display='none'"
+            title="Revenue Forecasts"></iframe>
+</body>
+</html>`;
+
+      return new Response(fallbackHTML, {
+        status: 200,
+        headers: {
+          'content-type': 'text/html',
+          'cache-control': 'no-cache'
+        }
+      });
+    }
+
+    // For other paths (like sub-pages), try the proxy approach
     const proxyHeaders = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
@@ -27,7 +68,6 @@ export default async (request: Request) => {
       'Sec-Fetch-Site': 'none',
       'Sec-Fetch-User': '?1',
       'Cache-Control': 'max-age=0',
-      // Try without referer to avoid cross-origin issues
     };
 
     const upstreamResponse = await fetch(upstream.toString(), {
