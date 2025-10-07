@@ -54,34 +54,58 @@
   force = true
 
 # Comprehensive proxy configuration for assets and routes
-# Dynamic fallback rules handle all assets without hardcoded hashes
-# Note: Specific hash redirects removed to prevent breakage on sub-app redeployments
+# Order matters! More specific rules first, then general fallbacks
 
-# Fundamentals specific assets (wildcard patterns)
+# Curve Viewer assets (must come first - highest priority)
+# These patterns match assets commonly used by the curve viewer
 [[redirects]]
-  from = "/_astro/*.css"
-  to = "https://gst-fundamentals.netlify.app/_astro/:splat"
+  from = "/_astro/*CurveViewer*.js"
+  to = "https://gridstor.netlify.app/_astro/:splat"
   status = 200
-  force = false
+  force = true
 
+[[redirects]]
+  from = "/_astro/*api-health*.css"
+  to = "https://gridstor.netlify.app/_astro/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/_astro/*api-client*.js"
+  to = "https://gridstor.netlify.app/_astro/:splat"
+  status = 200
+  force = true
+
+# Market Ops specific patterns
+[[redirects]]
+  from = "/_astro/*MECOverview*.js"
+  to = "https://gridstordayzer.netlify.app/_astro/:splat"
+  status = 200
+  force = true
+
+# Fundamentals specific patterns
 [[redirects]]
   from = "/_astro/*Navbar*.js"
   to = "https://gst-fundamentals.netlify.app/_astro/:splat"
   status = 200
   force = false
 
+# General client.js - prioritize gridstor for curve viewer compatibility
 [[redirects]]
   from = "/_astro/client*.js"
-  to = "https://gst-fundamentals.netlify.app/_astro/:splat"
+  to = "https://gridstor.netlify.app/_astro/:splat"
   status = 200
-  force = false
+  force = true
 
-# General Astro assets fallback to Market Ops
+# General Astro assets fallback - defaults to gridstor
+# WARNING: This means unmatched assets default to gridstor.netlify.app
+# If market-ops or fundamentals have asset issues, add specific patterns above
+# The challenge: All apps use /_astro/* with no way to distinguish which app owns which asset
 [[redirects]]
   from = "/_astro/*"
-  to = "https://gridstordayzer.netlify.app/_astro/:splat"
+  to = "https://gridstor.netlify.app/_astro/:splat"
   status = 200
-  force = false
+  force = true
 
 # API routes - Delivery APIs should go to gridstor (curve-viewer backend)
 # These APIs are used by the curve-viewer for delivery request management
