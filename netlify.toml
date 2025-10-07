@@ -54,96 +54,10 @@
   force = true
 
 # Comprehensive proxy configuration for assets and routes
-# This covers all possible file types and routes used by the sub-applications
+# Dynamic fallback rules handle all assets without hardcoded hashes
+# Note: Specific hash redirects removed to prevent breakage on sub-app redeployments
 
-# Market Ops specific assets (new hashes)
-[[redirects]]
-  from = "/_astro/index.B9qVpYRV.css"
-  to = "https://gridstordayzer.netlify.app/_astro/index.B9qVpYRV.css"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/MECOverviewChart.BGgdQn-a.js"
-  to = "https://gridstordayzer.netlify.app/_astro/MECOverviewChart.BGgdQn-a.js"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/Navbar.DNiuerQ1.js"
-  to = "https://gridstordayzer.netlify.app/_astro/Navbar.DNiuerQ1.js"
-  status = 200
-  force = true
-
-# Fundamentals specific assets (latest hashes)
-[[redirects]]
-  from = "/_astro/index.BLBjlnYQ.css"
-  to = "https://gst-fundamentals.netlify.app/_astro/index.BLBjlnYQ.css"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/index.OU9ZdyBe.css"
-  to = "https://gst-fundamentals.netlify.app/_astro/index.OU9ZdyBe.css"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/index.BJfUAbRs.js"
-  to = "https://gst-fundamentals.netlify.app/_astro/index.BJfUAbRs.js"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/client.BxCTEn3I.js"
-  to = "https://gst-fundamentals.netlify.app/_astro/client.BxCTEn3I.js"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/Navbar.Cro_pm-Z.js"
-  to = "https://gst-fundamentals.netlify.app/_astro/Navbar.Cro_pm-Z.js"
-  status = 200
-  force = true
-
-# Curve Viewer specific assets (latest hashes from gridstor.netlify.app)
-[[redirects]]
-  from = "/_astro/CurveViewer.Ce2-sCzS.js"
-  to = "https://gridstor.netlify.app/_astro/CurveViewer.Ce2-sCzS.js"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/client.CyyDrSAY.js"
-  to = "https://gridstor.netlify.app/_astro/client.CyyDrSAY.js"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/api-client.Dq3dca7d.js"
-  to = "https://gridstor.netlify.app/_astro/api-client.Dq3dca7d.js"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/jsx-runtime.D3GSbgeI.js"
-  to = "https://gridstor.netlify.app/_astro/jsx-runtime.D3GSbgeI.js"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/index.KqMXKjf4.js"
-  to = "https://gridstor.netlify.app/_astro/index.KqMXKjf4.js"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/index.yBjzXJbu.js"
-  to = "https://gridstor.netlify.app/_astro/index.yBjzXJbu.js"
-  status = 200
-  force = true
-
-# Fundamentals specific assets (fallback for other patterns)
+# Fundamentals specific assets (wildcard patterns)
 [[redirects]]
   from = "/_astro/*.css"
   to = "https://gst-fundamentals.netlify.app/_astro/:splat"
@@ -350,16 +264,16 @@
   status = 302
   force = true
 
-# Curve Viewer - redirect to static iframe page to avoid edge function issues
+# Curve Viewer proxy configuration (seamless integration)
 [[redirects]]
   from = "/curve-viewer"
-  to = "/curve-viewer-iframe.html"
+  to = "https://gridstor.netlify.app/curve-viewer/"
   status = 200
   force = true
 
 [[redirects]]
   from = "/curve-viewer/*"
-  to = "/curve-viewer-iframe.html"
+  to = "https://gridstor.netlify.app/curve-viewer/:splat"
   status = 200
   force = true
 
