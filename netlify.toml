@@ -90,22 +90,23 @@
   status = 200
   force = false
 
-# General client.js - prioritize gridstor for curve viewer compatibility
+# General client.js - proxy to gridstor if not found locally
+# force = false allows main site's client.js to be served first
 [[redirects]]
   from = "/_astro/client*.js"
   to = "https://gridstor.netlify.app/_astro/:splat"
   status = 200
-  force = true
+  force = false
 
-# General Astro assets fallback - defaults to gridstor
-# WARNING: This means unmatched assets default to gridstor.netlify.app
-# If market-ops or fundamentals have asset issues, add specific patterns above
-# The challenge: All apps use /_astro/* with no way to distinguish which app owns which asset
+# General Astro assets fallback - defaults to gridstor for proxied pages
+# force = false means: Only proxy if file doesn't exist locally in /dist/
+# This allows the main site's own assets to be served normally
+# Only assets requested by proxied pages (curve-viewer, market-ops) get proxied
 [[redirects]]
   from = "/_astro/*"
   to = "https://gridstor.netlify.app/_astro/:splat"
   status = 200
-  force = true
+  force = false
 
 # API routes - Delivery APIs should go to gridstor (curve-viewer backend)
 # These APIs are used by the curve-viewer for delivery request management
