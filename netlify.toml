@@ -108,8 +108,20 @@
   status = 200
   force = false
 
-# API routes - Delivery APIs should go to gridstor (curve-viewer backend)
-# These APIs are used by the curve-viewer for delivery request management
+# API routes - Gridstor APIs (curve-viewer and admin tools backend)
+# These APIs are used by the curve-viewer, admin tools, and data management
+[[redirects]]
+  from = "/api/admin*"
+  to = "https://gridstor.netlify.app/api/admin:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/curves*"
+  to = "https://gridstor.netlify.app/api/curves:splat"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/api/delivery*"
   to = "https://gridstor.netlify.app/api/delivery:splat"
