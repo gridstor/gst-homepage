@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import { geoAlbersUsa } from 'd3-geo';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
@@ -34,7 +35,7 @@ export default function RevenueForcastMap() {
         capacity: 7.0
       },
       region: "Northern California",
-      calloutPosition: { x: 15, y: 20 } // Left edge, more spacing
+      calloutPosition: { x: 15, y: 16 }
     },
     "Goleta": { 
       coordinates: [-119.8276, 34.4208] as [number, number],
@@ -44,7 +45,7 @@ export default function RevenueForcastMap() {
         capacity: 7.0
       },
       region: "Santa Barbara",
-      calloutPosition: { x: 15, y: 50 } // Left edge, center
+      calloutPosition: { x: 15, y: 50 }
     },
     "SP15": { 
       coordinates: [-118.2437, 34.0522] as [number, number],
@@ -54,7 +55,7 @@ export default function RevenueForcastMap() {
         capacity: 7.0
       },
       region: "Southern California",
-      calloutPosition: { x: 15, y: 80 } // Left edge, more spacing
+      calloutPosition: { x: 15, y: 84 }
     },
     "Houston": { 
       coordinates: [-95.3698, 29.7604] as [number, number],
@@ -64,7 +65,7 @@ export default function RevenueForcastMap() {
         capacity: 0
       },
       region: "Houston Hub",
-      calloutPosition: { x: 85, y: 20 } // Right edge, more spacing
+      calloutPosition: { x: 85, y: 16 }
     },
     "Hidden Lakes": { 
       coordinates: [-94.7977, 29.2733] as [number, number],
@@ -74,7 +75,7 @@ export default function RevenueForcastMap() {
         capacity: 0
       },
       region: "South of Houston",
-      calloutPosition: { x: 85, y: 50 } // Right edge, center
+      calloutPosition: { x: 85, y: 50 }
     },
     "Gunnar": { 
       coordinates: [-97.0633, 28.0367] as [number, number],
@@ -84,7 +85,7 @@ export default function RevenueForcastMap() {
         capacity: 0
       },
       region: "South Central Texas",
-      calloutPosition: { x: 85, y: 80 } // Right edge, more spacing
+      calloutPosition: { x: 85, y: 84 }
     },
     "South Hub": { 
       coordinates: [-98.2300, 26.2034] as [number, number],
@@ -94,7 +95,7 @@ export default function RevenueForcastMap() {
         capacity: 0
       },
       region: "Southern Texas",
-      calloutPosition: { x: 50, y: 85 } // Bottom edge, more spacing
+      calloutPosition: { x: 50, y: 92 }
     },
     "North Hub": { 
       coordinates: [-98.3834, 39.0473] as [number, number],
@@ -104,7 +105,7 @@ export default function RevenueForcastMap() {
         capacity: 5.0
       },
       region: "Kansas/Northern SPP",
-      calloutPosition: { x: 35, y: 15 } // Top edge, moved right
+      calloutPosition: { x: 35, y: 10 }
     },
     "South Hub SPP": { 
       coordinates: [-97.5164, 35.4676] as [number, number],
@@ -114,7 +115,7 @@ export default function RevenueForcastMap() {
         capacity: 5.0
       },
       region: "Oklahoma/Southern SPP",
-      calloutPosition: { x: 65, y: 15 } // Top edge, moved left
+      calloutPosition: { x: 65, y: 10 }
     }
   };
 
@@ -220,16 +221,16 @@ export default function RevenueForcastMap() {
   const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
   return (
-    <div className="bg-gray-50 rounded-lg p-6">
-      {/* Global Controls at Top */}
+    <div>
+      {/* Global Controls */}
       <div className="mb-6">
-        <div className="bg-white rounded-md p-4 border shadow-sm">
+        <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">COD Year</label>
+                <label className="block text-xs font-medium text-gray-700 mb-2">COD Year</label>
                 <Select value={codYear} onValueChange={setCodYear}>
-                  <SelectTrigger className="h-9 w-24 text-sm">
+                  <SelectTrigger className="h-10 w-20 bg-gray-50 border-gray-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -243,9 +244,9 @@ export default function RevenueForcastMap() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Forecast Horizon</label>
+                <label className="block text-xs font-medium text-gray-700 mb-2">Forecast Horizon</label>
                 <Select value={horizon} onValueChange={setHorizon}>
-                  <SelectTrigger className="h-9 w-24 text-sm">
+                  <SelectTrigger className="h-10 w-20 bg-gray-50 border-gray-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -261,7 +262,7 @@ export default function RevenueForcastMap() {
 
             <button
               onClick={downloadData}
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium text-sm"
+              className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 transition-all duration-200 font-medium text-sm hover:-translate-y-0.5"
             >
               <Download size={16} />
               Download Data
@@ -270,9 +271,9 @@ export default function RevenueForcastMap() {
         </div>
       </div>
 
-      {/* Map Container with Edge Callouts - Larger container */}
-      <div className="relative bg-white rounded-lg border border-gray-200 p-6" style={{ height: '800px' }}>
-        {/* SVG Overlay for Connecting Lines - Cover entire container */}
+      {/* Map Container with Edge Callouts */}
+      <div className="relative bg-white rounded-lg shadow-sm p-6 transition-all duration-200 hover:shadow-md min-h-[600px]" style={{ height: '800px' }}>
+        {/* SVG Overlay for Connecting Lines */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
           {Object.entries(locations).map(([key, location]) => {
             const screenCoords = projection(location.coordinates);
@@ -303,9 +304,9 @@ export default function RevenueForcastMap() {
                 x2={`${calloutX}%`}
                 y2={`${calloutY}%`}
                 stroke={location.color}
-                strokeWidth="2"
-                strokeDasharray="4,4"
-                opacity="0.7"
+                strokeWidth="1.5"
+                strokeDasharray="3,3"
+                opacity="0.4"
               />
             );
           })}
@@ -356,12 +357,12 @@ export default function RevenueForcastMap() {
               {Object.entries(locations).map(([key, location]) => (
                 <Marker key={key} coordinates={location.coordinates}>
                   <circle
-                    r={6}
+                    r={8}
                     fill={location.color}
                     stroke="white"
                     strokeWidth={2}
                     style={{
-                      filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.4))"
+                      filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))"
                     }}
                   />
                 </Marker>
@@ -374,9 +375,10 @@ export default function RevenueForcastMap() {
         {Object.entries(locations).map(([key, location]) => {
           const breakdown = getRevenueBreakdown(key);
           return (
-            <div
+            <motion.div
               key={key}
-              className="absolute bg-white border-2 rounded-lg p-3 shadow-lg"
+              whileHover={{ boxShadow: "0 8px 20px rgba(0,0,0,0.12)" }}
+              className="absolute bg-white rounded-lg p-4 border-l-4 shadow-sm transition-all duration-200"
               style={{
                 left: `${location.calloutPosition.x}%`,
                 top: `${location.calloutPosition.y}%`,
@@ -386,50 +388,108 @@ export default function RevenueForcastMap() {
                 zIndex: 20
               }}
             >
-              <div className="flex items-center gap-2 mb-2">
+              {/* Header with Location + Total */}
+              <div className="flex items-center justify-between mb-0.5">
+                <div className="flex items-center gap-1.5">
+                  <div 
+                    className="w-2.5 h-2.5 rounded-full" 
+                    style={{ backgroundColor: location.color }}
+                  />
+                  <h3 className="text-sm font-semibold text-gray-800">{key}</h3>
+                </div>
                 <div 
-                  className="w-3 h-3 rounded-full" 
-                  style={{ backgroundColor: location.color }}
-                />
-                <span className="font-semibold text-sm">{key}</span>
-              </div>
-              <div className="text-xs text-gray-600 mb-2">{location.region}</div>
-              
-              <div className="space-y-1 text-xs">
-                <div className="flex justify-between">
-                  <span>Energy:</span>
-                  <span className="font-medium">${breakdown.energyArb}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>AS:</span>
-                  <span className="font-medium">${breakdown.as}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Capacity:</span>
-                  <span className="font-medium">${breakdown.capacity}</span>
-                </div>
-                <div className="flex justify-between font-semibold border-t pt-1">
-                  <span>Total:</span>
-                  <span style={{ color: location.color }}>${breakdown.total}</span>
+                  className="text-base font-bold font-mono"
+                  style={{ 
+                    color: location.color,
+                    fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace"
+                  }}
+                >
+                  ${breakdown.total}
                 </div>
               </div>
               
-              <Select 
-                value={locationDurations[key as keyof typeof locationDurations]} 
-                onValueChange={(value) => updateLocationDuration(key, value)}
-              >
-                <SelectTrigger className="h-8 text-xs mt-2">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="2h">2h</SelectItem>
-                  <SelectItem value="4h">4h</SelectItem>
-                  <SelectItem value="8h">8h</SelectItem>
-                </SelectContent>
-              </Select>
+              {/* Region */}
+              <div className="text-[10px] text-gray-500 mb-2">{location.region}</div>
               
-              <div className="text-xs text-gray-500 mt-1 text-center">$/kW-month</div>
-            </div>
+              {/* Divider */}
+              <div className="border-t border-gray-100 mb-2" />
+              
+              {/* Energy Arbitrage - Featured */}
+              <div className="bg-gray-50 rounded-md p-2 mb-2">
+                <div className="text-[10px] uppercase tracking-wider font-medium text-gray-500 mb-0.5">
+                  ENERGY ARBITRAGE
+                </div>
+                <div className="flex items-center justify-between mb-0.5">
+                  <div 
+                    className="text-base font-bold font-mono text-gray-900"
+                    style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}
+                  >
+                    ${breakdown.energyArb}
+                  </div>
+                  <Select 
+                    value={locationDurations[key as keyof typeof locationDurations]} 
+                    onValueChange={(value) => updateLocationDuration(key, value)}
+                  >
+                    <SelectTrigger className="h-6 w-12 text-[10px] bg-white border-gray-200">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2h">2h</SelectItem>
+                      <SelectItem value="4h">4h</SelectItem>
+                      <SelectItem value="8h">8h</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="text-[10px] text-gray-600">$/kW-month</div>
+              </div>
+              
+              {/* AS & Capacity Grid */}
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <div className="bg-gray-50 rounded-md p-1.5">
+                  <div className="text-[9px] uppercase tracking-wider font-medium text-gray-500 mb-0.5">
+                    AS
+                  </div>
+                  <div 
+                    className="text-xs font-bold font-mono text-gray-900"
+                    style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}
+                  >
+                    ${breakdown.as}
+                  </div>
+                  <div className="text-[9px] text-gray-600">$/kW-mo</div>
+                </div>
+                
+                <div className="bg-gray-50 rounded-md p-1.5">
+                  <div className="text-[9px] uppercase tracking-wider font-medium text-gray-500 mb-0.5">
+                    CAPACITY
+                  </div>
+                  <div 
+                    className="text-xs font-bold font-mono text-gray-900"
+                    style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}
+                  >
+                    ${breakdown.capacity}
+                  </div>
+                  <div className="text-[9px] text-gray-600">$/kW-mo</div>
+                </div>
+              </div>
+              
+              {/* Total Section */}
+              <div className="border-t-2 border-gray-200 pt-2">
+                <div className="flex items-center justify-between">
+                  <div className="text-[10px] uppercase tracking-wider font-semibold text-gray-600">
+                    TOTAL
+                  </div>
+                  <div 
+                    className="text-base font-bold font-mono"
+                    style={{ 
+                      color: location.color,
+                      fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace"
+                    }}
+                  >
+                    ${breakdown.total}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           );
         })}
       </div>

@@ -275,30 +275,83 @@
   status = 200
   force = false
 
-# Legacy Dayzer routes - redirect to Market Ops structure
+# New Navigation Structure
+# Long Term Outlook - Revenue Forecasts & Fundamentals
+[[redirects]]
+  from = "/long-term-outlook"
+  to = "https://gridstor.netlify.app/curve-viewer/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/*"
+  to = "https://gridstor.netlify.app/curve-viewer/:splat"
+  status = 200
+  force = true
+
+# Short Term Outlook - Market Operations
+[[redirects]]
+  from = "/short-term-outlook"
+  to = "https://gridstordayzer.netlify.app/market-ops/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/short-term-outlook/*"
+  to = "https://gridstordayzer.netlify.app/market-ops/:splat"
+  status = 200
+  force = true
+
+# Legacy Dayzer routes - redirect to Short Term Outlook
 [[redirects]]
   from = "/dayzer"
-  to = "/market-ops"
+  to = "/short-term-outlook"
   status = 301
   force = true
 
 [[redirects]]
   from = "/dayzer/*"
-  to = "/market-ops/:splat"
+  to = "/short-term-outlook/:splat"
   status = 301
   force = true
 
-# Temporary redirect - Revenue Forecasts points to existing Curve Viewer
+# Legacy Revenue Forecasts - redirect to Long Term Outlook
 [[redirects]]
   from = "/revenue-forecasts"
-  to = "/curve-viewer"
-  status = 302
+  to = "/long-term-outlook"
+  status = 301
   force = true
 
 [[redirects]]
   from = "/revenue-forecasts/*"
-  to = "/curve-viewer/:splat"
-  status = 302
+  to = "/long-term-outlook/:splat"
+  status = 301
+  force = true
+
+# Legacy Market Ops - redirect to Short Term Outlook
+[[redirects]]
+  from = "/market-ops"
+  to = "/short-term-outlook"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/market-ops/*"
+  to = "/short-term-outlook/:splat"
+  status = 301
+  force = true
+
+# Legacy Fundamentals - redirect to Long Term Outlook
+[[redirects]]
+  from = "/fundamentals"
+  to = "/long-term-outlook"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/fundamentals/*"
+  to = "/long-term-outlook/:splat"
+  status = 301
   force = true
 
 # Curve Viewer proxy configuration (seamless integration)

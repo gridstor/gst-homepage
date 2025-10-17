@@ -8,12 +8,12 @@ import MarketAnalyticsCard from '../components/MarketAnalyticsCard.tsx';
 	<div class="min-h-full bg-white">
 
 
-		{/* Compact Revenue Forecasting Map */}
-		<section class="py-8 bg-white border-b">
+		{/* Revenue Forecasting Map */}
+		<section class="py-12 bg-white">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="mb-4">
-					<h2 class="text-xl font-bold text-[#2A2A2A] mb-1">Revenue Forecasting Map</h2>
-					<p class="text-sm text-gray-600">Interactive energy arbitrage forecasting across market locations</p>
+				<div class="mb-8">
+					<h2 class="text-2xl font-bold text-[#2A2A2A] mb-2">Revenue Forecasting Map</h2>
+					<p class="text-gray-600">Interactive energy arbitrage forecasting across market locations</p>
 				</div>
 				
 				<RevenueForcastMap client:load />
@@ -90,18 +90,18 @@ import MarketAnalyticsCard from '../components/MarketAnalyticsCard.tsx';
 		</section>
 
 
-		{/* Analytics Tools Section */}
+		{/* Analytics Modules Section */}
 		<section class="py-16 bg-[#F9FAFB]">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div class="text-center mb-12">
-					<h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Analytics Tools</h2>
+					<h2 class="text-3xl font-bold text-[#2A2A2A] mb-4">Market Intelligence Modules</h2>
 					<p class="text-lg text-gray-600 max-w-3xl mx-auto">
-						Comprehensive suite of analysis tools for battery storage market intelligence
+						Comprehensive analysis tools for strategic planning and operational excellence
 					</p>
 				</div>
 				
-				<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-					{/* Curve Viewer */}
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+					{/* Long Term Outlook */}
 					<div class="bg-white rounded-lg shadow-sm p-8 border border-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
 						<div class="flex items-center gap-3 mb-4">
 							<div class="text-blue-600">
@@ -109,68 +109,103 @@ import MarketAnalyticsCard from '../components/MarketAnalyticsCard.tsx';
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
 								</svg>
 							</div>
-							<h3 class="text-xl font-semibold text-gray-800">Curve Viewer</h3>
+							<h3 class="text-xl font-semibold text-gray-800">Long Term Outlook</h3>
 						</div>
 						<p class="text-gray-600 mb-6 leading-relaxed">
-							Advanced curve analysis and visualization tools for complex data patterns and market forecasting.
+							Strategic revenue forecasting and market fundamentals for long-term planning and investment decisions.
 						</p>
 						<ul class="space-y-2 mb-6">
 							<li class="flex items-start gap-2 text-gray-600">
 								<span class="text-blue-600 mt-1">•</span>
-								Interactive curve visualization
+								Revenue curve analysis & forecasting
 							</li>
 							<li class="flex items-start gap-2 text-gray-600">
 								<span class="text-blue-600 mt-1">•</span>
-								Historical data analysis
+								Market fundamentals & trends
 							</li>
 							<li class="flex items-start gap-2 text-gray-600">
 								<span class="text-blue-600 mt-1">•</span>
-								Trend identification and forecasting
+								Multi-year horizon planning
 							</li>
 						</ul>
-						<a href="/curve-viewer" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium">
-					Launch Curve Viewer
+						<a href="/long-term-outlook" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium">
+							Launch Long Term
 							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-					</svg>
-				</a>
-			</div>
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+							</svg>
+						</a>
+					</div>
 
-					{/* Market Ops */}
+					{/* Short Term Outlook */}
 					<div class="bg-white rounded-lg shadow-sm p-8 border border-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
 						<div class="flex items-center gap-3 mb-4">
 							<div class="text-green-600">
 								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-						</svg>
-					</div>
-							<h3 class="text-xl font-semibold text-gray-800">Market Ops</h3>
-				</div>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+								</svg>
+							</div>
+							<h3 class="text-xl font-semibold text-gray-800">Short Term Outlook</h3>
+						</div>
 						<p class="text-gray-600 mb-6 leading-relaxed">
-							Comprehensive market operations analysis tools for tracking performance, forecasting, and optimization opportunities.
+							Real-time market operations, daily trading analysis, and near-term performance optimization.
 						</p>
 						<ul class="space-y-2 mb-6">
 							<li class="flex items-start gap-2 text-gray-600">
 								<span class="text-green-600 mt-1">•</span>
-								Market performance tracking
+								Daily market performance tracking
 							</li>
 							<li class="flex items-start gap-2 text-gray-600">
 								<span class="text-green-600 mt-1">•</span>
-								PCM forecasting and analysis
+								Weekly congestion analysis
 							</li>
 							<li class="flex items-start gap-2 text-gray-600">
 								<span class="text-green-600 mt-1">•</span>
-								Revenue optimization insights
+								Operational optimization insights
 							</li>
 						</ul>
-						<a href="/market-ops" class="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors font-medium">
-							Launch Market Ops
+						<a href="/short-term-outlook" class="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors font-medium">
+							Launch Short Term
 							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-					</svg>
-				</a>
-			</div>
-		</div>
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+							</svg>
+						</a>
+					</div>
+
+					{/* Risk/Structuring */}
+					<div class="bg-white rounded-lg shadow-sm p-8 border border-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+						<div class="flex items-center gap-3 mb-4">
+							<div class="text-purple-600">
+								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+								</svg>
+							</div>
+							<h3 class="text-xl font-semibold text-gray-800">Risk/Structuring</h3>
+						</div>
+						<p class="text-gray-600 mb-6 leading-relaxed">
+							Advanced risk analytics, portfolio optimization, and deal structuring for strategic decision-making.
+						</p>
+						<ul class="space-y-2 mb-6">
+							<li class="flex items-start gap-2 text-gray-600">
+								<span class="text-purple-600 mt-1">•</span>
+								Portfolio risk analysis
+							</li>
+							<li class="flex items-start gap-2 text-gray-600">
+								<span class="text-purple-600 mt-1">•</span>
+								Volatility assessment & hedging
+							</li>
+							<li class="flex items-start gap-2 text-gray-600">
+								<span class="text-purple-600 mt-1">•</span>
+								Contract structuring tools
+							</li>
+						</ul>
+						<a href="/risk-structuring" class="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition-colors font-medium">
+							Coming Soon
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+							</svg>
+						</a>
+					</div>
+				</div>
 			</div>
 		</section>
 
