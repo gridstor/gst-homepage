@@ -244,14 +244,30 @@ test('renders market name', () => {
 
 ---
 
-## 📖 Documentation Files
+## 📖 Documentation
 
-- **`RECOMMENDATIONS.md`** - Comprehensive setup review & improvements
-- **`DEPLOYMENT_GUIDE.md`** - Detailed deployment instructions
-- **`SEAMLESS_PROXY_SETUP.md`** - Proxy configuration guide
-- **`AUTHENTICATION_TROUBLESHOOTING.md`** - Auth debugging
-- **`NAVIGATION_BAR_REPLICATION_GUIDE.md`** - UI consistency guide
-- **`SETUP_COMPLETE.md`** - Initial setup checklist
+**All documentation is organized in the `/docs` folder:**
+
+👉 **[View Complete Documentation Index](docs/README.md)** 👈
+
+### Quick Links
+
+**Design System:**
+- [Complete Design Specification](docs/design-system/DESIGN_SYSTEM_SPECIFICATION.md) ⭐
+- [Navigation Bar Specification](docs/design-system/NAVIGATION_BAR_SPEC.md) ⭐
+
+**Deployment:**
+- [Deployment Guide](docs/deployment/DEPLOYMENT_GUIDE.md) ⭐
+- [Proxy Setup](docs/deployment/SEAMLESS_PROXY_SETUP.md)
+
+**Troubleshooting:**
+- [API Routing Guide](docs/troubleshooting/API_ROUTING_GUIDE.md) ⭐
+- [Authentication Troubleshooting](docs/troubleshooting/AUTHENTICATION_TROUBLESHOOTING.md)
+
+**Recent Changes:**
+- [Rebranding Summary](docs/recent-updates/REBRANDING_COMPLETE.md) ⭐
+- [Recommendations](docs/recent-updates/RECOMMENDATIONS.md) ⭐
+- [Complete Changes Log](docs/recent-updates/CHANGES_SUMMARY.md)
 
 ---
 
