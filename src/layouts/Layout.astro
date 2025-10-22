@@ -1,5 +1,6 @@
 ---
 import '../styles/globals.css';
+import { DarkModeToggle } from '../components/DarkModeToggle';
 
 interface Props {
 	title: string;
@@ -19,17 +20,31 @@ const currentPath = Astro.url.pathname;
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/svg+xml" href="/lightning-bolt.svg" />
 	</head>
 	<body>
-		<header class="bg-[#2A2A2A] text-white shadow-sm">
+		<header class="bg-[#2A2A2A] dark:bg-[#1F1F1F] text-white shadow-sm border-b border-gray-800 dark:border-gray-900">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div class="flex justify-between items-center py-4">
 					<div class="flex items-center gap-8">
 						<a href="/" class="flex items-center gap-3 text-xl font-bold hover:text-gray-300 transition-colors">
-							<div class="flex items-center justify-center">
-								<img src="/lightning-bolt.svg" alt="GridStor Market Sight Logo" class="w-8 h-8" />
-							</div>
+							<svg
+								width="32"
+								height="32"
+								viewBox="0 0 100 100"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-8 h-8"
+								role="presentation"
+							>
+								<path
+									d="M55 10L30 55H50L45 90L70 45H50L55 10Z"
+									fill="#06B6D4"
+									stroke="#06B6D4"
+									stroke-width="2"
+									stroke-linejoin="round"
+								/>
+							</svg>
 							GridStor Market Sight
 						</a>
 						<nav class="hidden lg:flex items-center gap-8">
@@ -45,14 +60,15 @@ const currentPath = Astro.url.pathname;
 						</nav>
 					</div>
 					
-					<!-- Right side: Settings icon only -->
+					<!-- Right side: Settings & Dark Mode Toggle -->
 					<div class="flex items-center gap-2 ml-4">
-						<button class="p-2 hover:bg-gray-700 rounded-md transition-colors" title="Settings">
+						<button class="p-2 hover:bg-gray-700 dark:hover:bg-gray-800 rounded-md transition-colors" title="Settings">
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
 							</svg>
 						</button>
+						<DarkModeToggle client:only="react" />
 					</div>
 				</div>
 			</div>

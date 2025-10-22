@@ -27,31 +27,7 @@
 # 1. Password protection is set to "Visitor access" not "Deploy previews"
 # 2. No conflicting edge functions that might interfere with /market-ops paths
 
-# Market Ops proxy configuration (seamless integration)
-[[redirects]]
-  from = "/market-ops"
-  to = "https://gridstordayzer.netlify.app/market-ops/"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/market-ops/*"
-  to = "https://gridstordayzer.netlify.app/market-ops/:splat"
-  status = 200
-  force = true
-
-# Fundamentals proxy configuration (seamless integration)
-[[redirects]]
-  from = "/fundamentals"
-  to = "https://gst-fundamentals.netlify.app/fundamentals/"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/fundamentals/*"
-  to = "https://gst-fundamentals.netlify.app/fundamentals/:splat"
-  status = 200
-  force = true
+# These legacy routes have been moved - see "New Navigation Structure" section below for current routes
 
 # Comprehensive proxy configuration for assets and routes
 # Order matters! More specific rules first, then general fallbacks
@@ -279,13 +255,13 @@
 # Long Term Outlook - Revenue Forecasts & Fundamentals
 [[redirects]]
   from = "/long-term-outlook"
-  to = "https://gridstor.netlify.app/curve-viewer/"
+  to = "https://gridstor.netlify.app/revenue-forecasts/"
   status = 200
   force = true
 
 [[redirects]]
   from = "/long-term-outlook/*"
-  to = "https://gridstor.netlify.app/curve-viewer/:splat"
+  to = "https://gridstor.netlify.app/revenue-forecasts/:splat"
   status = 200
   force = true
 
@@ -301,6 +277,9 @@
   to = "https://gridstordayzer.netlify.app/market-ops/:splat"
   status = 200
   force = true
+
+# Legacy routes - keep for backward compatibility
+# These redirect old URLs to the new navigation structure
 
 # Legacy Dayzer routes - redirect to Short Term Outlook
 [[redirects]]
@@ -328,42 +307,17 @@
   status = 301
   force = true
 
-# Legacy Market Ops - redirect to Short Term Outlook
-[[redirects]]
-  from = "/market-ops"
-  to = "/short-term-outlook"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/market-ops/*"
-  to = "/short-term-outlook/:splat"
-  status = 301
-  force = true
-
-# Legacy Fundamentals - redirect to Long Term Outlook
-[[redirects]]
-  from = "/fundamentals"
-  to = "/long-term-outlook"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/fundamentals/*"
-  to = "/long-term-outlook/:splat"
-  status = 301
-  force = true
-
-# Curve Viewer proxy configuration (seamless integration)
+# Revenue Forecasts proxy configuration (seamless integration)
+# Legacy /curve-viewer path also redirects here
 [[redirects]]
   from = "/curve-viewer"
-  to = "https://gridstor.netlify.app/curve-viewer/"
+  to = "https://gridstor.netlify.app/revenue-forecasts/"
   status = 200
   force = true
 
 [[redirects]]
   from = "/curve-viewer/*"
-  to = "https://gridstor.netlify.app/curve-viewer/:splat"
+  to = "https://gridstor.netlify.app/revenue-forecasts/:splat"
   status = 200
   force = true
 
@@ -380,7 +334,4 @@
   status = 200
   force = true
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200 
+# Note: No catch-all needed with Astro SSR mode - the Netlify adapter handles routing automatically 
