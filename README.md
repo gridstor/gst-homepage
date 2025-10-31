@@ -13,9 +13,9 @@ This is the **main hub** that proxies to specialized sub-applications:
 ```
 gridstoranalytics.com/
 ├── /                    → Main homepage (this repo)
-├── /curve-viewer        → Revenue Forecasts (gridstor.netlify.app)
+├── /long-term-outlook   → Revenue Forecasts (gridstor.netlify.app)
+├── /short-term-outlook  → Short Term Outlook (gridstordayzer.netlify.app)
 ├── /admin               → Admin Tools (gridstor.netlify.app)
-├── /market-ops          → Market Operations (gridstordayzer.netlify.app)
 └── /fundamentals        → Market Fundamentals (gst-fundamentals.netlify.app)
 ```
 
@@ -120,11 +120,11 @@ gst-homepage/
 
 The magic happens in `netlify.toml`. Key redirects:
 
-### Market Ops
+### Short Term Outlook
 ```toml
 [[redirects]]
-  from = "/market-ops"
-  to = "https://gridstordayzer.netlify.app/market-ops/"
+  from = "/short-term-outlook"
+  to = "https://gridstordayzer.netlify.app/short-term-outlook"
   status = 200
   force = true
 ```
@@ -329,9 +329,9 @@ npx prisma generate
 | App | URL | Repository | Purpose |
 |-----|-----|------------|---------|
 | **Main Hub** | `gridstoranalytics.com` | This repo | Homepage + navigation |
-| **Curve Viewer** | `/curve-viewer` | `gridstor` | Revenue forecasting |
+| **Long Term Outlook** | `/long-term-outlook` | `gridstor` | Revenue forecasting |
+| **Short Term Outlook** | `/short-term-outlook` | `gridstordayzer` | Short term forecasts |
 | **Admin Tools** | `/admin` | `gridstor` | System administration |
-| **Market Ops** | `/market-ops` | `gridstordayzer` | Market operations |
 | **Fundamentals** | `/fundamentals` | `gst-fundamentals` | Market fundamentals |
 
 ---

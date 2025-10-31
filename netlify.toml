@@ -265,16 +265,16 @@
   status = 200
   force = true
 
-# Short Term Outlook - Market Operations
+# Short Term Outlook
 [[redirects]]
   from = "/short-term-outlook"
-  to = "https://gridstordayzer.netlify.app/market-ops/"
+  to = "https://gridstordayzer.netlify.app/short-term-outlook"
   status = 200
   force = true
 
 [[redirects]]
   from = "/short-term-outlook/*"
-  to = "https://gridstordayzer.netlify.app/market-ops/:splat"
+  to = "https://gridstordayzer.netlify.app/short-term-outlook/:splat"
   status = 200
   force = true
 
