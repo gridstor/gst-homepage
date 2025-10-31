@@ -15,7 +15,7 @@ gridstoranalytics.com/
 ├── /                    → Main homepage (this repo)
 ├── /long-term-outlook   → Revenue Forecasts (gridstor.netlify.app)
 ├── /short-term-outlook  → Short Term Outlook (gridstordayzer.netlify.app)
-├── /admin               → Admin Tools (gridstor.netlify.app)
+├── /admin               → Admin Tools (gridstordayzer.netlify.app)
 └── /fundamentals        → Market Fundamentals (gst-fundamentals.netlify.app)
 ```
 
@@ -331,7 +331,7 @@ npx prisma generate
 | **Main Hub** | `gridstoranalytics.com` | This repo | Homepage + navigation |
 | **Long Term Outlook** | `/long-term-outlook` | `gridstor` | Revenue forecasting |
 | **Short Term Outlook** | `/short-term-outlook` | `gridstordayzer` | Short term forecasts |
-| **Admin Tools** | `/admin` | `gridstor` | System administration |
+| **Admin Tools** | `/admin` | `gridstordayzer` | Dev ops & system monitoring |
 | **Fundamentals** | `/fundamentals` | `gst-fundamentals` | Market fundamentals |
 
 ---

@@ -14,15 +14,15 @@ export default async (request: Request, context: Context) => {
   if (referer.includes('/short-term-outlook')) {
     targetOrigin = 'https://gridstordayzer.netlify.app';
     console.log('Routing to gridstordayzer (short-term-outlook)');
+  } else if (referer.includes('/admin')) {
+    targetOrigin = 'https://gridstordayzer.netlify.app';
+    console.log('Routing to gridstordayzer (admin)');
   } else if (referer.includes('/long-term-outlook')) {
     targetOrigin = 'https://gridstor.netlify.app';
     console.log('Routing to gridstor (long-term-outlook)');
   } else if (referer.includes('/curve-viewer')) {
     targetOrigin = 'https://gridstor.netlify.app';
     console.log('Routing to gridstor (curve-viewer)');
-  } else if (referer.includes('/admin')) {
-    targetOrigin = 'https://gridstor.netlify.app';
-    console.log('Routing to gridstor (admin)');
   } else if (referer.includes('/fundamentals')) {
     targetOrigin = 'https://gst-fundamentals.netlify.app';
     console.log('Routing to fundamentals');

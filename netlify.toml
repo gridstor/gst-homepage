@@ -280,16 +280,16 @@
   status = 200
   force = true
 
-# Admin Tools proxy configuration (part of gridstor app)
+# Admin Tools proxy configuration (part of gridstordayzer app)
 [[redirects]]
   from = "/admin"
-  to = "https://gridstor.netlify.app/admin/"
+  to = "https://gridstordayzer.netlify.app/admin/"
   status = 200
   force = true
 
 [[redirects]]
   from = "/admin/*"
-  to = "https://gridstor.netlify.app/admin/:splat"
+  to = "https://gridstordayzer.netlify.app/admin/:splat"
   status = 200
   force = true
 
