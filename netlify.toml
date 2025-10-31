@@ -13,6 +13,17 @@
   external_node_modules = ["@prisma/client", "@astrojs/react"]
   node_bundler = "esbuild"
 
+# Edge Functions Configuration
+# Smart asset routing based on referer header
+# The edge function checks the referer to determine which backend to proxy to
+[[edge_functions]]
+  function = "asset-proxy"
+  path = "/_astro/*"
+
+[[edge_functions]]
+  function = "asset-proxy"
+  path = "/assets/*"
+
 # Shared Authentication Configuration
 # Environment Variables needed:
 # SITE_PASSWORD=your_secure_password_here (same value across all sites)
@@ -32,57 +43,9 @@
 # Comprehensive proxy configuration for assets and routes
 # Order matters! More specific rules first, then general fallbacks
 
-# Curve Viewer assets (must come first - highest priority)
-# These patterns match assets commonly used by the curve viewer
-[[redirects]]
-  from = "/_astro/*CurveViewer*.js"
-  to = "https://gridstor.netlify.app/_astro/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/*api-health*.css"
-  to = "https://gridstor.netlify.app/_astro/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/_astro/*api-client*.js"
-  to = "https://gridstor.netlify.app/_astro/:splat"
-  status = 200
-  force = true
-
-# Market Ops specific patterns
-[[redirects]]
-  from = "/_astro/*MECOverview*.js"
-  to = "https://gridstordayzer.netlify.app/_astro/:splat"
-  status = 200
-  force = true
-
-# Fundamentals specific patterns
-[[redirects]]
-  from = "/_astro/*Navbar*.js"
-  to = "https://gst-fundamentals.netlify.app/_astro/:splat"
-  status = 200
-  force = false
-
-# General client.js - proxy to gridstor if not found locally
-# force = false allows main site's client.js to be served first
-[[redirects]]
-  from = "/_astro/client*.js"
-  to = "https://gridstor.netlify.app/_astro/:splat"
-  status = 200
-  force = false
-
-# General Astro assets fallback - defaults to gridstor for proxied pages
-# force = false means: Only proxy if file doesn't exist locally in /dist/
-# This allows the main site's own assets to be served normally
-# Only assets requested by proxied pages (curve-viewer, market-ops) get proxied
-[[redirects]]
-  from = "/_astro/*"
-  to = "https://gridstor.netlify.app/_astro/:splat"
-  status = 200
-  force = false
+# NOTE: Asset routing is now handled by the Edge Function (asset-proxy.ts)
+# The Edge Function intelligently routes /_astro/* and /assets/* based on the referer header
+# This allows each proxied page to load its correct assets dynamically
 
 # API routes - Gridstor APIs (curve-viewer and admin tools backend)
 # These APIs are used by the curve-viewer, admin tools, and data management
@@ -117,12 +80,8 @@
   status = 200
   force = false
 
-# Static assets and images - prioritize Fundamentals
-[[redirects]]
-  from = "/assets/*"
-  to = "https://gst-fundamentals.netlify.app/assets/:splat"
-  status = 200
-  force = false
+# NOTE: /assets/* is now handled by the Edge Function above
+# Root-level images and fonts below are fallbacks for assets not in /_astro/ or /assets/
 
 # Common image formats
 [[redirects]]
@@ -265,16 +224,16 @@
   status = 200
   force = true
 
-# Short Term Outlook - Market Operations
+# Short Term Outlook
 [[redirects]]
   from = "/short-term-outlook"
-  to = "https://gridstordayzer.netlify.app/market-ops/"
+  to = "https://gridstordayzer.netlify.app/short-term-outlook"
   status = 200
   force = true
 
 [[redirects]]
   from = "/short-term-outlook/*"
-  to = "https://gridstordayzer.netlify.app/market-ops/:splat"
+  to = "https://gridstordayzer.netlify.app/short-term-outlook/:splat"
   status = 200
   force = true
 
@@ -321,16 +280,16 @@
   status = 200
   force = true
 
-# Admin Tools proxy configuration (part of gridstor app)
+# Admin Tools proxy configuration (part of gridstordayzer app)
 [[redirects]]
   from = "/admin"
-  to = "https://gridstor.netlify.app/admin/"
+  to = "https://gridstordayzer.netlify.app/admin/"
   status = 200
   force = true
 
 [[redirects]]
   from = "/admin/*"
-  to = "https://gridstor.netlify.app/admin/:splat"
+  to = "https://gridstordayzer.netlify.app/admin/:splat"
   status = 200
   force = true
 
