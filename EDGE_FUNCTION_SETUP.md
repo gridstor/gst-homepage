@@ -40,6 +40,7 @@ Routes assets based on referer:
 
 ## How It Works
 
+### For Proxied Pages:
 1. User visits `/short-term-outlook`
 2. Page HTML is proxied from `gridstordayzer.netlify.app`
 3. Browser requests assets like `/_astro/index.abc123.js`
@@ -47,6 +48,15 @@ Routes assets based on referer:
 5. Checks referer header → sees `/short-term-outlook`
 6. Fetches asset from `gridstordayzer.netlify.app/_astro/index.abc123.js`
 7. Returns asset to browser
+
+### For Main Site Pages (Homepage, etc):
+1. User visits `/` (homepage) or `/risk-structuring`
+2. Page HTML is served from main site
+3. Browser requests assets like `/_astro/main.xyz789.css`
+4. Edge Function intercepts the request
+5. Checks referer → doesn't match any proxied page
+6. **Passes through to local assets** using `context.next()`
+7. Main site's own CSS/JS loads normally
 
 ## Benefits
 
@@ -85,9 +95,15 @@ When adding new proxied sites:
 - `/netlify.toml` - Edge Function configuration
 - `/netlify/edge-functions/dayzer.ts` - Example of path-based proxying
 
+## Important Fix (Nov 1, 2025)
+
+**Issue**: Initial deployment caused homepage to be unstyled because Edge Function was intercepting ALL asset requests, including the main site's own assets.
+
+**Solution**: Added logic to detect when assets are requested by the main site (homepage, /risk-structuring, /docs, etc.) and pass them through to local assets using `context.next()` instead of proxying them.
+
 ---
 
 **Created**: October 31, 2025  
-**Last Updated**: October 31, 2025  
-**Status**: Implemented, awaiting deployment testing
+**Last Updated**: November 1, 2025  
+**Status**: Fixed - now correctly passes through main site assets
 
