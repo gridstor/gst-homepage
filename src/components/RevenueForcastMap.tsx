@@ -150,7 +150,8 @@ export default function RevenueForcastMap() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `revenue-forecast-${codYear}-${horizon}yr.csv`;
+    const timestamp = new Date().toISOString().split('T')[0];
+    a.download = `revenue-forecast-${timestamp}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };

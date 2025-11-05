@@ -36,9 +36,15 @@ async function setupEnv() {
   
   console.log('\n--- Yes Energy Credentials ---\n');
   
-  const username = await question('Yes Energy Username (brett.rudder@gridstor.com): ') || 'brett.rudder@gridstor.com';
-  const password = await question('Yes Energy Password (commonFibre!2): ') || 'commonFibre!2';
-  const baseUrl = await question('Yes Energy Base URL (https://services.yesenergy.com/PS/rest): ') || 'https://services.yesenergy.com/PS/rest';
+  const username = await question('Yes Energy Username: ');
+  const password = await question('Yes Energy Password: ');
+  const baseUrl = await question('Yes Energy Base URL (default: https://services.yesenergy.com/PS/rest): ') || 'https://services.yesenergy.com/PS/rest';
+  
+  if (!username || !password) {
+    console.error('\n❌ Error: Yes Energy username and password are required');
+    rl.close();
+    process.exit(1);
+  }
   
   console.log('\n--- Database Configuration ---\n');
   console.log('Format: postgresql://username:password@host:port/database');

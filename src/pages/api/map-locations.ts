@@ -1,9 +1,12 @@
 import type { APIRoute } from 'astro';
 import { Pool } from 'pg';
 
-// Database connection - set DATABASE_URL in environment or Netlify
-const DATABASE_URL = import.meta.env.DATABASE_URL || 
-  "postgresql://brett_rudder:XYGyCEdpGqehNPn@gridstor-dev.cxoowsyptaww.us-east-2.rds.amazonaws.com:5432/analytics_workspace?sslmode=require";
+// Database connection - requires DATABASE_URL in environment
+const DATABASE_URL = import.meta.env.DATABASE_URL;
+
+if (!DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
 
 const pool = new Pool({
   connectionString: DATABASE_URL,
