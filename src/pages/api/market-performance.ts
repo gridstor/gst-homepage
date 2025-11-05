@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { db } from '../../lib/db';
+import { prisma } from '../../lib/db';
 
 /**
  * Market Performance API Endpoint
@@ -94,7 +94,7 @@ async function getMarketPerformanceData(
   
   try {
     // Query locations from database
-    const locations = await db.location.findMany({
+    const locations = await (prisma as any).location.findMany({
       where: {
         market: market ? market.toUpperCase() : undefined,
         name: location ? location : undefined,
