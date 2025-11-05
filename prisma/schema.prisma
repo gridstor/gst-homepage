@@ -1,20 +1,128 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["public", "YourDomain"]
 }
 
-// Example model - customize for your project
-model ExampleModel {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(255)
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+// Market locations/nodes for pricing data
+model Location {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(100) // e.g., "NP15", "Houston Hub"
+  market      String   @db.VarChar(20)  // CAISO, ERCOT, SPP
+  nodeId      String?  @db.VarChar(50)  // Yes Energy node ID
+  region      String?  @db.VarChar(100)
+  latitude    Float?
+  longitude   Float?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
   
-  @@schema("YourDomain")
+  lmpData     LMPData[]
+  forecasts   Forecast[]
+  tb4Calculations TB4Calculation[]
+  ytdPerformance  YTDPerformance[]
+  
+  @@unique([market, name])
+}
+
+// Day-ahead and real-time LMP data from Yes Energy
+model LMPData {
+  id              String   @id @default(cuid())
+  locationId      String
+  location        Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  
+  marketDate      DateTime @db.Date  // Trading date
+  hour            Int                // Hour ending (1-24)
+  timestamp       DateTime @db.Timestamptz(6)
+  
+  // Pricing data ($/MWh)
+  dayAheadPrice   Float?   @db.DoublePrecision  // DA LMP
+  realTimePrice   Float?   @db.DoublePrecision  // RT LMP
+  
+  // Components (if available)
+  energyComponent Float?   @db.DoublePrecision
+  congestionComponent Float? @db.DoublePrecision
+  lossComponent   Float?   @db.DoublePrecision
+  
+  dataSource      String   @default("yes_energy") @db.VarChar(50)
+  createdAt       DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  
+  @@unique([locationId, marketDate, hour])
+  @@index([locationId, marketDate])
+  @@index([marketDate])
+}
+
+// Pre-calculated TB4 values (peak-to-trough spread)
+model TB4Calculation {
+  id              String   @id @default(cuid())
+  locationId      String
+  location        Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  
+  marketDate      DateTime @db.Date
+  
+  // TB4 = Average of top 4 hours - Average of bottom 4 hours
+  tb4Value        Float    @db.DoublePrecision  // $/MWh
+  peakHours       Int[]                         // Array of peak hours
+  troughHours     Int[]                         // Array of trough hours
+  avgPeakPrice    Float    @db.DoublePrecision
+  avgTroughPrice  Float    @db.DoublePrecision
+  
+  // Metadata
+  dataQuality     String?  @db.VarChar(20)  // "complete", "partial", "estimated"
+  calculatedAt    DateTime @default(now()) @db.Timestamptz(6)
+  
+  @@unique([locationId, marketDate])
+  @@index([locationId, marketDate])
+  @@index([marketDate])
+}
+
+// Forecasts (from your existing forecast models)
+model Forecast {
+  id              String   @id @default(cuid())
+  locationId      String
+  location        Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  
+  forecastYear    Int      // e.g., 2025
+  forecastType    String   @db.VarChar(50)  // "year_ahead", "mid_year", "quarterly"
+  
+  // Forecast values ($/kW-month for revenue, $/MWh for TB4)
+  tb4Forecast     Float?   @db.DoublePrecision
+  pValueTarget    Int?     // e.g., 50 for P50
+  
+  // Revenue forecasts
+  energyArbRevenue Float?  @db.DoublePrecision
+  asRevenue       Float?   @db.DoublePrecision
+  capacityRevenue Float?   @db.DoublePrecision
+  
+  createdAt       DateTime @default(now()) @db.Timestamptz(6)
+  createdBy       String?  @db.VarChar(100)
+  notes           String?  @db.Text
+  
+  @@unique([locationId, forecastYear, forecastType])
+}
+
+// Year-to-date aggregations (for performance tracking)
+model YTDPerformance {
+  id              String   @id @default(cuid())
+  locationId      String
+  location        Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  year            Int
+  
+  // Calculated metrics
+  ytdTB4Avg       Float    @db.DoublePrecision  // YTD average TB4
+  ytdDaysCount    Int                           // Number of days included
+  ytdRevenue      Float?   @db.DoublePrecision  // Calculated revenue
+  
+  // P-value performance (vs forecast distribution)
+  actualPValue    Int?     // Where actual performance falls in forecast distribution
+  forecastPValue  Int?     // Target P-value
+  variance        Float?   @db.DoublePrecision  // Actual - Forecast
+  
+  lastUpdated     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  
+  @@unique([locationId, year])
 } 

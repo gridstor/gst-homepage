@@ -1,50 +1,147 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Clock, TrendingUp, TrendingDown } from "lucide-react";
+import { Clock, TrendingUp, TrendingDown, Loader2, AlertCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 interface MarketAnalyticsCardProps {
   market: string;
-  tbType: string;
-  locations: string[];
-  lastUpdated: string;
-  ytdTB: string;
-  yearAheadForecast: string;
-  pValue: string;
-  pValueAmount: string;
-  boyForecast: string;
-  neededToMeet: string;
-  neededPValue: string;
-  projectedTotal: string;
-  yoyChange: string;
-  asProportion: string;
   accent: string;
   accentColor: string;
 }
 
+interface LocationPerformance {
+  name: string;
+  locationId: string;
+  ytdTB4: number;
+  ytdDaysCount: number;
+  yearAheadForecast: number;
+  pValue: string;
+  pValueAmount: number;
+  boyForecast: number;
+  boyDaysRemaining: number;
+  neededToMeet: number;
+  neededPValue: string;
+  projectedTotal: number;
+  yoyChange: string;
+  asProportion: number;
+}
+
+interface MarketPerformanceData {
+  market: string;
+  tbType: string;
+  locations: LocationPerformance[];
+  lastUpdated: string;
+  metadata: {
+    dataSource: string;
+    calculationDate: string;
+    year: number;
+  };
+}
+
 export default function MarketAnalyticsCard({ 
-  market, 
-  tbType, 
-  locations, 
-  lastUpdated,
-  ytdTB, 
-  yearAheadForecast, 
-  pValue, 
-  pValueAmount, 
-  boyForecast, 
-  neededToMeet, 
-  neededPValue, 
-  projectedTotal, 
-  yoyChange,
-  asProportion,
+  market,
   accent, 
   accentColor 
 }: MarketAnalyticsCardProps) {
-  const [selectedLocation, setSelectedLocation] = useState(locations[0]);
-  const isPositive = yoyChange.startsWith('+');
-  const isOverForecast = pValueAmount.startsWith('+');
-  const pValueNumber = parseInt(pValue.replace('P', ''));
-  const totalWithAS = (parseFloat(projectedTotal) * parseFloat(asProportion)).toFixed(2);
+  const [performanceData, setPerformanceData] = useState<MarketPerformanceData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
+  
+  // Fetch performance data from API
+  useEffect(() => {
+    const fetchPerformance = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch(`/api/market-performance?market=${market}`);
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error('Failed to fetch performance data');
+        }
+        
+        // Get data for this market
+        const marketData = result.data.find((d: MarketPerformanceData) => d.market === market);
+        
+        if (!marketData) {
+          throw new Error(`No data found for market ${market}`);
+        }
+        
+        setPerformanceData(marketData);
+        
+        // Set default location
+        if (marketData.locations.length > 0 && !selectedLocation) {
+          setSelectedLocation(marketData.locations[0].name);
+        }
+        
+      } catch (err) {
+        console.error('Error fetching performance data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load performance data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPerformance();
+    
+    // Refresh every 5 minutes
+    const interval = setInterval(fetchPerformance, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [market]);
+  
+  // Loading state
+  if (loading) {
+    return (
+      <motion.div 
+        className={`bg-white rounded-lg shadow-sm p-6 border-l-4 ${accent} transition-all duration-200 flex items-center justify-center min-h-[400px]`}
+      >
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-gray-400 animate-spin mx-auto mb-2" />
+          <p className="text-sm text-gray-600">Loading {market} data...</p>
+        </div>
+      </motion.div>
+    );
+  }
+  
+  // Error state
+  if (error || !performanceData) {
+    return (
+      <motion.div 
+        className={`bg-white rounded-lg shadow-sm p-6 border-l-4 ${accent} transition-all duration-200`}
+      >
+        <div className="text-center">
+          <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
+          <p className="text-sm text-gray-600 mb-2">Failed to load {market} data</p>
+          <p className="text-xs text-gray-500">{error}</p>
+        </div>
+      </motion.div>
+    );
+  }
+  
+  // Get current location data
+  const currentLocationData = performanceData.locations.find(loc => loc.name === selectedLocation) 
+    || performanceData.locations[0];
+  
+  if (!currentLocationData) {
+    return null;
+  }
+  
+  const isPositive = currentLocationData.yoyChange.startsWith('+');
+  const isOverForecast = currentLocationData.pValueAmount > 0;
+  const pValueNumber = parseInt(currentLocationData.pValue.replace('P', ''));
+  const totalWithAS = (currentLocationData.projectedTotal * currentLocationData.asProportion).toFixed(2);
+  
+  // Format last updated timestamp
+  const lastUpdated = new Date(performanceData.lastUpdated).toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
   
   return (
     <motion.div 
@@ -66,12 +163,12 @@ export default function MarketAnalyticsCard({
             {market}
           </h3>
           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">
-            {tbType}
+            {performanceData.tbType}
           </span>
         </div>
         <div className={`flex items-center gap-1 text-sm font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
           {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-          <span>{yoyChange} YoY</span>
+          <span>{currentLocationData.yoyChange} YoY</span>
         </div>
       </div>
 
@@ -82,9 +179,9 @@ export default function MarketAnalyticsCard({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {locations.map((location) => (
-              <SelectItem key={location} value={location}>
-                {location}
+            {performanceData.locations.map((location) => (
+              <SelectItem key={location.locationId} value={location.name}>
+                {location.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -95,9 +192,9 @@ export default function MarketAnalyticsCard({
       <div className="grid grid-cols-2 gap-4 mb-6">
         {/* YTD TB */}
         <div className="bg-gray-50 rounded-md p-3">
-          <div className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD {tbType}</div>
+          <div className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD {performanceData.tbType}</div>
           <div className="text-lg font-bold text-gray-900 font-mono" style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}>
-            ${ytdTB}
+            ${currentLocationData.ytdTB4.toFixed(2)}
           </div>
           <div className="text-xs text-gray-600">$/kW-month</div>
         </div>
@@ -106,16 +203,16 @@ export default function MarketAnalyticsCard({
         <div className="bg-gray-50 rounded-md p-3">
           <div className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">Year Ahead Forecast</div>
           <div className="text-lg font-bold text-gray-900 font-mono" style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}>
-            ${yearAheadForecast}
+            ${currentLocationData.yearAheadForecast.toFixed(2)}
           </div>
           <div className="text-xs text-gray-600">$/kW-month</div>
         </div>
 
         {/* P-Value YTD */}
         <div className="bg-gray-50 rounded-md p-3">
-          <div className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">{pValue} YTD</div>
+          <div className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">{currentLocationData.pValue} YTD</div>
           <div className={`text-sm font-semibold ${isOverForecast ? 'text-green-600' : 'text-red-600'}`}>
-            {pValueAmount}
+            {isOverForecast ? '+' : ''}{currentLocationData.pValueAmount.toFixed(2)}
           </div>
           <div className="text-xs text-gray-600">vs forecast</div>
         </div>
@@ -124,7 +221,7 @@ export default function MarketAnalyticsCard({
         <div className="bg-gray-50 rounded-md p-3">
           <div className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">BOY Forecast</div>
           <div className="text-lg font-bold text-gray-900 font-mono" style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}>
-            ${boyForecast}
+            ${currentLocationData.boyForecast.toFixed(2)}
           </div>
           <div className="text-xs text-gray-600">$/kW-month</div>
         </div>
@@ -133,13 +230,13 @@ export default function MarketAnalyticsCard({
       {/* Additional Metrics */}
       <div className="grid grid-cols-1 gap-3 mb-6">
         <div className="bg-yellow-50 rounded-md p-3">
-          <div className="text-xs text-gray-600 uppercase tracking-wider mb-1 font-medium">Needed to Meet {neededPValue}</div>
+          <div className="text-xs text-gray-600 uppercase tracking-wider mb-1 font-medium">Needed to Meet {currentLocationData.neededPValue}</div>
           <div className="text-base font-bold text-gray-900 font-mono" style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}>
-            ${neededToMeet}
+            ${currentLocationData.neededToMeet.toFixed(2)}
           </div>
           <div className="text-xs text-gray-600">$/kW-month</div>
         </div>
-      </div>
+</div>
 
       {/* Projected Total */}
       <div className="border-t border-gray-200 pt-4 mb-4">
@@ -147,14 +244,14 @@ export default function MarketAnalyticsCard({
           <div>
             <div className="text-sm text-gray-500 font-medium">Projected Total (YTD + BOY)</div>
             <div className="text-xl font-bold text-gray-900 font-mono" style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}>
-              ${projectedTotal}
+              ${currentLocationData.projectedTotal.toFixed(2)}
             </div>
             <div className="text-xs text-gray-600">$/kW-month</div>
           </div>
           <div className="text-right">
             <div className="text-xs text-gray-500 mb-1">vs Forecast</div>
-            <div className={`text-sm font-semibold ${parseFloat(projectedTotal) > parseFloat(yearAheadForecast) ? 'text-green-600' : 'text-red-600'}`}>
-              {parseFloat(projectedTotal) > parseFloat(yearAheadForecast) ? '+' : ''}{(parseFloat(projectedTotal) - parseFloat(yearAheadForecast)).toFixed(2)}
+            <div className={`text-sm font-semibold ${currentLocationData.projectedTotal > currentLocationData.yearAheadForecast ? 'text-green-600' : 'text-red-600'}`}>
+              {currentLocationData.projectedTotal > currentLocationData.yearAheadForecast ? '+' : ''}{(currentLocationData.projectedTotal - currentLocationData.yearAheadForecast).toFixed(2)}
             </div>
           </div>
         </div>
@@ -167,7 +264,7 @@ export default function MarketAnalyticsCard({
           <div>
             <div className="text-sm text-gray-600">Multiplier</div>
             <div className="text-base font-bold text-gray-900 font-mono" style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}>
-              {asProportion}x
+              {currentLocationData.asProportion.toFixed(2)}x
             </div>
           </div>
           <div>

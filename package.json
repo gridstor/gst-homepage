@@ -20,12 +20,22 @@
     "test": "vitest",
     "test:integration": "vitest integration",
     "test:coverage": "vitest run --coverage",
-    "type-check": "astro check"
+    "type-check": "astro check",
+    "setup": "tsx scripts/quickstart.ts",
+    "setup:env": "tsx scripts/setup-env.ts",
+    "setup:production": "tsx scripts/setup-production.ts",
+    "poll-data": "tsx src/lib/jobs/poll-yes-energy.ts",
+    "fetch-ytd": "tsx scripts/fetch-ytd-data.ts",
+    "check-data": "tsx scripts/check-data-status.ts",
+    "import-csv": "tsx scripts/import-csv-data.ts",
+    "test-yes": "tsx test-yes-energy.ts",
+    "seed-locations": "tsx scripts/seed-locations.ts",
+    "db-studio": "prisma studio"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/netlify": "^6.3.4",
-    "@astrojs/react": "^4.3.0",
+    "@astrojs/check": "^0.9.5",
+    "@astrojs/netlify": "^6.6.0",
+    "@astrojs/react": "^4.4.1",
     "@astrojs/tailwind": "^6.0.2",
     "@fullcalendar/core": "^6.1.11",
     "@fullcalendar/daygrid": "^6.1.11",
@@ -36,10 +46,11 @@
     "@radix-ui/react-select": "^2.2.5",
     "@types/d3-geo": "^3.1.0",
     "@types/pg": "^8.11.14",
-    "astro": "^5.8.1",
+    "astro": "^5.15.3",
     "chart.js": "^4.4.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "csv-parse": "^5.5.6",
     "d3-geo": "^3.1.1",
     "date-fns": "^2.30.0",
     "dotenv": "^16.5.0",
@@ -74,4 +85,4 @@
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   }
-} 
+}

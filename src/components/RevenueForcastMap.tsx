@@ -1,121 +1,82 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import { geoAlbersUsa } from 'd3-geo';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Download } from 'lucide-react';
+import { Download, Loader2, AlertCircle } from 'lucide-react';
+
+// Types for API response
+interface LocationData {
+  id: string;
+  name: string;
+  market: 'CAISO' | 'ERCOT' | 'SPP';
+  region: string;
+  coordinates: [number, number];
+  calloutPosition: { x: number; y: number };
+  curves: {
+    energyArbitrage: number;
+    ancillaryServices: number;
+    capacity: number;
+  };
+  curveSource: 'GridStor P50' | 'Aurora Base' | 'ASCEND';
+  metadata?: {
+    dbLocationName?: string;
+    aliases?: string[];
+  };
+}
+
+interface ApiResponse {
+  success: boolean;
+  data: LocationData[];
+  metadata?: {
+    total: number;
+    timestamp: string;
+    source: string;
+  };
+}
 
 // Compact React Simple Maps Dashboard with Fixed Callouts
 export default function RevenueForcastMap() {
-  const [codYear, setCodYear] = useState('2026');
-  const [horizon, setHorizon] = useState('10');
   const [hoveredState, setHoveredState] = useState<string | null>(null);
+  const [locations, setLocations] = useState<LocationData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Individual duration controls for all locations
-  const [locationDurations, setLocationDurations] = useState({
-    "NP15": "4h",
-    "Goleta": "4h", 
-    "SP15": "4h",
-    "Houston": "4h",
-    "Hidden Lakes": "4h",
-    "Gunnar": "4h",
-    "South Hub": "4h",
-    "North Hub": "4h",
-    "South Hub SPP": "4h"
-  });
+  // Fetch locations from API
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/map-locations');
+        const result: ApiResponse = await response.json();
+        
+        if (!result.success) {
+          throw new Error('Failed to fetch location data');
+        }
+        
+        setLocations(result.data);
+        
+      } catch (err) {
+        console.error('Error fetching locations:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load location data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchLocations();
+  }, []);
 
-  const locations = {
-    "NP15": { 
-      coordinates: [-121.4687, 38.5816] as [number, number],
-      market: "CAISO", color: "#3B82F6",
-      revenue: { 
-        energyArb: { "2": 8.45, "4": 9.12, "8": 9.78 },
-        capacity: 7.0
-      },
-      region: "Northern California",
-      calloutPosition: { x: 15, y: 16 }
-    },
-    "Goleta": { 
-      coordinates: [-119.8276, 34.4208] as [number, number],
-      market: "CAISO", color: "#3B82F6",
-      revenue: { 
-        energyArb: { "2": 8.12, "4": 8.89, "8": 9.56 },
-        capacity: 7.0
-      },
-      region: "Santa Barbara",
-      calloutPosition: { x: 15, y: 50 }
-    },
-    "SP15": { 
-      coordinates: [-118.2437, 34.0522] as [number, number],
-      market: "CAISO", color: "#3B82F6",
-      revenue: { 
-        energyArb: { "2": 8.67, "4": 9.34, "8": 10.01 },
-        capacity: 7.0
-      },
-      region: "Southern California",
-      calloutPosition: { x: 15, y: 84 }
-    },
-    "Houston": { 
-      coordinates: [-95.3698, 29.7604] as [number, number],
-      market: "ERCOT", color: "#EF4444",
-      revenue: { 
-        energyArb: { "2": 9.34, "4": 10.12, "8": 10.89 },
-        capacity: 0
-      },
-      region: "Houston Hub",
-      calloutPosition: { x: 85, y: 16 }
-    },
-    "Hidden Lakes": { 
-      coordinates: [-94.7977, 29.2733] as [number, number],
-      market: "ERCOT", color: "#EF4444",
-      revenue: { 
-        energyArb: { "2": 9.12, "4": 9.89, "8": 10.56 },
-        capacity: 0
-      },
-      region: "South of Houston",
-      calloutPosition: { x: 85, y: 50 }
-    },
-    "Gunnar": { 
-      coordinates: [-97.0633, 28.0367] as [number, number],
-      market: "ERCOT", color: "#EF4444",
-      revenue: { 
-        energyArb: { "2": 8.56, "4": 9.23, "8": 9.90 },
-        capacity: 0
-      },
-      region: "South Central Texas",
-      calloutPosition: { x: 85, y: 84 }
-    },
-    "South Hub": { 
-      coordinates: [-98.2300, 26.2034] as [number, number],
-      market: "ERCOT", color: "#EF4444",
-      revenue: { 
-        energyArb: { "2": 8.78, "4": 9.45, "8": 10.12 },
-        capacity: 0
-      },
-      region: "Southern Texas",
-      calloutPosition: { x: 50, y: 92 }
-    },
-    "North Hub": { 
-      coordinates: [-98.3834, 39.0473] as [number, number],
-      market: "SPP", color: "#10B981",
-      revenue: { 
-        energyArb: { "2": 6.45, "4": 7.12, "8": 7.78 },
-        capacity: 5.0
-      },
-      region: "Kansas/Northern SPP",
-      calloutPosition: { x: 35, y: 10 }
-    },
-    "South Hub SPP": { 
-      coordinates: [-97.5164, 35.4676] as [number, number],
-      market: "SPP", color: "#10B981",
-      revenue: { 
-        energyArb: { "2": 6.78, "4": 7.45, "8": 8.12 },
-        capacity: 5.0
-      },
-      region: "Oklahoma/Southern SPP",
-      calloutPosition: { x: 65, y: 10 }
+  // Helper function to get market color
+  const getMarketColor = (market: string) => {
+    switch (market) {
+      case 'CAISO': return '#3B82F6';
+      case 'ERCOT': return '#EF4444';
+      case 'SPP': return '#10B981';
+      default: return '#6B7280';
     }
   };
 
@@ -149,25 +110,10 @@ export default function RevenueForcastMap() {
     }
   };
 
-  const updateLocationDuration = (location: string, duration: string) => {
-    setLocationDurations(prev => ({
-      ...prev,
-      [location]: duration
-    }));
-  };
-
-  const getRevenueBreakdown = (locationKey: string) => {
-    const location = locations[locationKey as keyof typeof locations];
-    const duration = locationDurations[locationKey as keyof typeof locationDurations];
-    const baseEnergyArb = location.revenue.energyArb[duration.replace('h', '') as keyof typeof location.revenue.energyArb];
-    
-    // Adjust based on COD year and horizon
-    const codMultiplier = 1 + (parseInt(codYear) - 2026) * 0.03;
-    const horizonMultiplier = 1 + (parseInt(horizon) - 1) * 0.02;
-    
-    const energyArb = baseEnergyArb * codMultiplier * horizonMultiplier;
-    const as = energyArb * 0.1; // AS is 10% of energy arbitrage
-    const capacity = location.revenue.capacity; // Fixed capacity value
+  const getRevenueBreakdown = (location: LocationData) => {
+    const energyArb = location.curves.energyArbitrage;
+    const as = location.curves.ancillaryServices;
+    const capacity = location.curves.capacity;
     const total = energyArb + as + capacity;
     
     return {
@@ -179,19 +125,19 @@ export default function RevenueForcastMap() {
   };
 
   const downloadData = () => {
-    const data = Object.entries(locations).map(([key, location]) => {
-      const breakdown = getRevenueBreakdown(key);
+    const data = locations.map(location => {
+      const breakdown = getRevenueBreakdown(location);
       return {
-        Location: key,
+        Location: location.name,
+        DB_Location_Name: location.metadata?.dbLocationName || location.name,
         Market: location.market,
         Region: location.region,
-        Duration: `${locationDurations[key as keyof typeof locationDurations]}`,
+        Curve_Source: location.curveSource,
+        Duration: '4h',
         Energy_Arbitrage: `$${breakdown.energyArb}`,
         Ancillary_Services: `$${breakdown.as}`,
         Capacity: `$${breakdown.capacity}`,
-        Total_Revenue: `$${breakdown.total}`,
-        COD_Year: codYear,
-        Forecast_Horizon: `${horizon} years`
+        Total_Revenue: `$${breakdown.total}`
       };
     });
     
@@ -220,62 +166,68 @@ export default function RevenueForcastMap() {
 
   const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[600px] bg-white rounded-lg shadow-sm">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-medium">Loading location data...</p>
+          <p className="text-sm text-gray-500 mt-2">Fetching latest revenue forecasts</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[600px] bg-white rounded-lg shadow-sm">
+        <div className="text-center max-w-md">
+          <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to Load Location Data</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-md hover:bg-blue-700 transition-all duration-200 font-medium"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No locations found
+  if (locations.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[600px] bg-white rounded-lg shadow-sm">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
+          <p className="text-gray-600 font-medium">No location data available</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      {/* Global Controls */}
-      <div className="mb-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-6">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">COD Year</label>
-                <Select value={codYear} onValueChange={setCodYear}>
-                  <SelectTrigger className="h-10 w-20 bg-gray-50 border-gray-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 7 }, (_, i) => 2026 + i).map(year => (
-                      <SelectItem key={year} value={year.toString()}>
-                        {year}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">Forecast Horizon</label>
-                <Select value={horizon} onValueChange={setHorizon}>
-                  <SelectTrigger className="h-10 w-20 bg-gray-50 border-gray-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 20 }, (_, i) => i + 1).map(year => (
-                      <SelectItem key={year} value={year.toString()}>
-                        {year}y
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <button
-              onClick={downloadData}
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 transition-all duration-200 font-medium text-sm hover:-translate-y-0.5"
-            >
-              <Download size={16} />
-              Download Data
-            </button>
-          </div>
-        </div>
+      {/* Download Button Only */}
+      <div className="mb-6 flex justify-end">
+        <button
+          onClick={downloadData}
+          className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 transition-all duration-200 font-medium text-sm shadow-sm hover:shadow-md"
+        >
+          <Download size={16} />
+          Download Data
+        </button>
       </div>
 
       {/* Map Container with Edge Callouts */}
       <div className="relative bg-white rounded-lg shadow-sm p-6 transition-all duration-200 hover:shadow-md min-h-[600px]" style={{ height: '800px' }}>
         {/* SVG Overlay for Connecting Lines */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
-          {Object.entries(locations).map(([key, location]) => {
+          {locations.map((location) => {
             const screenCoords = projection(location.coordinates);
             if (!screenCoords) return null;
             
@@ -292,18 +244,20 @@ export default function RevenueForcastMap() {
             const markerX = ((containerPadding + mapOffsetX + screenCoords[0]) / 1200) * 100;
             const markerY = ((containerPadding + mapOffsetY + screenCoords[1]) / 800) * 100;
             
-            // Callout position (already in percentages)
+            // Use callout position from API
             const calloutX = location.calloutPosition.x;
             const calloutY = location.calloutPosition.y;
             
+            const color = getMarketColor(location.market);
+            
             return (
               <line
-                key={key}
+                key={location.id}
                 x1={`${markerX}%`}
                 y1={`${markerY}%`}
                 x2={`${calloutX}%`}
                 y2={`${calloutY}%`}
-                stroke={location.color}
+                stroke={color}
                 strokeWidth="1.5"
                 strokeDasharray="3,3"
                 opacity="0.4"
@@ -354,11 +308,11 @@ export default function RevenueForcastMap() {
               </Geographies>
               
               {/* Location Markers */}
-              {Object.entries(locations).map(([key, location]) => (
-                <Marker key={key} coordinates={location.coordinates}>
+              {locations.map((location) => (
+                <Marker key={location.id} coordinates={location.coordinates}>
                   <circle
                     r={8}
-                    fill={location.color}
+                    fill={getMarketColor(location.market)}
                     stroke="white"
                     strokeWidth={2}
                     style={{
@@ -372,11 +326,13 @@ export default function RevenueForcastMap() {
         </div>
 
         {/* Edge Callout Boxes */}
-        {Object.entries(locations).map(([key, location]) => {
-          const breakdown = getRevenueBreakdown(key);
+        {locations.map((location) => {
+          const breakdown = getRevenueBreakdown(location);
+          const color = getMarketColor(location.market);
+          
           return (
             <motion.div
-              key={key}
+              key={location.id}
               whileHover={{ boxShadow: "0 8px 20px rgba(0,0,0,0.12)" }}
               className="absolute bg-white rounded-lg p-4 border-l-4 shadow-sm transition-all duration-200"
               style={{
@@ -384,7 +340,7 @@ export default function RevenueForcastMap() {
                 top: `${location.calloutPosition.y}%`,
                 transform: 'translate(-50%, -50%)',
                 width: '180px',
-                borderColor: location.color,
+                borderColor: color,
                 zIndex: 20
               }}
             >
@@ -393,14 +349,16 @@ export default function RevenueForcastMap() {
                 <div className="flex items-center gap-1.5">
                   <div 
                     className="w-2.5 h-2.5 rounded-full" 
-                    style={{ backgroundColor: location.color }}
+                    style={{ backgroundColor: color }}
                   />
-                  <h3 className="text-sm font-semibold text-gray-800">{key}</h3>
+                  <h3 className="text-sm font-semibold text-gray-800" title={location.metadata?.dbLocationName}>
+                    {location.name}
+                  </h3>
                 </div>
                 <div 
                   className="text-base font-bold font-mono"
                   style={{ 
-                    color: location.color,
+                    color: color,
                     fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace"
                   }}
                 >
@@ -417,28 +375,15 @@ export default function RevenueForcastMap() {
               {/* Energy Arbitrage - Featured */}
               <div className="bg-gray-50 rounded-md p-2 mb-2">
                 <div className="text-[10px] uppercase tracking-wider font-medium text-gray-500 mb-0.5">
-                  ENERGY ARBITRAGE
+                  ENERGY ARBITRAGE (4h)
                 </div>
-                <div className="flex items-center justify-between mb-0.5">
+                <div className="mb-0.5">
                   <div 
                     className="text-base font-bold font-mono text-gray-900"
                     style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}
                   >
                     ${breakdown.energyArb}
                   </div>
-                  <Select 
-                    value={locationDurations[key as keyof typeof locationDurations]} 
-                    onValueChange={(value) => updateLocationDuration(key, value)}
-                  >
-                    <SelectTrigger className="h-6 w-12 text-[10px] bg-white border-gray-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="2h">2h</SelectItem>
-                      <SelectItem value="4h">4h</SelectItem>
-                      <SelectItem value="8h">8h</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
                 <div className="text-[10px] text-gray-600">$/kW-month</div>
               </div>
@@ -473,7 +418,7 @@ export default function RevenueForcastMap() {
               </div>
               
               {/* Total Section */}
-              <div className="border-t-2 border-gray-200 pt-2">
+              <div className="border-t-2 border-gray-200 pt-2 mb-1">
                 <div className="flex items-center justify-between">
                   <div className="text-[10px] uppercase tracking-wider font-semibold text-gray-600">
                     TOTAL
@@ -481,13 +426,18 @@ export default function RevenueForcastMap() {
                   <div 
                     className="text-base font-bold font-mono"
                     style={{ 
-                      color: location.color,
+                      color: color,
                       fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace"
                     }}
                   >
                     ${breakdown.total}
                   </div>
                 </div>
+              </div>
+              
+              {/* Curve Source Indicator */}
+              <div className="text-[9px] text-gray-500 text-center pt-1 border-t border-gray-100">
+                {location.curveSource}
               </div>
             </motion.div>
           );
