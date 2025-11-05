@@ -7,9 +7,23 @@ export default async (request: Request, context: Context) => {
   
   console.log(`Asset request: ${path}, Referer: ${referer}`);
   
+  // If referer is empty or is the homepage/main site pages, pass through to local assets
+  // This allows the main site's own assets to be served normally
+  if (!referer || 
+      referer.endsWith('/') || 
+      referer.includes('/risk-structuring') ||
+      referer.includes('/docs') ||
+      (!referer.includes('/short-term-outlook') && 
+       !referer.includes('/admin') && 
+       !referer.includes('/long-term-outlook') && 
+       !referer.includes('/curve-viewer') && 
+       !referer.includes('/fundamentals'))) {
+    console.log('Passing through to local assets (main site)');
+    return context.next();
+  }
+  
   // Determine which backend to proxy to based on the referer
   let targetOrigin: string;
-  let fallbackOrigin: string | null = null;
   
   if (referer.includes('/short-term-outlook')) {
     targetOrigin = 'https://gridstordayzer.netlify.app';
@@ -27,11 +41,9 @@ export default async (request: Request, context: Context) => {
     targetOrigin = 'https://gst-fundamentals.netlify.app';
     console.log('Routing to fundamentals');
   } else {
-    // Check if it's an asset from the main site by trying locally first
-    // For unknown referers, try gridstordayzer first with gridstor as fallback
-    targetOrigin = 'https://gridstordayzer.netlify.app';
-    fallbackOrigin = 'https://gridstor.netlify.app';
-    console.log('Default routing to gridstordayzer with gridstor fallback');
+    // This shouldn't happen now, but fallback to passing through
+    console.log('Unexpected referer, passing through to local assets');
+    return context.next();
   }
   
   // Construct the target URL
@@ -44,22 +56,7 @@ export default async (request: Request, context: Context) => {
       headers: request.headers,
     });
     
-    // If we get a 404 and have a fallback origin, try the fallback
-    if (!response.ok && response.status === 404 && fallbackOrigin) {
-      console.log(`Asset not found at ${targetOrigin}, trying ${fallbackOrigin} fallback`);
-      const fallbackUrl = `${fallbackOrigin}${url.pathname}${url.search}`;
-      const fallbackResponse = await fetch(fallbackUrl, {
-        method: request.method,
-        headers: request.headers,
-      });
-      
-      if (fallbackResponse.ok) {
-        console.log(`Asset found at fallback ${fallbackOrigin}`);
-        return fallbackResponse;
-      }
-    }
-    
-    // Return the response (even if 404 - let the browser handle it)
+    // Return the response
     return response;
   } catch (error) {
     console.error(`Error proxying asset: ${error}`);
