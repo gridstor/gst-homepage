@@ -73,12 +73,14 @@
   status = 200
   force = true
 
-# General API routes fallback to Market Ops
-[[redirects]]
-  from = "/api/*"
-  to = "https://gridstordayzer.netlify.app/api/:splat"
-  status = 200
-  force = false
+# General API routes fallback to Market Ops (for other API calls)
+# DISABLED: Commenting out to allow local Astro API routes to work
+# If you need specific API proxies, add them explicitly above this section
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://gridstordayzer.netlify.app/api/:splat"
+#   status = 200
+#   force = false
 
 # NOTE: /assets/* is now handled by the Edge Function above
 # Root-level images and fonts below are fallbacks for assets not in /_astro/ or /assets/
