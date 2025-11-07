@@ -30,6 +30,7 @@
     "import-csv": "tsx scripts/import-csv-data.ts",
     "test-yes": "tsx test-yes-energy.ts",
     "seed-locations": "tsx scripts/seed-locations.ts",
+    "test:analytics": "tsx scripts/test-analytics-connection.ts",
     "db-studio": "prisma studio"
   },
   "dependencies": {

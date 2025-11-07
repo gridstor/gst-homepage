@@ -33,6 +33,7 @@ gridstoranalytics.com/
 - Node.js >= 18.20.8
 - npm >= 9.0.0
 - PostgreSQL database (optional, if using Prisma)
+- Analytics Workspace database access (for Market Performance data)
 
 ### Installation
 
@@ -44,15 +45,29 @@ cd gst-homepage
 # Install dependencies
 npm install
 
-# Create environment file
-cp .env.example .env
-# Edit .env with your database URL and other secrets
+# Create environment file with Analytics Workspace connection
+echo 'DATABASE_URL_ANALYTICSWORKSPACE="postgresql://user:password@host:port/database"' > .env
+
+# Test Analytics Workspace connection
+npm run test:analytics
 
 # Start development server
 npm run dev
 ```
 
 Visit `http://localhost:4321` to view the site.
+
+### 🎯 Connect Real Market Data
+
+The Market Performance Overview cards now fetch real YTD TBx data from your Analytics Workspace database.
+
+**Quick Setup:**
+1. Create `.env` with `DATABASE_URL_ANALYTICSWORKSPACE` connection string
+2. Run `npm run test:analytics` to verify connection
+3. Update forecasts in `src/lib/market-config.ts` (optional)
+4. Start the dev server
+
+📖 **Full Guide:** See [SETUP_ANALYTICS_QUICKSTART.md](SETUP_ANALYTICS_QUICKSTART.md)
 
 ---
 
@@ -111,6 +126,7 @@ gst-homepage/
 | `npm run build` | Build for production to `./dist/` |
 | `npm run preview` | Preview production build locally |
 | `npm run type-check` | Run TypeScript type checking |
+| `npm run test:analytics` | Test Analytics Workspace connection |
 | `npm run prisma:generate` | Generate Prisma client |
 | `npm run prisma:migrate` | Run database migrations |
 
@@ -156,6 +172,9 @@ The magic happens in `netlify.toml`. Key redirects:
 
 ### Local Development (`.env`)
 ```env
+# Analytics Workspace - REQUIRED for Market Performance data
+DATABASE_URL_ANALYTICSWORKSPACE="postgresql://user:password@host:port/analytics_workspace"
+
 # Database (if using Prisma)
 DATABASE_URL="postgresql://user:password@localhost:5432/gridstor"
 
@@ -167,6 +186,9 @@ NODE_ENV="development"
 Set these in: Site Settings > Environment Variables
 
 ```env
+# Analytics Workspace - REQUIRED
+DATABASE_URL_ANALYTICSWORKSPACE="your-analytics-workspace-url"
+
 # Database
 DATABASE_URL="your-production-database-url"
 
@@ -176,6 +198,8 @@ SITE_PASSWORD="your-shared-password"
 # Build
 NODE_VERSION="22"
 ```
+
+**Note:** The `DATABASE_URL_ANALYTICSWORKSPACE` variable connects to your existing `Homepage_YTD_TBx` table for real market performance data.
 
 ---
 
