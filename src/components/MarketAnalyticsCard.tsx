@@ -532,13 +532,31 @@ export default function MarketAnalyticsCard({
   }
   
   // Error state
-  if (error || allLocations.length === 0) {
+  if (error) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Failed to load performance data</p>
           <p className="text-xs text-gray-500 dark:text-gray-500">{error}</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // No data available state (not an error, just empty)
+  if (allLocations.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <AlertCircle className="w-8 h-8 text-amber-500 mx-auto mb-2" />
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">No Performance Data Available</p>
+          <p className="text-xs text-gray-500 dark:text-gray-500 max-w-md mx-auto">
+            The Homepage_YTD_TBx table is not populated yet. Please ensure the data pipeline is running and has completed at least one update cycle.
+          </p>
+          <p className="text-xs text-blue-600 dark:text-blue-400 mt-3">
+            Contact your database administrator to populate the table with year-to-date performance metrics.
+          </p>
         </div>
       </div>
     );

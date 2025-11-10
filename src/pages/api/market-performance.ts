@@ -35,8 +35,8 @@ interface LocationPerformance {
   locationType: 'hub' | 'node'; // Hub or Node designation
   duration: string;             // Battery duration (e.g., "2.6h", "4h")
   
-  // Year-to-date actuals
-  ytdTB4: number;              // YTD average TBx value ($/kW-month)
+  // Year-to-date actuals - Energy Arbitrage Revenue
+  ytdEnergyRevenue: number;     // YTD average TBx value ($/kW-month)
   ytdDaysCount: number;        // Number of days in YTD calculation
   
   // Year-to-date forecast (prorated portion)
@@ -52,8 +52,8 @@ interface LocationPerformance {
   boyDaysRemaining: number;
   
   // Performance targets
-  neededToMeet: number;        // TBx needed to meet target P-value
-  neededPValue: string;        // Target P-value
+  neededToMeet: number;         // TBx needed to meet target P-value
+  boyPValue: string;            // Target P-value (balance of year P-value)
   
   // Projections
   projectedTotal: number;       // (YTD weighted + BOY weighted) energy arbitrage
@@ -169,7 +169,7 @@ async function getMarketPerformanceDataReal(
         
         // Target P-value
         const targetPValue = config?.targetPValue || marketConfig.defaultTargetPValue;
-        const neededPValue = `P${targetPValue}`;
+        const boyPValue = `P${targetPValue}`;
         
         // Calculate what's needed to meet target
         // Simplified: assume need to hit forecast to meet P50
@@ -205,7 +205,7 @@ async function getMarketPerformanceDataReal(
           market: mkt,
           locationType,
           duration,
-          ytdTB4: parseFloat(ytdTB4.toFixed(2)),
+          ytdEnergyRevenue: parseFloat(ytdTB4.toFixed(2)),
           ytdDaysCount: dayOfYear,
           ytdForecast: parseFloat(ytdForecast.toFixed(2)),
           ytdPValue,
@@ -214,7 +214,7 @@ async function getMarketPerformanceDataReal(
           boyForecast: parseFloat(boyForecast.toFixed(2)),
           boyDaysRemaining: daysRemaining,
           neededToMeet: parseFloat(neededToMeet.toFixed(2)),
-          neededPValue,
+          boyPValue,
           projectedTotal: parseFloat(projectedTotal.toFixed(2)),
           yoyChange,
           asProportion,
