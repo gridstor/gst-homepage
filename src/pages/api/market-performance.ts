@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getLatestYTDData } from '../../lib/db-analytics';
+import { getLatestYTDData, getHistoricalYTDData } from '../../lib/db-analytics';
 import { 
   getLocationConfig, 
   getMarketLocations, 
@@ -86,21 +86,40 @@ async function getMarketPerformanceDataReal(
   
   const currentDate = new Date();
   const targetYear = currentDate.getFullYear();
+  const lastYear = targetYear - 1;
   const yearStart = new Date(targetYear, 0, 1);
   const dayOfYear = Math.floor((currentDate.getTime() - yearStart.getTime()) / (1000 * 60 * 60 * 24));
   const daysInYear = 365;
   const daysRemaining = daysInYear - dayOfYear;
   
   try {
-    // Fetch latest YTD data from Analytics Workspace
+    // Fetch latest YTD data from Analytics Workspace for current year
     const ytdData = await getLatestYTDData(market, location);
+    
+    // Fetch last year's data for YoY calculation
+    console.log(`\n📅 Fetching YoY data: current year = ${targetYear}, last year = ${lastYear}`);
+    const lastYearData = await getHistoricalYTDData(market, location, lastYear);
     
     if (!ytdData || ytdData.length === 0) {
       console.log('No data found in Homepage_YTD_TBx table');
       return [];
     }
     
-    console.log(`Found ${ytdData.length} records from Homepage_YTD_TBx`);
+    console.log(`Found ${ytdData.length} records from Homepage_YTD_TBx (current year)`);
+    console.log(`Found ${lastYearData.length} records from last year (${lastYear})`);
+    
+    // Create a map of last year's data by asset for YoY calculations
+    const lastYearMap = new Map<string, number>();
+    lastYearData.forEach(record => {
+      const key = `${record.ISO}_${record.Asset}`;
+      lastYearMap.set(key, record["YTD TBx"]);
+      console.log(`  Last year: ${key} = ${record["YTD TBx"]}`);
+    });
+    
+    if (lastYearData.length === 0) {
+      console.log(`⚠️  No data found for year ${lastYear}. YoY calculations will show 0.0%`);
+      console.log(`   Make sure your Homepage_YTD_TBx table has data with Run Date in year ${lastYear}`);
+    }
     
     // Group data by market
     const marketGroups: { [key: string]: typeof ytdData } = {};
@@ -156,8 +175,19 @@ async function getMarketPerformanceDataReal(
         // Simplified: assume need to hit forecast to meet P50
         const neededToMeet = yearAheadForecast;
         
-        // YoY change (TODO: calculate from historical data when available)
-        const yoyChange = "+0.0%";
+        // YoY change - calculate from last year's data
+        const lastYearKey = `${mkt}_${record.Asset}`;
+        const lastYearValue = lastYearMap.get(lastYearKey);
+        let yoyChange = "+0.0%";
+        
+        if (lastYearValue && lastYearValue > 0) {
+          const percentChange = ((ytdTB4 - lastYearValue) / lastYearValue) * 100;
+          const sign = percentChange >= 0 ? '+' : '';
+          yoyChange = `${sign}${percentChange.toFixed(1)}%`;
+          console.log(`  ${record.Asset} YoY: ${ytdTB4} vs ${lastYearValue} = ${yoyChange}`);
+        } else {
+          console.log(`  ${record.Asset} YoY: No last year data for key "${lastYearKey}"`);
+        }
         
         // AS proportion
         const asProportion = config?.asProportion || marketConfig.asProportion;
@@ -197,9 +227,15 @@ async function getMarketPerformanceDataReal(
         return record["Run Date"] > latest ? record["Run Date"] : latest;
       }, records[0]["Run Date"]);
       
+      // Use market-level TB type (fallback for the market if needed)
+      const dbTbValue = records[0]?.TBx;
+      const tbType = dbTbValue?.toString().startsWith('TB') 
+        ? dbTbValue 
+        : `TB${dbTbValue || marketConfig.tbType.replace('TB', '')}`;
+      
       return {
         market: mkt,
-        tbType: marketConfig.tbType,
+        tbType: tbType,
         locations: locationPerformance,
         lastUpdated: latestRunDate.toISOString(),
         metadata: {

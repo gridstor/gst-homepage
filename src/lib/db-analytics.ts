@@ -85,3 +85,46 @@ export async function getAllYTDData(): Promise<HomepageYTDTBx[]> {
   return getLatestYTDData();
 }
 
+/**
+ * Get historical YTD data from a specific year for YoY comparisons
+ */
+export async function getHistoricalYTDData(iso?: string, asset?: string, year?: number): Promise<HomepageYTDTBx[]> {
+  const whereConditions = [];
+  const params: any[] = [];
+  let paramIndex = 1;
+
+  if (iso) {
+    whereConditions.push(`"ISO" = $${paramIndex}`);
+    params.push(iso.toUpperCase());
+    paramIndex++;
+  }
+
+  if (asset) {
+    whereConditions.push(`"Asset" = $${paramIndex}`);
+    params.push(asset);
+    paramIndex++;
+  }
+
+  if (year) {
+    whereConditions.push(`EXTRACT(YEAR FROM "Run Date") = $${paramIndex}`);
+    params.push(year);
+    paramIndex++;
+  }
+
+  const whereClause = whereConditions.length > 0 
+    ? `WHERE ${whereConditions.join(' AND ')}` 
+    : '';
+
+  // Get the most recent Run Date for each Asset/ISO combination for the specified year
+  const query = `
+    SELECT DISTINCT ON ("Asset", "ISO") 
+      "Asset", "ISO", "TBx", "YTD TBx", "Run Date"
+    FROM "Homepage_YTD_TBx"
+    ${whereClause}
+    ORDER BY "Asset", "ISO", "Run Date" DESC
+  `;
+
+  const results = await analyticsDb.$queryRawUnsafe<HomepageYTDTBx[]>(query, ...params);
+  return results;
+}
+

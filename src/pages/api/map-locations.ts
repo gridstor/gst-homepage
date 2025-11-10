@@ -151,6 +151,15 @@ const LOCATION_MAP: Record<string, {
     locationType: 'hub',
     standardDuration: '2h'
   },
+  'ERCOT South Hub': {
+    displayName: 'South Hub',
+    dbName: 'South Hub',
+    market: 'ERCOT',
+    region: 'South Zone',
+    coordinates: [-98.0000, 28.0000],
+    calloutPosition: { x: 75, y: 70 },
+    capacity: 0
+  },
   'North Hub': {
     displayName: 'North Hub',
     dbName: 'North Hub',
@@ -162,7 +171,7 @@ const LOCATION_MAP: Record<string, {
     locationType: 'hub',
     standardDuration: '4h'
   },
-  'South Hub': {
+  'SPP South Hub': {
     displayName: 'South Hub SPP',
     dbName: 'South Hub',
     market: 'SPP',
