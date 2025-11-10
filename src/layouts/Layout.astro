@@ -43,101 +43,85 @@ const currentPath = Astro.url.pathname;
 						
 					<!-- Navigation Links -->
 					<nav 
-						class="hidden lg:flex items-center gap-6"
+						class="hidden lg:flex items-center gap-8"
 						role="navigation"
 						aria-label="Primary"
 					>
-						<!-- Long Term Outlook Dropdown -->
-						<div class="relative nav-dropdown">
+						<!-- Long-term outlook Dropdown -->
+						<div class="relative group">
 							<button 
-								class={`text-white hover:text-gray-300 transition-colors text-xl font-normal flex items-center gap-1 ${currentPath.startsWith('/long-term-outlook') ? 'text-gray-300' : ''}`}
-								aria-expanded="false"
-								aria-haspopup="true"
+								class={`text-white hover:text-gray-300 transition-colors font-medium flex items-center gap-1 ${currentPath.startsWith('/revenue-forecasts') || currentPath.startsWith('/futures-market') || currentPath.startsWith('/long-term-outlook') ? 'text-gray-300' : ''}`}
 							>
-								Long Term Outlook
-								<svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								Long-term outlook
+								<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 								</svg>
 							</button>
-							<div class="dropdown-menu absolute left-0 mt-2 w-56 bg-white dark:bg-[#2A2A2A] border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg opacity-0 invisible transition-all duration-200 z-50">
-								<div class="py-2">
-									<a 
-										href="/long-term-outlook" 
-										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-									>
-										Overview
-									</a>
-									<a 
-										href="/long-term-outlook/revenue-forecasts" 
-										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-									>
-										Revenue Forecasts
-									</a>
-									<a 
-										href="/long-term-outlook/curve-schedule" 
-										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-									>
-										Curve Schedule
-									</a>
-									<a 
-										href="/long-term-outlook/curve-tracker" 
-										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-									>
-										Curve Tracker
-									</a>
-									<a 
-										href="/long-term-outlook/fundamentals" 
-										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-									>
-										Market Fundamentals
+							<div class="absolute left-0 mt-1 pt-1 w-64 group-hover:block z-50">
+								<div class="bg-white rounded-lg shadow-xl border border-gray-200">
+									<!-- Revenue Forecast nested submenu -->
+									<div class="relative submenu-group">
+										<div class={`block px-4 py-3 text-sm transition-colors rounded-t-lg ${currentPath.startsWith('/revenue-forecasts') || currentPath.startsWith('/long-term-outlook/revenue-forecasts') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'}`}>
+											<div class="flex items-center justify-between">
+												<div>
+													<div class="font-medium">Revenue Forecast</div>
+													<div class="text-xs text-gray-500 mt-0.5">Forecasting and analytics</div>
+												</div>
+												<svg class="w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+												</svg>
+											</div>
+										</div>
+										<div class="absolute left-full top-0 ml-1 pt-1 w-64 submenu-hover:block z-50">
+											<div class="bg-white rounded-lg shadow-xl border border-gray-200">
+												<a href="/long-term-outlook/revenue-forecasts" class={`block px-4 py-3 text-sm transition-colors rounded-t-lg ${currentPath.startsWith('/long-term-outlook/revenue-forecasts') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
+													<div class="font-medium">Revenue Forecast Grapher</div>
+													<div class="text-xs text-gray-500 mt-0.5">Build and compare forecast graphs</div>
+												</a>
+												<a href="/long-term-outlook/curve-browser" class={`block px-4 py-3 text-sm transition-colors border-t border-gray-100 ${currentPath.startsWith('/long-term-outlook/curve-browser') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
+													<div class="font-medium">Curve Browser</div>
+													<div class="text-xs text-gray-500 mt-0.5">Browse and download curves</div>
+												</a>
+												<a href="/long-term-outlook/curve-schedule" class={`block px-4 py-3 text-sm transition-colors border-t border-gray-100 ${currentPath.startsWith('/long-term-outlook/curve-schedule') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
+													<div class="font-medium">Curve Schedule</div>
+													<div class="text-xs text-gray-500 mt-0.5">Manage delivery schedules</div>
+												</a>
+												<a href="/long-term-outlook/curve-tracker" class={`block px-4 py-3 text-sm transition-colors border-t border-gray-100 ${currentPath.startsWith('/long-term-outlook/curve-tracker') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
+													<div class="font-medium">Curve Tracker</div>
+													<div class="text-xs text-gray-500 mt-0.5">Track curve updates</div>
+												</a>
+												<a href="/long-term-outlook/fundamentals" class={`block px-4 py-3 text-sm transition-colors border-t border-gray-100 rounded-b-lg ${currentPath.startsWith('/long-term-outlook/fundamentals') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
+													<div class="font-medium">Market Fundamentals</div>
+													<div class="text-xs text-gray-500 mt-0.5">Market analysis and insights</div>
+												</a>
+											</div>
+										</div>
+									</div>
+									<!-- Futures Markets -->
+									<a href="/long-term-outlook/futures-markets" class={`block px-4 py-3 text-sm transition-colors border-t border-gray-100 rounded-b-lg ${currentPath.startsWith('/long-term-outlook/futures-markets') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
+										<div class="font-medium">Futures Markets</div>
+										<div class="text-xs text-gray-500 mt-0.5">Natural gas, power, heat rate futures</div>
 									</a>
 								</div>
 							</div>
 						</div>
 
-						<!-- Short Term Outlook Dropdown -->
-						<div class="relative nav-dropdown">
-							<button 
-								class={`text-white hover:text-gray-300 transition-colors text-xl font-normal flex items-center gap-1 ${currentPath.startsWith('/short-term-outlook') ? 'text-gray-300' : ''}`}
-								aria-expanded="false"
-								aria-haspopup="true"
-							>
-								Short Term Outlook
-								<svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-								</svg>
-							</button>
-							<div class="dropdown-menu absolute left-0 mt-2 w-56 bg-white dark:bg-[#2A2A2A] border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg opacity-0 invisible transition-all duration-200 z-50">
-								<div class="py-2">
-									<a 
-										href="/short-term-outlook" 
-										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-									>
-										Overview
-									</a>
-									<a 
-										href="/short-term-outlook/market-ops" 
-										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-									>
-										Market Operations
-									</a>
-									<a 
-										href="/short-term-outlook/performance" 
-										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-									>
-										Performance Tracking
-									</a>
-								</div>
-							</div>
-						</div>
+						<!-- Short-term outlook Link -->
+						<a 
+							href="/short-term-outlook" 
+							class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/short-term-outlook') ? 'text-gray-300' : ''}`}
+							aria-current={currentPath.startsWith('/short-term-outlook') ? 'page' : undefined}
+						>
+							Short-term outlook
+						</a>
 
-						<!-- Risk/Structuring - Simple link -->
+						<!-- Risk and structuring Link -->
 						<a 
 							href="/risk-structuring" 
-							class={`text-white hover:text-gray-300 transition-colors text-xl font-normal ${currentPath.startsWith('/risk-structuring') ? 'text-gray-300' : ''}`}
+							class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/risk-structuring') ? 'text-gray-300' : ''}`}
 							aria-current={currentPath.startsWith('/risk-structuring') ? 'page' : undefined}
 						>
-							Risk/Structuring
+							Risk and structuring
 						</a>
 					</nav>
 					</div>
@@ -177,83 +161,59 @@ const currentPath = Astro.url.pathname;
 		<slot />
 	</main>
 
-	<script>
-		// Dropdown functionality
-		document.addEventListener('DOMContentLoaded', () => {
-			const dropdowns = document.querySelectorAll('.nav-dropdown');
-			
-			dropdowns.forEach(dropdown => {
-				const button = dropdown.querySelector('button');
-				const menu = dropdown.querySelector('.dropdown-menu');
-				const arrow = dropdown.querySelector('svg');
-				
-				if (!button || !menu) return;
-				
-				// Toggle dropdown on click
-				button.addEventListener('click', (e) => {
-					e.stopPropagation();
-					const isOpen = menu.classList.contains('opacity-100');
-					
-					// Close all other dropdowns
-					document.querySelectorAll('.dropdown-menu').forEach(m => {
-						m.classList.remove('opacity-100', 'visible');
-						m.classList.add('opacity-0', 'invisible');
-					});
-					document.querySelectorAll('.nav-dropdown svg').forEach(a => {
-						a.classList.remove('rotate-180');
-					});
-					
-					// Toggle current dropdown
-					if (!isOpen) {
-						menu.classList.remove('opacity-0', 'invisible');
-						menu.classList.add('opacity-100', 'visible');
-						arrow?.classList.add('rotate-180');
-						button.setAttribute('aria-expanded', 'true');
-					} else {
-						menu.classList.remove('opacity-100', 'visible');
-						menu.classList.add('opacity-0', 'invisible');
-						arrow?.classList.remove('rotate-180');
-						button.setAttribute('aria-expanded', 'false');
-					}
-				});
-				
-				// Open dropdown on hover
-				dropdown.addEventListener('mouseenter', () => {
-					menu.classList.remove('opacity-0', 'invisible');
-					menu.classList.add('opacity-100', 'visible');
-					arrow?.classList.add('rotate-180');
-					button.setAttribute('aria-expanded', 'true');
-				});
-				
-				// Close dropdown when mouse leaves
-				dropdown.addEventListener('mouseleave', () => {
-					menu.classList.remove('opacity-100', 'visible');
-					menu.classList.add('opacity-0', 'invisible');
-					arrow?.classList.remove('rotate-180');
-					button.setAttribute('aria-expanded', 'false');
-				});
-			});
-			
-			// Close all dropdowns when clicking outside
-			document.addEventListener('click', () => {
-				document.querySelectorAll('.dropdown-menu').forEach(menu => {
-					menu.classList.remove('opacity-100', 'visible');
-					menu.classList.add('opacity-0', 'invisible');
-				});
-				document.querySelectorAll('.nav-dropdown button').forEach(btn => {
-					btn.setAttribute('aria-expanded', 'false');
-				});
-				document.querySelectorAll('.nav-dropdown svg').forEach(arrow => {
-					arrow.classList.remove('rotate-180');
-				});
-			});
-		});
-	</script>
 </body>
 </html>
 
 <style is:global>
 	html {
 		font-family: 'Inter', system-ui, sans-serif;
+	}
+
+	/* Improved dropdown menu hover styles with smooth transitions */
+	.group .group-hover\:block {
+		display: none;
+	}
+	
+	.group:hover .group-hover\:block {
+		display: block;
+	}
+	
+	/* Smooth fade-in effect for dropdowns */
+	.group .group-hover\:block > div {
+		animation: fadeIn 0.15s ease-in-out;
+	}
+	
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(-5px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	
+	/* Keep dropdown visible with a bridge between button and menu */
+	.group .group-hover\:block {
+		/* The pt-1 class creates a bridge area that keeps hover active */
+	}
+	
+	/* Nested submenu styles */
+	.submenu-group {
+		position: relative;
+	}
+	
+	.submenu-group .submenu-hover\:block {
+		display: none;
+	}
+	
+	.submenu-group:hover .submenu-hover\:block {
+		display: block;
+	}
+	
+	/* Smooth fade-in for nested menus */
+	.submenu-group .submenu-hover\:block > div {
+		animation: fadeIn 0.15s ease-in-out;
 	}
 </style>

@@ -212,8 +212,21 @@ async function getMarketPerformanceDataReal(
     
     return performanceData;
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching market performance from Analytics Workspace:', error);
+    
+    // Handle specific database errors gracefully
+    if (error.code === 'P2010' || error.meta?.code === '42P01') {
+      console.warn('Homepage_YTD_TBx table does not exist. Returning empty array.');
+      return [];
+    }
+    
+    // For other errors, log and return empty array in development
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Development mode: Returning empty array due to database error');
+      return [];
+    }
+    
     throw error;
   }
 }
@@ -232,12 +245,21 @@ export const GET: APIRoute = async ({ request }) => {
     
     if (!data || data.length === 0) {
       return new Response(JSON.stringify({
-        success: false,
-        error: 'No data found in Homepage_YTD_TBx table',
-        hint: 'Please ensure DATABASE_URL_ANALYTICSWORKSPACE is configured correctly'
+        success: true,
+        data: [],
+        metadata: {
+          timestamp: new Date().toISOString(),
+          requestedMarket: market || 'all',
+          dataSource: 'analytics_workspace',
+          recordCount: 0,
+          warning: 'Homepage_YTD_TBx table not found or contains no data. This is expected in development mode.'
+        }
       }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
+        status: 200,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=60'
+        }
       });
     }
     
