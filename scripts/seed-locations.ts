@@ -11,7 +11,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 import { prisma } from '../src/lib/db';
 
 const LOCATIONS = [
-  // CAISO (TB4)
+  // CAISO (TB4) - Nodes
   {
     name: 'NP15',
     market: 'CAISO',
@@ -19,7 +19,12 @@ const LOCATIONS = [
     region: 'Northern California',
     latitude: 38.5816,
     longitude: -121.4944,
-    isActive: true
+    isActive: true,
+    locationType: 'node',
+    mapCalloutX: 15,
+    mapCalloutY: 15,
+    standardDuration: '4h',
+    capacityValue: 7.0
   },
   {
     name: 'SP15',
@@ -28,63 +33,112 @@ const LOCATIONS = [
     region: 'Southern California',
     latitude: 34.0522,
     longitude: -118.2437,
-    isActive: true
+    isActive: true,
+    locationType: 'node',
+    mapCalloutX: 15,
+    mapCalloutY: 80,
+    standardDuration: '4h',
+    capacityValue: 7.0
   },
   {
     name: 'Goleta',
     market: 'CAISO',
     nodeId: '20000001321',
-    region: 'Southern California',
+    region: 'Santa Barbara',
     latitude: 34.4208,
     longitude: -119.8286,
-    isActive: true
+    isActive: true,
+    locationType: 'node',
+    mapCalloutX: 15,
+    mapCalloutY: 45,
+    standardDuration: '2.6h',
+    capacityValue: 7.0
   },
   // ERCOT (TB2)
   {
     name: 'Houston Hub',
     market: 'ERCOT',
     nodeId: '10000697077',
-    region: 'Houston Zone',
+    region: 'Houston Hub',
     latitude: 29.7604,
     longitude: -95.3698,
-    isActive: true
+    isActive: true,
+    locationType: 'hub',
+    mapCalloutX: 85,
+    mapCalloutY: 15,
+    standardDuration: '2h',
+    capacityValue: 0
   },
   {
     name: 'Hidden Lakes',
     market: 'ERCOT',
     nodeId: '10002872961',
-    region: 'West Zone',
+    region: 'South of Houston',
     latitude: 31.9686,
     longitude: -99.9018,
-    isActive: true
+    isActive: true,
+    locationType: 'node',
+    mapCalloutX: 85,
+    mapCalloutY: 41,
+    standardDuration: '2h',
+    capacityValue: 0
+  },
+  {
+    name: 'Gunnar',
+    market: 'ERCOT',
+    nodeId: '10000000000', // Placeholder - update with actual node ID
+    region: 'South Central Texas',
+    latitude: 28.0367,
+    longitude: -97.0633,
+    isActive: true,
+    locationType: 'node',
+    mapCalloutX: 85,
+    mapCalloutY: 67,
+    standardDuration: '2h',
+    capacityValue: 0
   },
   {
     name: 'South Hub',
     market: 'ERCOT',
     nodeId: '10000697079',
-    region: 'South Zone',
+    region: 'Southern Texas',
     latitude: 28.0000,
     longitude: -98.0000,
-    isActive: true
+    isActive: true,
+    locationType: 'hub',
+    mapCalloutX: 58,
+    mapCalloutY: 88,
+    standardDuration: '2h',
+    capacityValue: 0
   },
-  // SPP (TB4)
+  // SPP (TB4) - Hubs
   {
     name: 'North Hub',
     market: 'SPP',
     nodeId: '10002511523',
-    region: 'SPP North',
+    region: 'Kansas/Northern SPP',
     latitude: 41.2565,
     longitude: -95.9345,
-    isActive: true
+    isActive: true,
+    locationType: 'hub',
+    mapCalloutX: 42,
+    mapCalloutY: 12,
+    standardDuration: '4h',
+    capacityValue: 5.0
   },
   {
     name: 'South Hub',
     market: 'SPP',
     nodeId: '10002511524',
-    region: 'SPP South',
+    region: 'Oklahoma/Southern SPP',
     latitude: 35.4676,
     longitude: -97.5164,
-    isActive: true
+    isActive: true,
+    locationType: 'hub',
+    mapCalloutX: 62,
+    mapCalloutY: 12,
+    standardDuration: '4h',
+    capacityValue: 5.0
   }
 ];
 
@@ -109,7 +163,12 @@ async function seedLocations() {
           region: location.region,
           latitude: location.latitude,
           longitude: location.longitude,
-          isActive: location.isActive
+          isActive: location.isActive,
+          locationType: location.locationType,
+          mapCalloutX: location.mapCalloutX,
+          mapCalloutY: location.mapCalloutY,
+          standardDuration: location.standardDuration,
+          capacityValue: location.capacityValue
         }
       });
       

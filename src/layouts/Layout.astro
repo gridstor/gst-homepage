@@ -15,7 +15,7 @@ const currentPath = Astro.url.pathname;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<title>{title} | GridStor Market Sight</title>
+		<title>{title} | Market Sight</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,46 +23,132 @@ const currentPath = Astro.url.pathname;
 		<link rel="icon" type="image/svg+xml" href="/lightning-bolt.svg" />
 	</head>
 	<body>
-		<header class="bg-[#2A2A2A] dark:bg-[#1F1F1F] text-white shadow-sm border-b border-gray-800 dark:border-gray-900">
+		<header class="bg-[#2A2A2A] dark:bg-[#1F1F1F] text-white shadow-sm border-b border-gray-800 dark:border-gray-900 relative">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div class="flex justify-between items-center py-4">
-					<div class="flex items-center gap-8">
-						<a href="/" class="flex items-center gap-3 text-xl font-bold hover:text-gray-300 transition-colors">
-							<svg
-								width="32"
-								height="32"
-								viewBox="0 0 100 100"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-								class="w-8 h-8"
-								role="presentation"
-							>
-								<path
-									d="M55 10L30 55H50L45 90L70 45H50L55 10Z"
-									fill="#06B6D4"
-									stroke="#06B6D4"
-									stroke-width="2"
-									stroke-linejoin="round"
-								/>
-							</svg>
-							GridStor Market Sight
+					<div class="flex items-center gap-4">
+						<!-- Logo - Always links to home -->
+						<a 
+							href="/" 
+							class="flex items-center gap-3 hover:opacity-80 transition-opacity"
+							aria-label="GridStor Market Sight Home"
+						>
+							<img 
+								src="/gridstor-logo.png" 
+								alt="GridStor Market Sight" 
+								class="h-16"
+								style="filter: brightness(0) invert(1); max-width: none;"
+							/>
 						</a>
-						<nav class="hidden lg:flex items-center gap-8">
-							<a href="/long-term-outlook" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/long-term-outlook') ? 'text-gray-300' : ''}`}>
+						
+					<!-- Navigation Links -->
+					<nav 
+						class="hidden lg:flex items-center gap-6"
+						role="navigation"
+						aria-label="Primary"
+					>
+						<!-- Long Term Outlook Dropdown -->
+						<div class="relative nav-dropdown">
+							<button 
+								class={`text-white hover:text-gray-300 transition-colors text-xl font-normal flex items-center gap-1 ${currentPath.startsWith('/long-term-outlook') ? 'text-gray-300' : ''}`}
+								aria-expanded="false"
+								aria-haspopup="true"
+							>
 								Long Term Outlook
-							</a>
-							<a href="/short-term-outlook" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/short-term-outlook') ? 'text-gray-300' : ''}`}>
+								<svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+								</svg>
+							</button>
+							<div class="dropdown-menu absolute left-0 mt-2 w-56 bg-white dark:bg-[#2A2A2A] border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg opacity-0 invisible transition-all duration-200 z-50">
+								<div class="py-2">
+									<a 
+										href="/long-term-outlook" 
+										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+									>
+										Overview
+									</a>
+									<a 
+										href="/long-term-outlook/revenue-forecasts" 
+										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+									>
+										Revenue Forecasts
+									</a>
+									<a 
+										href="/long-term-outlook/curve-schedule" 
+										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+									>
+										Curve Schedule
+									</a>
+									<a 
+										href="/long-term-outlook/curve-tracker" 
+										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+									>
+										Curve Tracker
+									</a>
+									<a 
+										href="/long-term-outlook/fundamentals" 
+										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+									>
+										Market Fundamentals
+									</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Short Term Outlook Dropdown -->
+						<div class="relative nav-dropdown">
+							<button 
+								class={`text-white hover:text-gray-300 transition-colors text-xl font-normal flex items-center gap-1 ${currentPath.startsWith('/short-term-outlook') ? 'text-gray-300' : ''}`}
+								aria-expanded="false"
+								aria-haspopup="true"
+							>
 								Short Term Outlook
-							</a>
-							<a href="/risk-structuring" class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/risk-structuring') ? 'text-gray-300' : ''}`}>
-								Risk/Structuring
-							</a>
-						</nav>
+								<svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+								</svg>
+							</button>
+							<div class="dropdown-menu absolute left-0 mt-2 w-56 bg-white dark:bg-[#2A2A2A] border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg opacity-0 invisible transition-all duration-200 z-50">
+								<div class="py-2">
+									<a 
+										href="/short-term-outlook" 
+										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+									>
+										Overview
+									</a>
+									<a 
+										href="/short-term-outlook/market-ops" 
+										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+									>
+										Market Operations
+									</a>
+									<a 
+										href="/short-term-outlook/performance" 
+										class="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+									>
+										Performance Tracking
+									</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Risk/Structuring - Simple link -->
+						<a 
+							href="/risk-structuring" 
+							class={`text-white hover:text-gray-300 transition-colors text-xl font-normal ${currentPath.startsWith('/risk-structuring') ? 'text-gray-300' : ''}`}
+							aria-current={currentPath.startsWith('/risk-structuring') ? 'page' : undefined}
+						>
+							Risk/Structuring
+						</a>
+					</nav>
 					</div>
 					
 					<!-- Right side: Settings & Dark Mode Toggle -->
 					<div class="flex items-center gap-2 ml-4">
-						<button class="p-2 hover:bg-gray-700 dark:hover:bg-gray-800 rounded-md transition-colors" title="Settings">
+						<button 
+							class="p-2 hover:bg-gray-700 dark:hover:bg-gray-800 rounded-md transition-colors" 
+							aria-label="Settings"
+							title="Settings"
+						>
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -72,12 +158,98 @@ const currentPath = Astro.url.pathname;
 					</div>
 				</div>
 			</div>
+			
+			<!-- Line Art Decorative Strip -->
+			<div 
+				class="absolute bottom-0 left-0 right-0 h-2"
+				style="
+					background-color: #00BCD4;
+					background-image: url(/line-art.png);
+					background-size: auto 100%;
+					background-position: left center;
+					background-repeat: repeat-x;
+				"
+				aria-hidden="true"
+			></div>
 		</header>
 
-		<main>
-			<slot />
-		</main>
-	</body>
+	<main>
+		<slot />
+	</main>
+
+	<script>
+		// Dropdown functionality
+		document.addEventListener('DOMContentLoaded', () => {
+			const dropdowns = document.querySelectorAll('.nav-dropdown');
+			
+			dropdowns.forEach(dropdown => {
+				const button = dropdown.querySelector('button');
+				const menu = dropdown.querySelector('.dropdown-menu');
+				const arrow = dropdown.querySelector('svg');
+				
+				if (!button || !menu) return;
+				
+				// Toggle dropdown on click
+				button.addEventListener('click', (e) => {
+					e.stopPropagation();
+					const isOpen = menu.classList.contains('opacity-100');
+					
+					// Close all other dropdowns
+					document.querySelectorAll('.dropdown-menu').forEach(m => {
+						m.classList.remove('opacity-100', 'visible');
+						m.classList.add('opacity-0', 'invisible');
+					});
+					document.querySelectorAll('.nav-dropdown svg').forEach(a => {
+						a.classList.remove('rotate-180');
+					});
+					
+					// Toggle current dropdown
+					if (!isOpen) {
+						menu.classList.remove('opacity-0', 'invisible');
+						menu.classList.add('opacity-100', 'visible');
+						arrow?.classList.add('rotate-180');
+						button.setAttribute('aria-expanded', 'true');
+					} else {
+						menu.classList.remove('opacity-100', 'visible');
+						menu.classList.add('opacity-0', 'invisible');
+						arrow?.classList.remove('rotate-180');
+						button.setAttribute('aria-expanded', 'false');
+					}
+				});
+				
+				// Open dropdown on hover
+				dropdown.addEventListener('mouseenter', () => {
+					menu.classList.remove('opacity-0', 'invisible');
+					menu.classList.add('opacity-100', 'visible');
+					arrow?.classList.add('rotate-180');
+					button.setAttribute('aria-expanded', 'true');
+				});
+				
+				// Close dropdown when mouse leaves
+				dropdown.addEventListener('mouseleave', () => {
+					menu.classList.remove('opacity-100', 'visible');
+					menu.classList.add('opacity-0', 'invisible');
+					arrow?.classList.remove('rotate-180');
+					button.setAttribute('aria-expanded', 'false');
+				});
+			});
+			
+			// Close all dropdowns when clicking outside
+			document.addEventListener('click', () => {
+				document.querySelectorAll('.dropdown-menu').forEach(menu => {
+					menu.classList.remove('opacity-100', 'visible');
+					menu.classList.add('opacity-0', 'invisible');
+				});
+				document.querySelectorAll('.nav-dropdown button').forEach(btn => {
+					btn.setAttribute('aria-expanded', 'false');
+				});
+				document.querySelectorAll('.nav-dropdown svg').forEach(arrow => {
+					arrow.classList.remove('rotate-180');
+				});
+			});
+		});
+	</script>
+</body>
 </html>
 
 <style is:global>

@@ -28,30 +28,37 @@ interface PerformanceData {
 interface LocationPerformance {
   name: string;
   locationId: string;
+  market: string;
+  locationType: 'hub' | 'node'; // Hub or Node designation
+  duration: string;             // Battery duration (e.g., "2.6h", "4h")
   
-  // Year-to-date actuals
-  ytdTB4: number;              // YTD average TB4 ($/MWh converted to $/kW-month)
-  ytdDaysCount: number;        // Number of days in YTD calculation
+  // Year-to-date actuals - Energy Arbitrage Revenue
+  ytdEnergyRevenue: number;     // YTD average energy arbitrage revenue ($/kW-month)
+  ytdDaysCount: number;         // Number of days in YTD calculation
   
-  // Forecasts
-  yearAheadForecast: number;   // Original forecast for the year
-  pValue: string;              // e.g., "P35" - where actuals fall in distribution
-  pValueAmount: number;        // Difference from forecast
+  // Year-to-date forecast (prorated portion)
+  ytdForecast: number;          // Prorated forecast for YTD period
+  ytdPValue: string;            // P-value comparing YTD actual vs YTD forecast (e.g., "P35")
+  ytdPValueAmount: number;      // YTD actual - YTD forecast
+  
+  // Full year forecast
+  yearAheadForecast: number;    // Original P50 forecast for the full year
   
   // Balance of year
-  boyForecast: number;         // Remaining months forecast
+  boyForecast: number;          // BOY energy arbitrage forecast
   boyDaysRemaining: number;
   
   // Performance targets
-  neededToMeet: number;        // TB4 needed to meet target P-value
-  neededPValue: string;        // Target P-value
+  neededToMeet: number;         // Energy revenue needed in BOY to meet P50
+  boyPValue: string;            // P-value for projected total vs P50 (e.g., "P32")
   
   // Projections
-  projectedTotal: number;      // (YTD weighted + BOY weighted)
-  yoyChange: string;           // vs last year same period
+  projectedTotal: number;       // (YTD weighted + BOY weighted) energy arbitrage
+  yoyChange: string;            // vs last year same period
   
   // Ancillary services
-  asProportion: number;        // Multiplier for total revenue (e.g., 1.1 = 110%)
+  asProportion: number;         // Multiplier for total revenue (e.g., 1.1 = 110%)
+  totalWithAS: number;          // Projected total including AS
 }
 
 // Utility: Convert TB4 ($/MWh) to revenue ($/kW-month)
@@ -93,7 +100,7 @@ async function getMarketPerformanceData(
   // For now, return structure with mock calculations
   
   try {
-    // Query locations from database
+    // Query locations from database with location metadata
     const locations = await (prisma as any).location.findMany({
       where: {
         market: market ? market.toUpperCase() : undefined,
@@ -121,6 +128,18 @@ async function getMarketPerformanceData(
             year: targetYear
           }
         }
+      },
+      // Select location metadata for header display
+      select: {
+        id: true,
+        name: true,
+        market: true,
+        locationType: true,
+        standardDuration: true,
+        isActive: true,
+        tb4Calculations: true,
+        forecasts: true,
+        ytdPerformance: true
       }
     });
     
@@ -138,59 +157,76 @@ async function getMarketPerformanceData(
       
       const locationPerformance: LocationPerformance[] = locs.map(loc => {
         
-        // Calculate YTD average TB4
+        // Calculate YTD average TB4 (energy arbitrage revenue)
         const tb4Values = loc.tb4Calculations.map(calc => calc.tb4Value);
         const ytdTB4Raw = tb4Values.length > 0 
           ? tb4Values.reduce((a, b) => a + b, 0) / tb4Values.length 
           : 0;
         
-        // Convert to $/kW-month
-        const ytdTB4 = tb4ToRevenue(ytdTB4Raw);
+        // Convert to $/kW-month for energy arbitrage revenue
+        const ytdEnergyRevenue = tb4ToRevenue(ytdTB4Raw);
         
         // Get forecast
         const forecast = loc.forecasts[0];
         const yearAheadForecast = forecast?.tb4Forecast || 0;
         
-        // Calculate P-value
-        const pValueNum = calculatePValue(ytdTB4, yearAheadForecast);
-        const pValue = `P${pValueNum}`;
-        const pValueAmount = ytdTB4 - yearAheadForecast;
+        // Calculate YTD forecast (prorated portion of full-year forecast)
+        const ytdWeight = dayOfYear / daysInYear;
+        const boyWeight = (daysInYear - dayOfYear) / daysInYear;
+        const ytdForecast = yearAheadForecast * ytdWeight;
         
-        // BOY projection (simplified: assume same as YTD for now)
-        const boyForecast = ytdTB4;
+        // Calculate YTD P-value (comparing YTD actual vs YTD forecast)
+        const ytdPValueNum = calculatePValue(ytdEnergyRevenue, ytdForecast);
+        const ytdPValue = `P${ytdPValueNum}`;
+        const ytdPValueAmount = ytdEnergyRevenue - ytdForecast;
+        
+        // BOY projection (simplified: assume same rate as YTD)
+        const boyForecast = ytdEnergyRevenue;
         const boyDaysRemaining = daysInYear - dayOfYear;
         
-        // Weighted projection
-        const ytdWeight = dayOfYear / daysInYear;
-        const boyWeight = boyDaysRemaining / daysInYear;
-        const projectedTotal = (ytdTB4 * ytdWeight) + (boyForecast * boyWeight);
+        // Weighted projection for full year
+        const projectedTotal = (ytdEnergyRevenue * ytdWeight) + (boyForecast * boyWeight);
         
-        // Target P-value (simplified)
-        const targetPValue = forecast?.pValueTarget || 50;
-        const neededPValue = `P${targetPValue}`;
-        const neededToMeet = yearAheadForecast; // Simplified
+        // Calculate BOY P-value (comparing projected total vs P50 target)
+        const boyPValueNum = calculatePValue(projectedTotal, yearAheadForecast);
+        const boyPValue = `P${boyPValueNum}`;
+        
+        // Calculate what's needed in BOY to meet P50
+        const neededToMeet = yearAheadForecast - (ytdEnergyRevenue * ytdWeight);
         
         // YoY change (TODO: calculate from last year data)
         const yoyChange = "+0.0%";
         
-        // AS proportion (TODO: get from market-specific config)
+        // AS proportion (get from market-specific config)
         const asProportion = mkt === 'ERCOT' ? 1.25 : mkt === 'SPP' ? 1.34 : 1.10;
+        
+        // Total with AS
+        const totalWithAS = projectedTotal * asProportion;
+        
+        // Location metadata
+        const locationType = (loc.locationType || 'node') as 'hub' | 'node';
+        const duration = loc.standardDuration || '4h';
         
         return {
           name: loc.name,
           locationId: loc.id,
-          ytdTB4: parseFloat(ytdTB4.toFixed(2)),
+          market: mkt,
+          locationType,
+          duration,
+          ytdEnergyRevenue: parseFloat(ytdEnergyRevenue.toFixed(2)),
           ytdDaysCount: tb4Values.length,
+          ytdForecast: parseFloat(ytdForecast.toFixed(2)),
+          ytdPValue,
+          ytdPValueAmount: parseFloat(ytdPValueAmount.toFixed(2)),
           yearAheadForecast: parseFloat(yearAheadForecast.toFixed(2)),
-          pValue,
-          pValueAmount: parseFloat(pValueAmount.toFixed(2)),
           boyForecast: parseFloat(boyForecast.toFixed(2)),
           boyDaysRemaining,
           neededToMeet: parseFloat(neededToMeet.toFixed(2)),
-          neededPValue,
+          boyPValue,
           projectedTotal: parseFloat(projectedTotal.toFixed(2)),
           yoyChange,
-          asProportion
+          asProportion,
+          totalWithAS: parseFloat(totalWithAS.toFixed(2))
         };
       });
       
@@ -228,50 +264,65 @@ function getMockPerformanceData(): PerformanceData[] {
         {
           name: 'Goleta',
           locationId: 'caiso_goleta',
-          ytdTB4: 7.85,
+          market: 'CAISO',
+          locationType: 'node',
+          duration: '2.6h',
+          ytdEnergyRevenue: 7.85,
           ytdDaysCount: 304,
+          ytdForecast: 6.83,
+          ytdPValue: 'P65',
+          ytdPValueAmount: 1.02,
           yearAheadForecast: 8.20,
-          pValue: 'P35',
-          pValueAmount: -0.35,
           boyForecast: 8.45,
           boyDaysRemaining: 61,
           neededToMeet: 8.55,
-          neededPValue: 'P25',
-          projectedTotal: 8.32,
+          boyPValue: 'P42',
+          projectedTotal: 8.15,
           yoyChange: '+4.2%',
-          asProportion: 1.10
+          asProportion: 1.10,
+          totalWithAS: 8.97
         },
         {
           name: 'SP15',
           locationId: 'caiso_sp15',
-          ytdTB4: 7.92,
+          market: 'CAISO',
+          locationType: 'node',
+          duration: '4h',
+          ytdEnergyRevenue: 7.92,
           ytdDaysCount: 304,
+          ytdForecast: 6.91,
+          ytdPValue: 'P68',
+          ytdPValueAmount: 1.01,
           yearAheadForecast: 8.30,
-          pValue: 'P38',
-          pValueAmount: -0.38,
           boyForecast: 8.50,
           boyDaysRemaining: 61,
           neededToMeet: 8.60,
-          neededPValue: 'P28',
-          projectedTotal: 8.35,
+          boyPValue: 'P45',
+          projectedTotal: 8.21,
           yoyChange: '+3.8%',
-          asProportion: 1.10
+          asProportion: 1.10,
+          totalWithAS: 9.03
         },
         {
           name: 'NP15',
           locationId: 'caiso_np15',
-          ytdTB4: 8.05,
+          market: 'CAISO',
+          locationType: 'node',
+          duration: '4h',
+          ytdEnergyRevenue: 8.05,
           ytdDaysCount: 304,
+          ytdForecast: 6.99,
+          ytdPValue: 'P72',
+          ytdPValueAmount: 1.06,
           yearAheadForecast: 8.40,
-          pValue: 'P42',
-          pValueAmount: -0.35,
           boyForecast: 8.60,
           boyDaysRemaining: 61,
           neededToMeet: 8.70,
-          neededPValue: 'P32',
-          projectedTotal: 8.45,
+          boyPValue: 'P48',
+          projectedTotal: 8.33,
           yoyChange: '+5.1%',
-          asProportion: 1.10
+          asProportion: 1.10,
+          totalWithAS: 9.16
         }
       ],
       lastUpdated: new Date().toISOString(),
@@ -288,66 +339,86 @@ function getMockPerformanceData(): PerformanceData[] {
         {
           name: 'Houston Hub',
           locationId: 'ercot_houston',
-          ytdTB4: 9.12,
+          market: 'ERCOT',
+          locationType: 'hub',
+          duration: '2h',
+          ytdEnergyRevenue: 9.12,
           ytdDaysCount: 304,
+          ytdForecast: 7.28,
+          ytdPValue: 'P78',
+          ytdPValueAmount: 1.84,
           yearAheadForecast: 8.75,
-          pValue: 'P65',
-          pValueAmount: 0.37,
           boyForecast: 8.95,
           boyDaysRemaining: 61,
           neededToMeet: 8.38,
-          neededPValue: 'P85',
-          projectedTotal: 9.05,
+          boyPValue: 'P58',
+          projectedTotal: 9.04,
           yoyChange: '+7.8%',
-          asProportion: 1.25
+          asProportion: 1.25,
+          totalWithAS: 11.30
         },
         {
           name: 'Hidden Lakes',
           locationId: 'ercot_hidden_lakes',
-          ytdTB4: 9.25,
+          market: 'ERCOT',
+          locationType: 'node',
+          duration: '2h',
+          ytdEnergyRevenue: 9.25,
           ytdDaysCount: 304,
+          ytdForecast: 7.36,
+          ytdPValue: 'P82',
+          ytdPValueAmount: 1.89,
           yearAheadForecast: 8.85,
-          pValue: 'P68',
-          pValueAmount: 0.40,
           boyForecast: 9.10,
           boyDaysRemaining: 61,
           neededToMeet: 8.50,
-          neededPValue: 'P88',
+          boyPValue: 'P60',
           projectedTotal: 9.18,
           yoyChange: '+8.2%',
-          asProportion: 1.25
+          asProportion: 1.25,
+          totalWithAS: 11.48
         },
         {
           name: 'Gunnar',
           locationId: 'ercot_gunnar',
-          ytdTB4: 8.95,
+          market: 'ERCOT',
+          locationType: 'node',
+          duration: '2h',
+          ytdEnergyRevenue: 8.95,
           ytdDaysCount: 304,
+          ytdForecast: 7.16,
+          ytdPValue: 'P75',
+          ytdPValueAmount: 1.79,
           yearAheadForecast: 8.60,
-          pValue: 'P62',
-          pValueAmount: 0.35,
           boyForecast: 8.75,
           boyDaysRemaining: 61,
           neededToMeet: 8.25,
-          neededPValue: 'P82',
-          projectedTotal: 8.87,
+          boyPValue: 'P55',
+          projectedTotal: 8.86,
           yoyChange: '+7.1%',
-          asProportion: 1.25
+          asProportion: 1.25,
+          totalWithAS: 11.08
         },
         {
           name: 'South Hub',
           locationId: 'ercot_south',
-          ytdTB4: 9.05,
+          market: 'ERCOT',
+          locationType: 'hub',
+          duration: '2h',
+          ytdEnergyRevenue: 9.05,
           ytdDaysCount: 304,
+          ytdForecast: 7.24,
+          ytdPValue: 'P76',
+          ytdPValueAmount: 1.81,
           yearAheadForecast: 8.70,
-          pValue: 'P64',
-          pValueAmount: 0.35,
           boyForecast: 8.85,
           boyDaysRemaining: 61,
           neededToMeet: 8.35,
-          neededPValue: 'P84',
-          projectedTotal: 8.97,
+          boyPValue: 'P56',
+          projectedTotal: 8.96,
           yoyChange: '+7.5%',
-          asProportion: 1.25
+          asProportion: 1.25,
+          totalWithAS: 11.20
         }
       ],
       lastUpdated: new Date().toISOString(),
@@ -364,34 +435,44 @@ function getMockPerformanceData(): PerformanceData[] {
         {
           name: 'North Hub',
           locationId: 'spp_north',
-          ytdTB4: 6.43,
+          market: 'SPP',
+          locationType: 'hub',
+          duration: '4h',
+          ytdEnergyRevenue: 6.43,
           ytdDaysCount: 304,
+          ytdForecast: 5.74,
+          ytdPValue: 'P58',
+          ytdPValueAmount: 0.69,
           yearAheadForecast: 6.90,
-          pValue: 'P20',
-          pValueAmount: -0.47,
           boyForecast: 7.10,
           boyDaysRemaining: 61,
           neededToMeet: 7.37,
-          neededPValue: 'P15',
-          projectedTotal: 6.73,
+          boyPValue: 'P38',
+          projectedTotal: 6.77,
           yoyChange: '-1.8%',
-          asProportion: 1.34
+          asProportion: 1.34,
+          totalWithAS: 9.07
         },
         {
           name: 'South Hub',
           locationId: 'spp_south',
-          ytdTB4: 6.58,
+          market: 'SPP',
+          locationType: 'hub',
+          duration: '4h',
+          ytdEnergyRevenue: 6.58,
           ytdDaysCount: 304,
+          ytdForecast: 5.87,
+          ytdPValue: 'P60',
+          ytdPValueAmount: 0.71,
           yearAheadForecast: 7.05,
-          pValue: 'P23',
-          pValueAmount: -0.47,
           boyForecast: 7.25,
           boyDaysRemaining: 61,
           neededToMeet: 7.50,
-          neededPValue: 'P18',
-          projectedTotal: 6.88,
+          boyPValue: 'P40',
+          projectedTotal: 6.92,
           yoyChange: '-1.2%',
-          asProportion: 1.34
+          asProportion: 1.34,
+          totalWithAS: 9.27
         }
       ],
       lastUpdated: new Date().toISOString(),
