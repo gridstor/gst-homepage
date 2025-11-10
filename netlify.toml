@@ -93,9 +93,125 @@
   status = 200
   force = true
 
+# Short-Term Outlook API routes (Dayzer APIs)
+[[redirects]]
+  from = "/api/tb26-calculation"
+  to = "https://gridstordayzer.netlify.app/api/tb26-calculation"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/weekly-congestion"
+  to = "https://gridstordayzer.netlify.app/api/weekly-congestion"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/mec-overview"
+  to = "https://gridstordayzer.netlify.app/api/mec-overview"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/likeday-*"
+  to = "https://gridstordayzer.netlify.app/api/likeday-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/lmp-*"
+  to = "https://gridstordayzer.netlify.app/api/lmp-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/load-*"
+  to = "https://gridstordayzer.netlify.app/api/load-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/renewables-*"
+  to = "https://gridstordayzer.netlify.app/api/renewables-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/weather-*"
+  to = "https://gridstordayzer.netlify.app/api/weather-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/supply-stack"
+  to = "https://gridstordayzer.netlify.app/api/supply-stack"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/zone-*"
+  to = "https://gridstordayzer.netlify.app/api/zone-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/congestion-*"
+  to = "https://gridstordayzer.netlify.app/api/congestion-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/peak-hours-*"
+  to = "https://gridstordayzer.netlify.app/api/peak-hours-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/bottom-hours-*"
+  to = "https://gridstordayzer.netlify.app/api/bottom-hours-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/week-overview"
+  to = "https://gridstordayzer.netlify.app/api/week-overview"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/available-*"
+  to = "https://gridstordayzer.netlify.app/api/available-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/combined-*"
+  to = "https://gridstordayzer.netlify.app/api/combined-:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/net-load*"
+  to = "https://gridstordayzer.netlify.app/api/net-load:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/db-health"
+  to = "https://gridstordayzer.netlify.app/api/db-health"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/yes-energy-*"
+  to = "https://gridstordayzer.netlify.app/api/yes-energy-:splat"
+  status = 200
+  force = true
+
 # General API routes fallback to Market Ops (for other API calls)
 # DISABLED: Commenting out to allow local Astro API routes to work
-# If you need specific API proxies, add them explicitly above this section
+# Note: Specific Dayzer API routes are proxied above
+# Local homepage APIs (market-performance, map-locations, etc.) are NOT proxied
 # [[redirects]]
 #   from = "/api/*"
 #   to = "https://gridstordayzer.netlify.app/api/:splat"
