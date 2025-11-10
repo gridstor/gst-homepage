@@ -13,6 +13,17 @@
   external_node_modules = ["@prisma/client", "@astrojs/react"]
   node_bundler = "esbuild"
 
+# CORS Headers for Shared Navigation Component
+# Allow shared-header.js to be loaded from any GridStor site or localhost
+[[headers]]
+  for = "/shared-header.js"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Max-Age = "3600"
+    Cache-Control = "public, max-age=300, s-maxage=600"
+
 # Edge Functions Configuration
 # Smart asset routing based on referer header
 # The edge function checks the referer to determine which backend to proxy to
