@@ -508,199 +508,138 @@ export default function RevenueForcastMap() {
 
   return (
     <div className="bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm">
-      {/* Filter Bar - Matching YTD Section Style */}
-      <div className="flex flex-col gap-4 p-4 border-b border-gray-200 dark:border-gray-700">
-        {/* Top Row: Filters */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          <Filter size={16} className="text-gray-500 dark:text-gray-400" />
-          
-          {/* Market/Region Filter */}
-          <Select value={selectedMarket} onValueChange={setSelectedMarket}>
-            <SelectTrigger className="w-[160px] bg-white dark:bg-[#2A2A2A] border-gray-200 dark:border-gray-700">
-              <SelectValue placeholder="Region" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Regions</SelectItem>
-              <SelectItem value="CAISO">CAISO</SelectItem>
-              <SelectItem value="ERCOT">ERCOT</SelectItem>
-              <SelectItem value="SPP">SPP</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Type Filter */}
-          <Select value={selectedType} onValueChange={setSelectedType}>
-            <SelectTrigger className="w-[160px] bg-white dark:bg-[#2A2A2A] border-gray-200 dark:border-gray-700">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types ({typeCounts.all})</SelectItem>
-              <SelectItem value="hub">Hubs ({typeCounts.hub})</SelectItem>
-              <SelectItem value="node">Nodes ({typeCounts.node})</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Curve Vintage Filter */}
-          <Select value={curveVintage} onValueChange={(value) => setCurveVintage(value as 'all' | 'GridStor' | 'Aurora' | 'Ascend')}>
-            <SelectTrigger className="w-[180px] bg-white dark:bg-[#2A2A2A] border-gray-200 dark:border-gray-700">
-              <SelectValue placeholder="Curve Vintage" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Current Vintage</SelectItem>
-              <SelectItem value="GridStor">Fresh as of Oct 2025</SelectItem>
-              <SelectItem value="Aurora">Fresh as of Sep 2025</SelectItem>
-              <SelectItem value="Ascend">Fresh as of Aug 2025</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Search Filter */}
-          <div className="relative flex-1 min-w-[200px]">
-            <input
-              type="text"
-              placeholder="Search locations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 pl-9 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-[#2A2A2A] text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-            />
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Second Row: Date Range Filters */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+      {/* Filter Bar - Simplified Two-Row Layout */}
+      <div className="flex flex-col gap-3 p-4 border-b border-gray-200 dark:border-gray-700">
+        {/* Row 1: Forecast Period */}
+        <div className="flex items-center gap-3">
           <Calendar size={16} className="text-gray-500 dark:text-gray-400" />
-          
-          {/* Quick Date Range Presets */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400">Forecast Period:</span>
-            <button
-              onClick={() => { 
-                setUseCustomRange(false); 
-                setTimeHorizon('1'); 
-              }}
-              className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
-                !useCustomRange && timeHorizon === '1'
-                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              Next 1 Year
-            </button>
-            <button
-              onClick={() => { 
-                setUseCustomRange(false); 
-                setTimeHorizon('5'); 
-              }}
-              className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
-                !useCustomRange && timeHorizon === '5'
-                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              Next 5 Years
-            </button>
-            <button
-              onClick={() => { 
-                setUseCustomRange(false); 
-                setTimeHorizon('10'); 
-              }}
-              className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
-                !useCustomRange && timeHorizon === '10'
-                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              Next 10 Years
-            </button>
-            <button
-              onClick={() => { 
-                setUseCustomRange(false); 
-                setTimeHorizon('lifetime'); 
-              }}
-              className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
-                !useCustomRange && timeHorizon === 'lifetime'
-                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              Lifetime
-            </button>
-          </div>
-
-          {/* Custom Date Range - Shows selected period dates */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400">or Custom:</span>
-            <input
-              type="number"
-              min="2020"
-              max="2060"
-              value={startYear}
-              onChange={(e) => {
-                setStartYear(parseInt(e.target.value));
-                setUseCustomRange(true);
-              }}
-              className="w-20 px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-[#2A2A2A] text-gray-900 dark:text-gray-100"
-            />
-            <span className="text-gray-400">to</span>
-            <input
-              type="number"
-              min="2020"
-              max="2060"
-              value={endYear}
-              onChange={(e) => {
-                setEndYear(parseInt(e.target.value));
-                setUseCustomRange(true);
-              }}
-              className="w-20 px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-[#2A2A2A] text-gray-900 dark:text-gray-100"
-            />
-          </div>
+          <span className="text-sm text-gray-600 dark:text-gray-400">Forecast Period:</span>
+          <button
+            onClick={() => { 
+              setUseCustomRange(false); 
+              setTimeHorizon('1'); 
+            }}
+            className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+              !useCustomRange && timeHorizon === '1'
+                ? 'bg-blue-500 text-white font-medium'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+            }`}
+          >
+            Next 1 Year
+          </button>
+          <button
+            onClick={() => { 
+              setUseCustomRange(false); 
+              setTimeHorizon('5'); 
+            }}
+            className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+              !useCustomRange && timeHorizon === '5'
+                ? 'bg-blue-500 text-white font-medium'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+            }`}
+          >
+            Next 5 Years
+          </button>
+          <button
+            onClick={() => { 
+              setUseCustomRange(false); 
+              setTimeHorizon('10'); 
+            }}
+            className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+              !useCustomRange && timeHorizon === '10'
+                ? 'bg-blue-500 text-white font-medium'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+            }`}
+          >
+            Next 10 Years
+          </button>
+          <button
+            onClick={() => { 
+              setUseCustomRange(false); 
+              setTimeHorizon('lifetime'); 
+            }}
+            className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+              !useCustomRange && timeHorizon === 'lifetime'
+                ? 'bg-blue-500 text-white font-medium'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+            }`}
+          >
+            Lifetime
+          </button>
+          <button
+            onClick={() => setUseCustomRange(true)}
+            className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+              useCustomRange
+                ? 'bg-blue-500 text-white font-medium'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+            }`}
+          >
+            Custom
+          </button>
         </div>
 
-        {/* Third Row: Quick Filters & View Toggle */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        {/* Row 2: Quick Filters & View Toggle */}
+        <div className="flex justify-between items-center">
           {/* Quick Filter Chips */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400">Quick:</span>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Quick:</span>
             <button
               onClick={() => { setSelectedMarket('CAISO'); setSelectedType('all'); }}
-              className="text-xs px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+                selectedMarket === 'CAISO' && selectedType === 'all'
+                  ? 'bg-blue-500 text-white font-medium'
+                  : 'bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+              }`}
             >
               CAISO All
             </button>
             <button
               onClick={() => { setSelectedMarket('ERCOT'); setSelectedType('all'); }}
-              className="text-xs px-2.5 py-1 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+                selectedMarket === 'ERCOT' && selectedType === 'all'
+                  ? 'bg-red-500 text-white font-medium'
+                  : 'bg-gray-100 dark:bg-gray-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'
+              }`}
             >
               ERCOT All
             </button>
             <button
               onClick={() => { setSelectedMarket('SPP'); setSelectedType('all'); }}
-              className="text-xs px-2.5 py-1 rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+                selectedMarket === 'SPP' && selectedType === 'all'
+                  ? 'bg-green-500 text-white font-medium'
+                  : 'bg-gray-100 dark:bg-gray-700 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'
+              }`}
             >
               SPP All
             </button>
             <button
               onClick={() => { setSelectedMarket('all'); setSelectedType('hub'); }}
-              className="text-xs px-2.5 py-1 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+                selectedMarket === 'all' && selectedType === 'hub'
+                  ? 'bg-gray-700 text-white font-medium'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
             >
-              All Hubs
+              Hubs Only
             </button>
-            {(selectedMarket !== 'all' || selectedType !== 'all' || searchQuery !== '') && (
-              <button
-                onClick={() => { setSelectedMarket('all'); setSelectedType('all'); setSearchQuery(''); }}
-                className="text-xs px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              >
-                Clear Filters
-              </button>
-            )}
+            <button
+              onClick={() => { setSelectedMarket('all'); setSelectedType('node'); }}
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+                selectedMarket === 'all' && selectedType === 'node'
+                  ? 'bg-gray-700 text-white font-medium'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              Nodes Only
+            </button>
           </div>
 
           {/* View Toggle */}
           <div className="flex items-center gap-2 bg-gray-100 dark:bg-[#1A1A1A] rounded-lg p-1">
             <button
               onClick={() => setViewMode('map')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${
                 viewMode === 'map'
                   ? 'bg-white dark:bg-[#2A2A2A] shadow-sm text-gray-900 dark:text-gray-100'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
@@ -711,7 +650,7 @@ export default function RevenueForcastMap() {
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${
                 viewMode === 'table'
                   ? 'bg-white dark:bg-[#2A2A2A] shadow-sm text-gray-900 dark:text-gray-100'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'

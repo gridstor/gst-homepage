@@ -140,7 +140,7 @@
     }).join('');
     
     const headerHTML = `
-      <header class="gridstor-header bg-[#2A2A2A] text-white shadow-sm border-b border-gray-800 relative">
+      <header class="gridstor-header bg-[#2A2A2A] text-white shadow-sm relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between items-center py-4">
             <div class="flex items-center gap-8">
@@ -179,7 +179,7 @@
         <!-- Decorative Strip -->
         <div 
           class="absolute bottom-0 left-0 right-0 h-2"
-          style="background-color: #00BCD4;"
+          style="background-color: #40C4DE;"
           aria-hidden="true"
         ></div>
       </header>

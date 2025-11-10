@@ -9,44 +9,22 @@ import MarketAnalyticsCard from '../components/MarketAnalyticsCard.tsx';
 
 
 		{/* Revenue Forecasts */}
-		<section class="py-12 bg-white dark:bg-[#2A2A2A]">
+		<section class="pt-4 pb-8 bg-white dark:bg-[#2A2A2A]">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="mb-8">
+				<div class="mb-4">
 					<div class="flex items-center justify-between gap-4">
-						<h2 class="flex items-center gap-3 text-2xl font-normal text-[#2A2A2A] dark:text-gray-100">
-							<img 
-								src="/gridstor-logo.svg" 
-								alt="GridStor" 
-								class="h-8"
-								style="max-width: none;"
-							/>
-							<span>Active Locations - Forecast Summary</span>
+						<h2 class="text-2xl font-normal text-[#2A2A2A] dark:text-gray-100">
+							Active Locations - Forecast Summary
 						</h2>
 						
-						{/* Database Status Indicators */}
-						<div class="inline-flex items-center gap-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2">
-							{/* Live Status Indicator */}
-							<div class="flex items-center gap-2">
-								<div class="relative flex items-center justify-center">
-									<div class="absolute w-3 h-3 bg-emerald-400 rounded-full animate-ping opacity-40"></div>
-									<div class="relative w-2 h-2 bg-emerald-400 rounded-full"></div>
-								</div>
-								<div class="flex flex-col">
-									<span class="text-xs font-mono font-semibold text-emerald-500 dark:text-emerald-400 uppercase tracking-wide">Live</span>
-									<span class="text-[10px] font-mono text-gray-600 dark:text-gray-400">Database Connected</span>
-								</div>
+						{/* Database Status Indicator */}
+						<div class="flex items-center gap-2">
+							<div class="relative flex items-center justify-center">
+								<div class="absolute w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping opacity-40"></div>
+								<div class="relative w-2 h-2 bg-emerald-400 rounded-full"></div>
 							</div>
-							
-							{/* Curve Run Date */}
-							<div class="flex items-center gap-2 border-l border-gray-300 dark:border-gray-600 pl-4">
-								<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-								</svg>
-								<div class="flex flex-col">
-									<span class="text-xs font-mono text-gray-600 dark:text-gray-400">Curve Run Date</span>
-									<span class="text-[11px] font-mono font-semibold text-gray-900 dark:text-gray-100">Oct 1, 2025</span>
-								</div>
-							</div>
+							<span class="text-sm font-medium text-emerald-500 dark:text-emerald-400 uppercase tracking-wide">Live</span>
+							<span class="text-sm text-gray-600 dark:text-gray-400">Database Connected</span>
 						</div>
 					</div>
 				</div>
@@ -56,44 +34,22 @@ import MarketAnalyticsCard from '../components/MarketAnalyticsCard.tsx';
 		</section>
 
 		{/* Year-to-Date Performance */}
-		<section class="py-12 bg-white dark:bg-[#2A2A2A]">
+		<section class="pt-8 pb-8 bg-white dark:bg-[#2A2A2A]">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="mb-8">
+				<div class="mb-4">
 					<div class="flex items-center justify-between gap-4">
-						<h2 class="flex items-center gap-3 text-2xl font-normal text-[#2A2A2A] dark:text-gray-100">
-							<img 
-								src="/gridstor-logo.svg" 
-								alt="GridStor" 
-								class="h-8"
-								style="max-width: none;"
-							/>
-							<span>Active Locations - Year-to-Date Performance</span>
+						<h2 class="text-2xl font-normal text-[#2A2A2A] dark:text-gray-100">
+							Active Locations - Year-to-Date Performance
 						</h2>
 						
-						{/* Database Status Indicators */}
-						<div class="inline-flex items-center gap-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2">
-							{/* Live Status Indicator */}
-							<div class="flex items-center gap-2">
-								<div class="relative flex items-center justify-center">
-									<div class="absolute w-3 h-3 bg-emerald-400 rounded-full animate-ping opacity-40"></div>
-									<div class="relative w-2 h-2 bg-emerald-400 rounded-full"></div>
-								</div>
-								<div class="flex flex-col">
-									<span class="text-xs font-mono font-semibold text-emerald-500 dark:text-emerald-400 uppercase tracking-wide">Live</span>
-									<span class="text-[10px] font-mono text-gray-600 dark:text-gray-400">Database Connected</span>
-								</div>
+						{/* Database Status Indicator */}
+						<div class="flex items-center gap-2">
+							<div class="relative flex items-center justify-center">
+								<div class="absolute w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping opacity-40"></div>
+								<div class="relative w-2 h-2 bg-emerald-400 rounded-full"></div>
 							</div>
-							
-							{/* Last Update Timestamp */}
-							<div class="flex items-center gap-2 border-l border-gray-300 dark:border-gray-600 pl-4">
-								<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-								</svg>
-								<div class="flex flex-col">
-									<span class="text-xs font-mono text-gray-600 dark:text-gray-400">Last Updated</span>
-									<span class="text-[11px] font-mono font-semibold text-gray-900 dark:text-gray-100">{new Date(Date.now() - 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-								</div>
-							</div>
+							<span class="text-sm font-medium text-emerald-500 dark:text-emerald-400 uppercase tracking-wide">Live</span>
+							<span class="text-sm text-gray-600 dark:text-gray-400">Database Connected</span>
 						</div>
 					</div>
 				</div>
