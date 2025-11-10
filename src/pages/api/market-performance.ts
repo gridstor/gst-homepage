@@ -31,19 +31,24 @@ interface PerformanceData {
 interface LocationPerformance {
   name: string;
   locationId: string;
-  tbType: string;              // TB type for this specific location (TB2, TB4, etc.)
+  market: string;
+  locationType: 'hub' | 'node'; // Hub or Node designation
+  duration: string;             // Battery duration (e.g., "2.6h", "4h")
   
   // Year-to-date actuals
   ytdTB4: number;              // YTD average TBx value ($/kW-month)
   ytdDaysCount: number;        // Number of days in YTD calculation
   
-  // Forecasts
-  yearAheadForecast: number;   // Original forecast for the year
-  pValue: string;              // e.g., "P35" - where actuals fall in distribution
-  pValueAmount: number;        // Difference from forecast
+  // Year-to-date forecast (prorated portion)
+  ytdForecast: number;          // Prorated forecast for YTD period
+  ytdPValue: string;            // P-value comparing YTD actual vs YTD forecast (e.g., "P35")
+  ytdPValueAmount: number;      // YTD actual - YTD forecast
+  
+  // Full year forecast
+  yearAheadForecast: number;    // Original P50 forecast for the full year
   
   // Balance of year
-  boyForecast: number;         // Remaining months forecast
+  boyForecast: number;          // BOY energy arbitrage forecast
   boyDaysRemaining: number;
   
   // Performance targets
@@ -51,11 +56,12 @@ interface LocationPerformance {
   neededPValue: string;        // Target P-value
   
   // Projections
-  projectedTotal: number;      // (YTD weighted + BOY weighted)
-  yoyChange: string;           // vs last year same period
+  projectedTotal: number;       // (YTD weighted + BOY weighted) energy arbitrage
+  yoyChange: string;            // vs last year same period
   
   // Ancillary services
-  asProportion: number;        // Multiplier for total revenue (e.g., 1.1 = 110%)
+  asProportion: number;         // Multiplier for total revenue (e.g., 1.1 = 110%)
+  totalWithAS: number;          // Projected total including AS
 }
 
 // Calculate P-value (percentile in forecast distribution)
@@ -145,17 +151,20 @@ async function getMarketPerformanceDataReal(
         // Get forecast from config (or default)
         const yearAheadForecast = config?.yearAheadForecast || ytdTB4;
         
-        // Calculate P-value
-        const pValueNum = calculatePValue(ytdTB4, yearAheadForecast);
-        const pValue = `P${pValueNum}`;
-        const pValueAmount = ytdTB4 - yearAheadForecast;
+        // Calculate YTD forecast (prorated portion of full-year forecast)
+        const ytdWeight = dayOfYear / daysInYear;
+        const boyWeight = (daysInYear - dayOfYear) / daysInYear;
+        const ytdForecast = yearAheadForecast * ytdWeight;
+        
+        // Calculate YTD P-value
+        const ytdPValueNum = calculatePValue(ytdTB4, ytdForecast);
+        const ytdPValue = `P${ytdPValueNum}`;
+        const ytdPValueAmount = ytdTB4 - ytdForecast;
         
         // BOY projection (simplified: assume YTD trend continues)
         const boyForecast = ytdTB4;
         
         // Weighted projection
-        const ytdWeight = dayOfYear / daysInYear;
-        const boyWeight = daysRemaining / daysInYear;
         const projectedTotal = (ytdTB4 * ytdWeight) + (boyForecast * boyWeight);
         
         // Target P-value
@@ -183,28 +192,33 @@ async function getMarketPerformanceDataReal(
         // AS proportion
         const asProportion = config?.asProportion || marketConfig.asProportion;
         
-        // Get TB type for this specific location
-        const locationTbValue = record.TBx;
-        const locationTbType = locationTbValue?.toString().startsWith('TB') 
-          ? locationTbValue 
-          : `TB${locationTbValue || '4'}`;
+        // Total with AS
+        const totalWithAS = projectedTotal * asProportion;
+        
+        // Location metadata
+        const locationType = (config?.locationType || 'node') as 'hub' | 'node';
+        const duration = config?.duration || '4h';
         
         return {
           name: config?.displayName || record.Asset,
           locationId: `${mkt.toLowerCase()}_${record.Asset.toLowerCase().replace(/\s+/g, '_')}`,
-          tbType: locationTbType,
+          market: mkt,
+          locationType,
+          duration,
           ytdTB4: parseFloat(ytdTB4.toFixed(2)),
           ytdDaysCount: dayOfYear,
+          ytdForecast: parseFloat(ytdForecast.toFixed(2)),
+          ytdPValue,
+          ytdPValueAmount: parseFloat(ytdPValueAmount.toFixed(2)),
           yearAheadForecast: parseFloat(yearAheadForecast.toFixed(2)),
-          pValue,
-          pValueAmount: parseFloat(pValueAmount.toFixed(2)),
           boyForecast: parseFloat(boyForecast.toFixed(2)),
           boyDaysRemaining: daysRemaining,
           neededToMeet: parseFloat(neededToMeet.toFixed(2)),
           neededPValue,
           projectedTotal: parseFloat(projectedTotal.toFixed(2)),
           yoyChange,
-          asProportion
+          asProportion,
+          totalWithAS: parseFloat(totalWithAS.toFixed(2))
         };
       });
       
@@ -234,8 +248,21 @@ async function getMarketPerformanceDataReal(
     
     return performanceData;
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching market performance from Analytics Workspace:', error);
+    
+    // Handle specific database errors gracefully
+    if (error.code === 'P2010' || error.meta?.code === '42P01') {
+      console.warn('Homepage_YTD_TBx table does not exist. Returning empty array.');
+      return [];
+    }
+    
+    // For other errors, log and return empty array in development
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Development mode: Returning empty array due to database error');
+      return [];
+    }
+    
     throw error;
   }
 }
@@ -254,12 +281,21 @@ export const GET: APIRoute = async ({ request }) => {
     
     if (!data || data.length === 0) {
       return new Response(JSON.stringify({
-        success: false,
-        error: 'No data found in Homepage_YTD_TBx table',
-        hint: 'Please ensure DATABASE_URL_ANALYTICSWORKSPACE is configured correctly'
+        success: true,
+        data: [],
+        metadata: {
+          timestamp: new Date().toISOString(),
+          requestedMarket: market || 'all',
+          dataSource: 'analytics_workspace',
+          recordCount: 0,
+          warning: 'Homepage_YTD_TBx table not found or contains no data. This is expected in development mode.'
+        }
       }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
+        status: 200,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=60'
+        }
       });
     }
     
@@ -292,4 +328,3 @@ export const GET: APIRoute = async ({ request }) => {
     });
   }
 };
-

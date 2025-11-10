@@ -1,0 +1,83 @@
+/**
+ * GridStor Market Sight - Shared Header Styles
+ * Include this CSS in all GridStor applications for consistent header styling
+ * 
+ * Usage: <link rel="stylesheet" href="https://gst-homepage.netlify.app/shared-header.css">
+ */
+
+.gridstor-header {
+  position: relative;
+  background-color: #2A2A2A;
+  color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #374151;
+}
+
+.gridstor-nav-dropdown {
+  position: relative;
+}
+
+.gridstor-dropdown-menu {
+  position: absolute;
+  left: 0;
+  margin-top: 0.5rem;
+  width: 16rem;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.gridstor-dropdown-menu.opacity-0 {
+  opacity: 0;
+}
+
+.gridstor-dropdown-menu.opacity-100 {
+  opacity: 1;
+}
+
+.gridstor-dropdown-menu.invisible {
+  visibility: hidden;
+}
+
+.gridstor-dropdown-menu.visible {
+  visibility: visible;
+}
+
+.gridstor-nav-dropdown svg {
+  transition: transform 0.2s;
+}
+
+.gridstor-nav-dropdown svg.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .gridstor-header {
+    background-color: #1F1F1F;
+  }
+  
+  .gridstor-dropdown-menu {
+    background-color: #2A2A2A;
+    border-color: #374151;
+  }
+  
+  .gridstor-dropdown-menu a {
+    color: #e5e7eb;
+  }
+  
+  .gridstor-dropdown-menu a:hover {
+    background-color: #374151;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .gridstor-header nav {
+    display: none;
+  }
+}
+

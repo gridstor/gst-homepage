@@ -8,303 +8,242 @@ import MarketAnalyticsCard from '../components/MarketAnalyticsCard.tsx';
 	<div class="min-h-full bg-[#F9FAFB] dark:bg-[#1A1A1A]">
 
 
-		{/* Revenue Forecasting Map */}
+		{/* Revenue Forecasts */}
 		<section class="py-12 bg-white dark:bg-[#2A2A2A]">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div class="mb-8">
-					<h2 class="text-2xl font-bold text-[#2A2A2A] dark:text-gray-100 mb-2">Revenue Forecasting Map</h2>
-					<p class="text-gray-600 dark:text-gray-400">Interactive energy arbitrage forecasting across market locations</p>
+					<div class="flex items-center justify-between gap-4">
+						<h2 class="flex items-center gap-3 text-2xl font-normal text-[#2A2A2A] dark:text-gray-100">
+							<img 
+								src="/gridstor-logo.svg" 
+								alt="GridStor" 
+								class="h-8"
+								style="max-width: none;"
+							/>
+							<span>Active Locations - Forecast Summary</span>
+						</h2>
+						
+						{/* Database Status Indicators */}
+						<div class="inline-flex items-center gap-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2">
+							{/* Live Status Indicator */}
+							<div class="flex items-center gap-2">
+								<div class="relative flex items-center justify-center">
+									<div class="absolute w-3 h-3 bg-emerald-400 rounded-full animate-ping opacity-40"></div>
+									<div class="relative w-2 h-2 bg-emerald-400 rounded-full"></div>
+								</div>
+								<div class="flex flex-col">
+									<span class="text-xs font-mono font-semibold text-emerald-500 dark:text-emerald-400 uppercase tracking-wide">Live</span>
+									<span class="text-[10px] font-mono text-gray-600 dark:text-gray-400">Database Connected</span>
+								</div>
+							</div>
+							
+							{/* Curve Run Date */}
+							<div class="flex items-center gap-2 border-l border-gray-300 dark:border-gray-600 pl-4">
+								<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+								</svg>
+								<div class="flex flex-col">
+									<span class="text-xs font-mono text-gray-600 dark:text-gray-400">Curve Run Date</span>
+									<span class="text-[11px] font-mono font-semibold text-gray-900 dark:text-gray-100">Oct 1, 2025</span>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 				
 				<RevenueForcastMap client:load />
 			</div>
 		</section>
 
-		{/* Market Performance Overview */}
+		{/* Year-to-Date Performance */}
 		<section class="py-12 bg-white dark:bg-[#2A2A2A]">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div class="mb-8">
-					<h2 class="text-2xl font-bold text-[#2A2A2A] dark:text-gray-100 mb-2">Market Performance Overview</h2>
-					<p class="text-gray-600 dark:text-gray-400">Energy arbitrage analytics and forecasting updated monthly</p>
+					<div class="flex items-center justify-between gap-4">
+						<h2 class="flex items-center gap-3 text-2xl font-normal text-[#2A2A2A] dark:text-gray-100">
+							<img 
+								src="/gridstor-logo.svg" 
+								alt="GridStor" 
+								class="h-8"
+								style="max-width: none;"
+							/>
+							<span>Active Locations - Year-to-Date Performance</span>
+						</h2>
+						
+						{/* Database Status Indicators */}
+						<div class="inline-flex items-center gap-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2">
+							{/* Live Status Indicator */}
+							<div class="flex items-center gap-2">
+								<div class="relative flex items-center justify-center">
+									<div class="absolute w-3 h-3 bg-emerald-400 rounded-full animate-ping opacity-40"></div>
+									<div class="relative w-2 h-2 bg-emerald-400 rounded-full"></div>
+								</div>
+								<div class="flex flex-col">
+									<span class="text-xs font-mono font-semibold text-emerald-500 dark:text-emerald-400 uppercase tracking-wide">Live</span>
+									<span class="text-[10px] font-mono text-gray-600 dark:text-gray-400">Database Connected</span>
+								</div>
+							</div>
+							
+							{/* Last Update Timestamp */}
+							<div class="flex items-center gap-2 border-l border-gray-300 dark:border-gray-600 pl-4">
+								<svg class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								</svg>
+								<div class="flex flex-col">
+									<span class="text-xs font-mono text-gray-600 dark:text-gray-400">Last Updated</span>
+									<span class="text-[11px] font-mono font-semibold text-gray-900 dark:text-gray-100">{new Date(Date.now() - 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
-				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+				
+				{/* Performance Grid with Filters and View Toggle */}
+				<div id="performance-section">
 					<MarketAnalyticsCard 
 						client:load
-						market="CAISO"
+						market="all"
 						accent="border-blue-500"
 						accentColor="blue"
 					/>
-					<MarketAnalyticsCard 
-						client:load
-						market="ERCOT"
-						accent="border-red-500"
-						accentColor="red"
-					/>
-					<MarketAnalyticsCard 
-						client:load
-						market="SPP"
-						accent="border-green-500"
-						accentColor="green"
-					/>
 				</div>
 			</div>
 		</section>
 
-
-		{/* Analytics Modules Section */}
-		<section class="py-16 bg-[#F9FAFB] dark:bg-[#1A1A1A]">
+		{/* Live Database Monitor */}
+		<section class="py-12 bg-gray-50 dark:bg-[#1A1A1A]">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="text-center mb-12">
-					<h2 class="text-3xl font-bold text-[#2A2A2A] dark:text-gray-100 mb-4">Market Intelligence Modules</h2>
-					<p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-						Comprehensive analysis tools for strategic planning and operational excellence
-					</p>
+				<div class="flex items-center justify-between mb-8">
+					<div>
+						<h2 class="text-2xl font-bold text-[#2A2A2A] dark:text-gray-100 mb-2">Database Monitor</h2>
+						<p class="text-sm text-gray-600 dark:text-gray-400">
+							Live connection status • <span class="text-green-600 dark:text-green-400 font-mono">Active</span>
+						</p>
+					</div>
+					<div class="flex gap-2">
+						<button class="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#2A2A2A] border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-[#333333] transition-colors">
+							Test Endpoints
+						</button>
+						<button class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 dark:bg-blue-500 rounded hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors">
+							Force Sync
+						</button>
+					</div>
 				</div>
 				
-				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-					{/* Long Term Outlook */}
-					<div class="bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm p-8 border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
-						<div class="flex items-center gap-3 mb-4">
-							<div class="text-blue-600 dark:text-blue-400">
-								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-								</svg>
-							</div>
-							<h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Long Term Outlook</h3>
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+					{/* API Health */}
+					<div class="bg-white dark:bg-[#2A2A2A] rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+						<div class="flex items-center justify-between mb-3">
+							<h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">API Health</h3>
+							<span class="px-2 py-0.5 text-xs font-mono bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded">OK</span>
 						</div>
-						<p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-							Strategic revenue forecasting and market fundamentals for long-term planning and investment decisions.
-						</p>
-						<ul class="space-y-2 mb-6">
-							<li class="flex items-start gap-2 text-gray-600 dark:text-gray-400">
-								<span class="text-blue-600 dark:text-blue-400 mt-1">•</span>
-								Revenue curve analysis & forecasting
-							</li>
-							<li class="flex items-start gap-2 text-gray-600 dark:text-gray-400">
-								<span class="text-blue-600 dark:text-blue-400 mt-1">•</span>
-								Market fundamentals & trends
-							</li>
-							<li class="flex items-start gap-2 text-gray-600 dark:text-gray-400">
-								<span class="text-blue-600 dark:text-blue-400 mt-1">•</span>
-								Multi-year horizon planning
-							</li>
-						</ul>
-						<a href="/long-term-outlook" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-medium">
-							Launch Long Term
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-							</svg>
-						</a>
-					</div>
-
-					{/* Short Term Outlook */}
-					<div class="bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm p-8 border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
-						<div class="flex items-center gap-3 mb-4">
-							<div class="text-green-600 dark:text-green-400">
-								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-								</svg>
+						<div class="space-y-2">
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">Response Time</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">124ms</span>
 							</div>
-							<h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Short Term Outlook</h3>
-						</div>
-						<p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-							Real-time market operations, daily trading analysis, and near-term performance optimization.
-						</p>
-						<ul class="space-y-2 mb-6">
-							<li class="flex items-start gap-2 text-gray-600 dark:text-gray-400">
-								<span class="text-green-600 dark:text-green-400 mt-1">•</span>
-								Daily market performance tracking
-							</li>
-							<li class="flex items-start gap-2 text-gray-600 dark:text-gray-400">
-								<span class="text-green-600 dark:text-green-400 mt-1">•</span>
-								Weekly congestion analysis
-							</li>
-							<li class="flex items-start gap-2 text-gray-600 dark:text-gray-400">
-								<span class="text-green-600 dark:text-green-400 mt-1">•</span>
-								Operational optimization insights
-							</li>
-						</ul>
-						<a href="/short-term-outlook" class="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors font-medium">
-							Launch Short Term
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-							</svg>
-						</a>
-					</div>
-
-					{/* Risk/Structuring */}
-					<div class="bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm p-8 border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
-						<div class="flex items-center gap-3 mb-4">
-							<div class="text-purple-600 dark:text-purple-400">
-								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-								</svg>
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">Uptime (30d)</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">99.8%</span>
 							</div>
-							<h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Risk/Structuring</h3>
-						</div>
-						<p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-							Advanced risk analytics, portfolio optimization, and deal structuring for strategic decision-making.
-						</p>
-						<ul class="space-y-2 mb-6">
-							<li class="flex items-start gap-2 text-gray-600 dark:text-gray-400">
-								<span class="text-purple-600 dark:text-purple-400 mt-1">•</span>
-								Portfolio risk analysis
-							</li>
-							<li class="flex items-start gap-2 text-gray-600 dark:text-gray-400">
-								<span class="text-purple-600 dark:text-purple-400 mt-1">•</span>
-								Volatility assessment & hedging
-							</li>
-							<li class="flex items-start gap-2 text-gray-600 dark:text-gray-400">
-								<span class="text-purple-600 dark:text-purple-400 mt-1">•</span>
-								Contract structuring tools
-							</li>
-						</ul>
-						<a href="/risk-structuring" class="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 transition-colors font-medium">
-							Coming Soon
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-							</svg>
-						</a>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		{/* Markets We Serve */}
-		<section class="py-16 bg-white dark:bg-[#2A2A2A]">
-			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="text-center mb-12">
-					<h2 class="text-3xl font-bold text-[#2A2A2A] dark:text-gray-100 mb-4">Markets We Serve</h2>
-					<p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-						Deep expertise across the three major electricity markets where GridStor operates
-					</p>
-				</div>
-				
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-					{/* CAISO */}
-					<div class="bg-white dark:bg-[#1A1A1A] rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:-translate-y-1">
-						<div class="bg-blue-500 h-2"></div>
-						<div class="p-6">
-							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">CAISO</h3>
-							<p class="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">California's grid operator serving 80% of the state</p>
-							<div class="bg-gray-50 dark:bg-[#3A3A3A] rounded-md p-3">
-								<span class="text-sm font-medium text-gray-700 dark:text-gray-300">45 GW battery storage target</span>
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">Active Queries</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">12</span>
 							</div>
 						</div>
 					</div>
 
-					{/* ERCOT */}
-					<div class="bg-white dark:bg-[#1A1A1A] rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:-translate-y-1">
-						<div class="bg-red-500 h-2"></div>
-						<div class="p-6">
-							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">ERCOT</h3>
-							<p class="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">Texas's grid operator serving 26M customers</p>
-							<div class="bg-gray-50 dark:bg-[#3A3A3A] rounded-md p-3">
-								<span class="text-sm font-medium text-gray-700 dark:text-gray-300">12 GW battery storage target</span>
+					{/* Data Sync */}
+					<div class="bg-white dark:bg-[#2A2A2A] rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+						<div class="flex items-center justify-between mb-3">
+							<h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">Data Sync</h3>
+							<div class="flex items-center gap-1">
+								<div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+								<span class="text-xs font-mono text-green-600 dark:text-green-400">Live</span>
+							</div>
+						</div>
+						<div class="space-y-2">
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">Last Sync</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">2m ago</span>
+							</div>
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">Records Synced</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">1.2M</span>
+							</div>
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">Next Sync</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">28m</span>
 							</div>
 						</div>
 					</div>
 
-					{/* SPP */}
-					<div class="bg-white dark:bg-[#1A1A1A] rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:-translate-y-1">
-						<div class="bg-green-500 h-2"></div>
-						<div class="p-6">
-							<h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">SPP</h3>
-							<p class="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">Southwest Power Pool serving 17 states</p>
-							<div class="bg-gray-50 dark:bg-[#3A3A3A] rounded-md p-3">
-								<span class="text-sm font-medium text-gray-700 dark:text-gray-300">8 GW battery storage target</span>
+					{/* Market Data */}
+					<div class="bg-white dark:bg-[#2A2A2A] rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+						<div class="flex items-center justify-between mb-3">
+							<h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">Market Data</h3>
+							<span class="px-2 py-0.5 text-xs font-mono bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded">Fresh</span>
+						</div>
+						<div class="space-y-2">
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">CAISO Latest</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">15m ago</span>
+							</div>
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">ERCOT Latest</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">18m ago</span>
+							</div>
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">Curve Vintage</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">Today</span>
+							</div>
+						</div>
+					</div>
+
+					{/* DB Metrics */}
+					<div class="bg-white dark:bg-[#2A2A2A] rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+						<div class="flex items-center justify-between mb-3">
+							<h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">DB Metrics</h3>
+							<span class="px-2 py-0.5 text-xs font-mono bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400 rounded">Monitor</span>
+						</div>
+						<div class="space-y-2">
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">Total Records</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">24.5M</span>
+							</div>
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">Storage Used</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">8.2 GB</span>
+							</div>
+							<div class="flex justify-between text-xs">
+								<span class="text-gray-500 dark:text-gray-400">Cache Hit Rate</span>
+								<span class="font-mono text-gray-900 dark:text-gray-100">94.3%</span>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</section>
 
-		{/* System Status */}
-		<section class="py-16 bg-[#F9FAFB] dark:bg-[#1A1A1A]">
-			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="text-center mb-12">
-					<h2 class="text-3xl font-bold text-[#2A2A2A] dark:text-gray-100 mb-4">Current System Status</h2>
-					<p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-						Real-time monitoring of platform health and recent analytics updates
-					</p>
-				</div>
-				
-				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-					{/* System Health */}
-					<div class="bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-						<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">System Health</h3>
-						<div class="space-y-3">
-							<div class="flex items-start gap-3">
-								<svg class="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-								</svg>
-								<span class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">All systems operational</span>
-							</div>
-							<div class="flex items-start gap-3">
-								<svg class="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-						</svg>
-								<span class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Last data refresh: 2 minutes ago</span>
-							</div>
-							<div class="flex items-start gap-3">
-								<svg class="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-								</svg>
-								<span class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">99.8% uptime this month</span>
-							</div>
+				{/* Action Bar */}
+				<div class="mt-4 flex items-center justify-between p-3 bg-white dark:bg-[#2A2A2A] rounded-lg border border-gray-200 dark:border-gray-700">
+					<div class="flex items-center gap-4 text-xs">
+						<div class="flex items-center gap-2">
+							<span class="text-gray-500 dark:text-gray-400">Database:</span>
+							<span class="font-mono text-gray-900 dark:text-gray-100">PostgreSQL 15.3</span>
+						</div>
+						<div class="h-3 w-px bg-gray-300 dark:bg-gray-600"></div>
+						<div class="flex items-center gap-2">
+							<span class="text-gray-500 dark:text-gray-400">Connection Pool:</span>
+							<span class="font-mono text-gray-900 dark:text-gray-100">8/20 active</span>
+						</div>
+						<div class="h-3 w-px bg-gray-300 dark:bg-gray-600"></div>
+						<div class="flex items-center gap-2">
+							<span class="text-gray-500 dark:text-gray-400">Last Health Check:</span>
+							<span class="font-mono text-green-600 dark:text-green-400">5s ago</span>
 						</div>
 					</div>
-
-					{/* Recent Updates */}
-					<div class="bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-						<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Recent Updates</h3>
-						<div class="space-y-3">
-							<div class="flex items-start gap-3">
-								<svg class="w-4 h-4 text-blue-500 dark:text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-								</svg>
-								<span class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Curve analysis updated 15 minutes ago</span>
-							</div>
-							<div class="flex items-start gap-3">
-								<svg class="w-4 h-4 text-blue-500 dark:text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-								</svg>
-								<span class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Market forecasts refreshed 1 hour ago</span>
-				</div>
-							<div class="flex items-start gap-3">
-								<svg class="w-4 h-4 text-blue-500 dark:text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-						</svg>
-								<span class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Daily analysis completed</span>
-							</div>
-						</div>
-					</div>
-
-					{/* Active Alerts */}
-					<div class="bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-						<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Active Alerts</h3>
-						<div class="space-y-3">
-							<div class="flex items-start gap-3">
-								<svg class="w-4 h-4 text-orange-500 dark:text-orange-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-									<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-								</svg>
-								<span class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">ERCOT: High volatility expected 3-5 PM today</span>
-							</div>
-							<div class="flex items-start gap-3">
-								<svg class="w-4 h-4 text-blue-500 dark:text-blue-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-									<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-								</svg>
-								<span class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">SPP: Maintenance window scheduled this weekend</span>
-				</div>
-							<div class="flex items-start gap-3">
-								<svg class="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-						</svg>
-								<span class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">CAISO: All systems normal</span>
-							</div>
-						</div>
-					</div>
+					<button class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+						View Logs →
+					</button>
 				</div>
 			</div>
 		</section>

@@ -13,6 +13,17 @@
   external_node_modules = ["@prisma/client", "@astrojs/react"]
   node_bundler = "esbuild"
 
+# CORS Headers for Shared Navigation Component
+# Allow shared-header.js to be loaded from any GridStor site or localhost
+[[headers]]
+  for = "/shared-header.js"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Max-Age = "3600"
+    Cache-Control = "public, max-age=300, s-maxage=600"
+
 # Edge Functions Configuration
 # Smart asset routing based on referer header
 # The edge function checks the referer to determine which backend to proxy to
@@ -214,6 +225,168 @@
 
 # New Navigation Structure
 # Long Term Outlook - Revenue Forecasts & Fundamentals
+
+# Specific Long Term Outlook dropdown menu items
+[[redirects]]
+  from = "/long-term-outlook/revenue-forecasts"
+  to = "https://gridstor.netlify.app/revenue-forecasts/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/revenue-forecasts/*"
+  to = "https://gridstor.netlify.app/revenue-forecasts/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/curve-browser"
+  to = "https://gridstor.netlify.app/curve-browser/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/curve-browser/*"
+  to = "https://gridstor.netlify.app/curve-browser/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/curve-schedule"
+  to = "https://gridstor.netlify.app/curve-schedule/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/curve-schedule/*"
+  to = "https://gridstor.netlify.app/curve-schedule/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/curve-tracker"
+  to = "https://gridstor.netlify.app/curve-tracker/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/curve-tracker/*"
+  to = "https://gridstor.netlify.app/curve-tracker/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/fundamentals"
+  to = "https://gst-fundamentals.netlify.app/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/fundamentals/*"
+  to = "https://gst-fundamentals.netlify.app/:splat"
+  status = 200
+  force = true
+
+# Curve Admin routes
+[[redirects]]
+  from = "/curve-admin/uploader"
+  to = "https://gridstor.netlify.app/curve-uploader/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/curve-admin/uploader/*"
+  to = "https://gridstor.netlify.app/curve-uploader/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/curve-admin/inventory"
+  to = "https://gridstor.netlify.app/curve-inventory/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/curve-admin/inventory/*"
+  to = "https://gridstor.netlify.app/curve-inventory/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/curve-admin/schedules"
+  to = "https://gridstor.netlify.app/curve-schedule/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/curve-admin/schedules/*"
+  to = "https://gridstor.netlify.app/curve-schedule/:splat"
+  status = 200
+  force = true
+
+# Forecast Admin routes
+[[redirects]]
+  from = "/forecast-admin/curves"
+  to = "https://gridstor.netlify.app/forecast-admin/curves/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/forecast-admin/curves/*"
+  to = "https://gridstor.netlify.app/forecast-admin/curves/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/forecast-admin/schedules"
+  to = "https://gridstor.netlify.app/forecast-admin/schedules/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/forecast-admin/schedules/*"
+  to = "https://gridstor.netlify.app/forecast-admin/schedules/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/forecast-admin/docs"
+  to = "https://gridstor.netlify.app/forecast-admin/docs/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/forecast-admin/docs/*"
+  to = "https://gridstor.netlify.app/forecast-admin/docs/:splat"
+  status = 200
+  force = true
+
+# Development Operations routes
+[[redirects]]
+  from = "/dev-ops/database"
+  to = "https://gridstordayzer.netlify.app/admin/database"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/dev-ops/database/*"
+  to = "https://gridstordayzer.netlify.app/admin/database/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/dev-ops/api"
+  to = "https://gridstordayzer.netlify.app/admin/api"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/dev-ops/api/*"
+  to = "https://gridstordayzer.netlify.app/admin/api/:splat"
+  status = 200
+  force = true
+
+# Default Long Term Outlook (Overview)
 [[redirects]]
   from = "/long-term-outlook"
   to = "https://gridstor.netlify.app/revenue-forecasts/"
@@ -227,6 +400,33 @@
   force = true
 
 # Short Term Outlook
+
+# Specific Short Term Outlook dropdown menu items
+[[redirects]]
+  from = "/short-term-outlook/market-ops"
+  to = "https://gridstordayzer.netlify.app/market-ops"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/short-term-outlook/market-ops/*"
+  to = "https://gridstordayzer.netlify.app/market-ops/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/short-term-outlook/performance"
+  to = "https://gridstordayzer.netlify.app/performance"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/short-term-outlook/performance/*"
+  to = "https://gridstordayzer.netlify.app/performance/:splat"
+  status = 200
+  force = true
+
+# Default Short Term Outlook (Overview)
 [[redirects]]
   from = "/short-term-outlook"
   to = "https://gridstordayzer.netlify.app/short-term-outlook"

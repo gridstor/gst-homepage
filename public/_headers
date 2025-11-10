@@ -14,3 +14,14 @@
 
 /curve-viewer/*
   # Remove any inherited authentication to prevent conflicts with edge function
+
+# Shared header files - Allow cross-origin loading for unified header
+/shared-header.js
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+  Content-Type: application/javascript
+
+/shared-header.css
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+  Content-Type: text/css
