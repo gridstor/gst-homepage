@@ -23,6 +23,7 @@
     Access-Control-Allow-Headers = "Content-Type"
     Access-Control-Max-Age = "3600"
     Cache-Control = "public, max-age=300, s-maxage=600"
+    X-Robots-Tag = "none"
 
 # Edge Functions Configuration
 # Smart asset routing based on referer header
@@ -57,6 +58,14 @@
 # NOTE: Asset routing is now handled by the Edge Function (asset-proxy.ts)
 # The Edge Function intelligently routes /_astro/* and /assets/* based on the referer header
 # This allows each proxied page to load its correct assets dynamically
+
+# PUBLIC SHARED RESOURCES
+# Serve shared-header.js publicly via serverless function (bypasses password protection)
+[[redirects]]
+  from = "/shared-header.js"
+  to = "/.netlify/functions/shared-header"
+  status = 200
+  force = true
 
 # API routes - Gridstor APIs (curve-viewer and admin tools backend)
 # These APIs are used by the curve-viewer, admin tools, and data management
