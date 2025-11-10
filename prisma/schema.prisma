@@ -17,6 +17,14 @@ model Location {
   latitude    Float?
   longitude   Float?
   isActive    Boolean  @default(true)
+  
+  // Map display configuration
+  locationType     String?  @db.VarChar(20)   // 'hub' or 'node'
+  mapCalloutX      Float?                     // Callout X position (percentage)
+  mapCalloutY      Float?                     // Callout Y position (percentage)
+  standardDuration String?  @db.VarChar(10)   // Standard battery duration for market
+  capacityValue    Float?   @default(0)       // Capacity revenue value
+  
   createdAt   DateTime @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
   

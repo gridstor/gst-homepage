@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import { geoAlbersUsa } from 'd3-geo';
-import { Download, Loader2, AlertCircle } from 'lucide-react';
+import { Download, Loader2, AlertCircle, Filter, Calendar, TrendingUp, Database, Map as MapIcon, Table as TableIcon, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 // Types for API response
 interface LocationData {
@@ -14,15 +15,22 @@ interface LocationData {
   region: string;
   coordinates: [number, number];
   calloutPosition: { x: number; y: number };
+  locationType: 'hub' | 'node'; // Location type for visual distinction
+  standardDuration: string; // Standard battery duration for market
   curves: {
     energyArbitrage: number;
     ancillaryServices: number;
     capacity: number;
   };
   curveSource: 'GridStor P50' | 'Aurora Base' | 'ASCEND';
+  duration?: string; // Optional duration label (e.g., "4h", "2.6 h")
   metadata?: {
     dbLocationName?: string;
     aliases?: string[];
+  };
+  dataFreshness?: {
+    lastUpdated: string;
+    daysOld: number;
   };
 }
 
@@ -42,6 +50,46 @@ export default function RevenueForcastMap() {
   const [locations, setLocations] = useState<LocationData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Filter states
+  const [timeHorizon, setTimeHorizon] = useState<'1' | '5' | '10' | 'lifetime'>('10');
+  const [curveVintage, setCurveVintage] = useState<'all' | 'GridStor' | 'Aurora' | 'Ascend'>('all');
+  const [revenueComponent, setRevenueComponent] = useState<'total' | 'energyArb' | 'as' | 'capacity'>('total');
+  const [viewMode, setViewMode] = useState<'map' | 'table'>('map');
+  const [selectedMarket, setSelectedMarket] = useState<string>('all');
+  const [selectedType, setSelectedType] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  
+  // Custom date range states
+  const [useCustomRange, setUseCustomRange] = useState(false);
+  const currentYear = new Date().getFullYear();
+  const [startYear, setStartYear] = useState<number>(currentYear);
+  const [endYear, setEndYear] = useState<number>(currentYear + 10);
+  
+  // Update custom range when timeHorizon changes
+  useEffect(() => {
+    if (!useCustomRange) {
+      const current = new Date().getFullYear();
+      switch (timeHorizon) {
+        case '1':
+          setStartYear(current);
+          setEndYear(current);
+          break;
+        case '5':
+          setStartYear(current);
+          setEndYear(current + 4);
+          break;
+        case '10':
+          setStartYear(current);
+          setEndYear(current + 9);
+          break;
+        case 'lifetime':
+          setStartYear(current);
+          setEndYear(current + 29);
+          break;
+      }
+    }
+  }, [timeHorizon, useCustomRange]);
 
   // Fetch locations from API
   useEffect(() => {
@@ -50,7 +98,17 @@ export default function RevenueForcastMap() {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('/api/map-locations');
+        // Build query parameters
+        const params = new URLSearchParams();
+        if (curveVintage !== 'all') {
+          params.append('curveSource', curveVintage);
+        }
+        
+        // Always use startYear and endYear (auto-updated based on timeHorizon)
+        params.append('startYear', startYear.toString());
+        params.append('endYear', endYear.toString());
+        
+        const response = await fetch(`/api/map-locations?${params.toString()}`);
         const result: ApiResponse = await response.json();
         
         if (!result.success) {
@@ -67,8 +125,8 @@ export default function RevenueForcastMap() {
       }
     };
     
-    fetchLocations();
-  }, []);
+      fetchLocations();
+    }, [timeHorizon, curveVintage, useCustomRange, startYear, endYear]);
 
   // Helper function to get market color
   const getMarketColor = (market: string) => {
@@ -110,6 +168,13 @@ export default function RevenueForcastMap() {
     }
   };
 
+  // Market color helpers
+  const MARKET_COLORS = {
+    CAISO: { border: 'border-blue-500', bg: 'bg-blue-50', text: 'text-blue-600' },
+    ERCOT: { border: 'border-red-500', bg: 'bg-red-50', text: 'text-red-600' },
+    SPP: { border: 'border-green-500', bg: 'bg-green-50', text: 'text-green-600' }
+  };
+
   const getRevenueBreakdown = (location: LocationData) => {
     const energyArb = location.curves.energyArbitrage;
     const as = location.curves.ancillaryServices;
@@ -123,21 +188,75 @@ export default function RevenueForcastMap() {
       total: total.toFixed(2)
     };
   };
+  
+  // Get the display value based on selected revenue component
+  const getDisplayValue = (location: LocationData): { value: string; label: string } => {
+    const breakdown = getRevenueBreakdown(location);
+    
+    switch (revenueComponent) {
+      case 'energyArb':
+        return { value: breakdown.energyArb, label: 'Energy Arb' };
+      case 'as':
+        return { value: breakdown.as, label: 'Ancillary Services' };
+      case 'capacity':
+        return { value: breakdown.capacity, label: 'Capacity' };
+      case 'total':
+      default:
+        return { value: breakdown.total, label: 'Total Revenue' };
+    }
+  };
+
+  // Filter locations by market, type, and search
+  const filteredLocations = locations.filter(loc => {
+    // Market filter
+    const marketMatch = selectedMarket === 'all' || loc.market === selectedMarket;
+    
+    // Type filter
+    const typeMatch = selectedType === 'all' || loc.locationType === selectedType;
+    
+    // Search filter
+    const searchMatch = searchQuery === '' || 
+      loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      loc.market.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      loc.region.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return marketMatch && typeMatch && searchMatch;
+  });
+
+  // Count locations by type for filter labels
+  const typeCounts = {
+    all: locations.length,
+    hub: locations.filter(loc => loc.locationType === 'hub').length,
+    node: locations.filter(loc => loc.locationType === 'node').length,
+  };
 
   const downloadData = () => {
-    const data = locations.map(location => {
+    const data = filteredLocations.map(location => {
       const breakdown = getRevenueBreakdown(location);
+      const displayData = getDisplayValue(location);
+
+      // Build filter info for filename
+      const startYear = useCustomRange ? startDate.split('-')[0] : null;
+      const endYear = useCustomRange ? endDate.split('-')[0] : null;
+      const filterSuffix = [
+        useCustomRange ? `${startYear}-${endYear}` : `${timeHorizon}yr`,
+        curveVintage !== 'all' ? curveVintage : null,
+        revenueComponent !== 'total' ? revenueComponent : null
+      ].filter(Boolean).join('_');
+      
       return {
         Location: location.name,
         DB_Location_Name: location.metadata?.dbLocationName || location.name,
         Market: location.market,
         Region: location.region,
         Curve_Source: location.curveSource,
-        Duration: '4h',
+        Duration: location.standardDuration,
         Energy_Arbitrage: `$${breakdown.energyArb}`,
         Ancillary_Services: `$${breakdown.as}`,
         Capacity: `$${breakdown.capacity}`,
-        Total_Revenue: `$${breakdown.total}`
+        Total_Revenue: `$${breakdown.total}`,
+        Displayed_Value: `$${displayData.value}`,
+        Displayed_Component: displayData.label
       };
     });
     
@@ -151,21 +270,197 @@ export default function RevenueForcastMap() {
     const a = document.createElement('a');
     a.href = url;
     const timestamp = new Date().toISOString().split('T')[0];
-    a.download = `revenue-forecast-${timestamp}.csv`;
+    const downloadFilterSuffix = [
+      `${startYear}-${endYear}`,
+      curveVintage !== 'all' ? curveVintage : null,
+      revenueComponent !== 'total' ? revenueComponent : null
+    ].filter(Boolean).join('_');
+    a.download = `revenue-forecast-${timestamp}_${downloadFilterSuffix}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
 
-  // Map dimensions - smaller map for better spacing
-  const mapWidth = 600;
-  const mapHeight = 400;
+  // Map dimensions - compact for tight layout
+  const mapWidth = 550;
+  const mapHeight = 350;
   
   // Create projection - adjusted scale for smaller map
   const projection = geoAlbersUsa()
-    .scale(675)
+    .scale(620)
     .translate([mapWidth / 2, mapHeight / 2]);
 
   const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
+
+  // Table Component with Sorting
+  type RevenueSortColumn = 'market' | 'location' | 'region' | 'type' | 'duration' | 'energyArb' | 'as' | 'capacity' | 'total' | 'source';
+  type SortDirection = 'asc' | 'desc' | null;
+
+  const RevenueTable = () => {
+    const [sortColumn, setSortColumn] = useState<RevenueSortColumn | null>(null);
+    const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+
+    const handleSort = (column: RevenueSortColumn) => {
+      if (sortColumn === column) {
+        // Cycle through: asc -> desc -> null
+        if (sortDirection === 'asc') {
+          setSortDirection('desc');
+        } else if (sortDirection === 'desc') {
+          setSortDirection(null);
+          setSortColumn(null);
+        }
+      } else {
+        setSortColumn(column);
+        setSortDirection('asc');
+      }
+    };
+
+    const getSortIcon = (column: RevenueSortColumn) => {
+      if (sortColumn !== column) {
+        return <ArrowUpDown className="w-3.5 h-3.5 opacity-40" />;
+      }
+      if (sortDirection === 'asc') {
+        return <ArrowUp className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />;
+      }
+      if (sortDirection === 'desc') {
+        return <ArrowDown className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />;
+      }
+      return <ArrowUpDown className="w-3.5 h-3.5 opacity-40" />;
+    };
+
+    // Sort locations based on current sort state
+    const sortedLocations = [...filteredLocations].sort((a, b) => {
+      if (!sortColumn || !sortDirection) return 0;
+
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortColumn) {
+        case 'market':
+          aValue = a.market;
+          bValue = b.market;
+          break;
+        case 'location':
+          aValue = a.name;
+          bValue = b.name;
+          break;
+        case 'region':
+          aValue = a.region;
+          bValue = b.region;
+          break;
+        case 'type':
+          aValue = a.locationType;
+          bValue = b.locationType;
+          break;
+        case 'duration':
+          aValue = a.standardDuration;
+          bValue = b.standardDuration;
+          break;
+        case 'energyArb':
+          aValue = a.curves.energyArbitrage;
+          bValue = b.curves.energyArbitrage;
+          break;
+        case 'as':
+          aValue = a.curves.ancillaryServices;
+          bValue = b.curves.ancillaryServices;
+          break;
+        case 'capacity':
+          aValue = a.curves.capacity;
+          bValue = b.curves.capacity;
+          break;
+        case 'total':
+          aValue = a.curves.energyArbitrage + a.curves.ancillaryServices + a.curves.capacity;
+          bValue = b.curves.energyArbitrage + b.curves.ancillaryServices + b.curves.capacity;
+          break;
+        case 'source':
+          aValue = a.curveSource;
+          bValue = b.curveSource;
+          break;
+        default:
+          return 0;
+      }
+
+      // Handle string vs number comparison
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        const comparison = aValue.localeCompare(bValue);
+        return sortDirection === 'asc' ? comparison : -comparison;
+      } else {
+        const comparison = aValue - bValue;
+        return sortDirection === 'asc' ? comparison : -comparison;
+      }
+    });
+
+    const SortableHeader = ({ column, children, align = 'left' }: { column: RevenueSortColumn; children: React.ReactNode; align?: 'left' | 'center' | 'right' }) => {
+      const alignClass = align === 'center' ? 'justify-center' : align === 'right' ? 'justify-end' : 'justify-start';
+      const textAlignClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : 'text-left';
+      
+      return (
+        <th className={`px-4 py-3 ${textAlignClass} font-semibold text-gray-700 dark:text-gray-300`}>
+          <button
+            onClick={() => handleSort(column)}
+            className={`flex items-center gap-1.5 ${alignClass} w-full hover:text-gray-900 dark:hover:text-gray-100 transition-colors`}
+          >
+            {children}
+            {getSortIcon(column)}
+          </button>
+        </th>
+      );
+    };
+
+    return (
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 dark:bg-[#1A1A1A] border-b border-gray-200 dark:border-gray-700">
+            <tr>
+              <SortableHeader column="market" align="left">Market</SortableHeader>
+              <SortableHeader column="location" align="left">Location</SortableHeader>
+              <SortableHeader column="region" align="left">Region</SortableHeader>
+              <SortableHeader column="type" align="left">Type</SortableHeader>
+              <SortableHeader column="duration" align="left">Duration</SortableHeader>
+              <SortableHeader column="energyArb" align="right">Energy Arb</SortableHeader>
+              <SortableHeader column="as" align="right">Ancillary Svc</SortableHeader>
+              <SortableHeader column="capacity" align="right">Capacity</SortableHeader>
+              <SortableHeader column="total" align="right">Total Revenue</SortableHeader>
+              <SortableHeader column="source" align="left">Source</SortableHeader>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            {sortedLocations.map((location) => {
+              const colors = MARKET_COLORS[location.market as keyof typeof MARKET_COLORS];
+              const breakdown = getRevenueBreakdown(location);
+              
+              return (
+                <tr key={location.id} className="hover:bg-gray-50 dark:hover:bg-[#1A1A1A] transition-colors">
+                  <td className="px-4 py-3">
+                    <span className={`text-xs ${colors.bg} ${colors.text} px-2 py-1 rounded font-semibold`}>
+                      {location.market}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{location.name}</td>
+                  <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{location.region}</td>
+                  <td className="px-4 py-3">
+                    <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">
+                      {location.locationType}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{location.standardDuration}</td>
+                  <td className="px-4 py-3 text-right font-mono text-gray-900 dark:text-gray-100">${breakdown.energyArb}</td>
+                  <td className="px-4 py-3 text-right font-mono text-gray-900 dark:text-gray-100">${breakdown.as}</td>
+                  <td className="px-4 py-3 text-right font-mono text-gray-900 dark:text-gray-100">${breakdown.capacity}</td>
+                  <td className="px-4 py-3 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">${breakdown.total}</td>
+                  <td className="px-4 py-3">
+                    <span className="text-xs bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-2 py-1 rounded">
+                      {location.curveSource === 'GridStor P50' ? 'Oct 2025' : 
+                       location.curveSource === 'Aurora Base' ? 'Sep 2025' : 'Aug 2025'}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   // Loading state
   if (loading) {
@@ -212,44 +507,257 @@ export default function RevenueForcastMap() {
   }
 
   return (
-    <div>
-      {/* Download Button Only */}
-      <div className="mb-6 flex justify-end">
-        <button
-          onClick={downloadData}
-          className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 transition-all duration-200 font-medium text-sm shadow-sm hover:shadow-md"
-        >
-          <Download size={16} />
-          Download Data
-        </button>
+    <div className="bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm">
+      {/* Filter Bar - Matching YTD Section Style */}
+      <div className="flex flex-col gap-4 p-4 border-b border-gray-200 dark:border-gray-700">
+        {/* Top Row: Filters */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <Filter size={16} className="text-gray-500 dark:text-gray-400" />
+          
+          {/* Market/Region Filter */}
+          <Select value={selectedMarket} onValueChange={setSelectedMarket}>
+            <SelectTrigger className="w-[160px] bg-white dark:bg-[#2A2A2A] border-gray-200 dark:border-gray-700">
+              <SelectValue placeholder="Region" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Regions</SelectItem>
+              <SelectItem value="CAISO">CAISO</SelectItem>
+              <SelectItem value="ERCOT">ERCOT</SelectItem>
+              <SelectItem value="SPP">SPP</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Type Filter */}
+          <Select value={selectedType} onValueChange={setSelectedType}>
+            <SelectTrigger className="w-[160px] bg-white dark:bg-[#2A2A2A] border-gray-200 dark:border-gray-700">
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types ({typeCounts.all})</SelectItem>
+              <SelectItem value="hub">Hubs ({typeCounts.hub})</SelectItem>
+              <SelectItem value="node">Nodes ({typeCounts.node})</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Curve Vintage Filter */}
+          <Select value={curveVintage} onValueChange={(value) => setCurveVintage(value as 'all' | 'GridStor' | 'Aurora' | 'Ascend')}>
+            <SelectTrigger className="w-[180px] bg-white dark:bg-[#2A2A2A] border-gray-200 dark:border-gray-700">
+              <SelectValue placeholder="Curve Vintage" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Current Vintage</SelectItem>
+              <SelectItem value="GridStor">Fresh as of Oct 2025</SelectItem>
+              <SelectItem value="Aurora">Fresh as of Sep 2025</SelectItem>
+              <SelectItem value="Ascend">Fresh as of Aug 2025</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Search Filter */}
+          <div className="relative flex-1 min-w-[200px]">
+            <input
+              type="text"
+              placeholder="Search locations..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-3 py-2 pl-9 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-[#2A2A2A] text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            />
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Second Row: Date Range Filters */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <Calendar size={16} className="text-gray-500 dark:text-gray-400" />
+          
+          {/* Quick Date Range Presets */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-500 dark:text-gray-400">Forecast Period:</span>
+            <button
+              onClick={() => { 
+                setUseCustomRange(false); 
+                setTimeHorizon('1'); 
+              }}
+              className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
+                !useCustomRange && timeHorizon === '1'
+                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              Next 1 Year
+            </button>
+            <button
+              onClick={() => { 
+                setUseCustomRange(false); 
+                setTimeHorizon('5'); 
+              }}
+              className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
+                !useCustomRange && timeHorizon === '5'
+                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              Next 5 Years
+            </button>
+            <button
+              onClick={() => { 
+                setUseCustomRange(false); 
+                setTimeHorizon('10'); 
+              }}
+              className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
+                !useCustomRange && timeHorizon === '10'
+                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              Next 10 Years
+            </button>
+            <button
+              onClick={() => { 
+                setUseCustomRange(false); 
+                setTimeHorizon('lifetime'); 
+              }}
+              className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
+                !useCustomRange && timeHorizon === 'lifetime'
+                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              Lifetime
+            </button>
+          </div>
+
+          {/* Custom Date Range - Shows selected period dates */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-500 dark:text-gray-400">or Custom:</span>
+            <input
+              type="number"
+              min="2020"
+              max="2060"
+              value={startYear}
+              onChange={(e) => {
+                setStartYear(parseInt(e.target.value));
+                setUseCustomRange(true);
+              }}
+              className="w-20 px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-[#2A2A2A] text-gray-900 dark:text-gray-100"
+            />
+            <span className="text-gray-400">to</span>
+            <input
+              type="number"
+              min="2020"
+              max="2060"
+              value={endYear}
+              onChange={(e) => {
+                setEndYear(parseInt(e.target.value));
+                setUseCustomRange(true);
+              }}
+              className="w-20 px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-[#2A2A2A] text-gray-900 dark:text-gray-100"
+            />
+          </div>
+        </div>
+
+        {/* Third Row: Quick Filters & View Toggle */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          {/* Quick Filter Chips */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs text-gray-500 dark:text-gray-400">Quick:</span>
+            <button
+              onClick={() => { setSelectedMarket('CAISO'); setSelectedType('all'); }}
+              className="text-xs px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+            >
+              CAISO All
+            </button>
+            <button
+              onClick={() => { setSelectedMarket('ERCOT'); setSelectedType('all'); }}
+              className="text-xs px-2.5 py-1 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+            >
+              ERCOT All
+            </button>
+            <button
+              onClick={() => { setSelectedMarket('SPP'); setSelectedType('all'); }}
+              className="text-xs px-2.5 py-1 rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+            >
+              SPP All
+            </button>
+            <button
+              onClick={() => { setSelectedMarket('all'); setSelectedType('hub'); }}
+              className="text-xs px-2.5 py-1 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+            >
+              All Hubs
+            </button>
+            {(selectedMarket !== 'all' || selectedType !== 'all' || searchQuery !== '') && (
+              <button
+                onClick={() => { setSelectedMarket('all'); setSelectedType('all'); setSearchQuery(''); }}
+                className="text-xs px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+
+          {/* View Toggle */}
+          <div className="flex items-center gap-2 bg-gray-100 dark:bg-[#1A1A1A] rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('map')}
+              className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                viewMode === 'map'
+                  ? 'bg-white dark:bg-[#2A2A2A] shadow-sm text-gray-900 dark:text-gray-100'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+              }`}
+            >
+              <MapIcon size={16} />
+              <span className="text-sm font-medium">Map View</span>
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                viewMode === 'table'
+                  ? 'bg-white dark:bg-[#2A2A2A] shadow-sm text-gray-900 dark:text-gray-100'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+              }`}
+            >
+              <TableIcon size={16} />
+              <span className="text-sm font-medium">Table View</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Map Container with Edge Callouts */}
-      <div className="relative bg-white rounded-lg shadow-sm p-6 transition-all duration-200 hover:shadow-md min-h-[600px]" style={{ height: '800px' }}>
+      {/* Content - Map or Table */}
+      {viewMode === 'map' ? (
+      <div className="relative p-4" style={{ height: '500px' }}>
         {/* SVG Overlay for Connecting Lines */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
-          {locations.map((location) => {
+          {filteredLocations.map((location) => {
             const screenCoords = projection(location.coordinates);
             if (!screenCoords) return null;
             
             // Container dimensions
-            const containerPadding = 24; // p-6 = 24px
-            const availableWidth = 1200 - (containerPadding * 2); // Estimate container width minus padding
-            const availableHeight = 800 - (containerPadding * 2); // Container height minus padding
+            const containerHeight = 500;
+            const containerPadding = 16; // p-4 padding
+            const containerWidth = 1000; // Approximate container width (will scale responsively)
             
-            // Map is centered in the available space
-            const mapOffsetX = (availableWidth - mapWidth) / 2;
-            const mapOffsetY = (availableHeight - mapHeight) / 2;
+            // The map (550x350) is centered both vertically and horizontally
+            const innerHeight = containerHeight - (containerPadding * 2);
+            const innerWidth = containerWidth - (containerPadding * 2);
+            const mapOffsetY = (innerHeight - mapHeight) / 2;
+            const mapOffsetX = (innerWidth - mapWidth) / 2;
             
-            // Marker position relative to container (including padding)
-            const markerX = ((containerPadding + mapOffsetX + screenCoords[0]) / 1200) * 100;
-            const markerY = ((containerPadding + mapOffsetY + screenCoords[1]) / 800) * 100;
+            // Marker position from top-left of container
+            // Y: padding + vertical offset + position within map
+            const markerAbsoluteY = containerPadding + mapOffsetY + screenCoords[1];
             
-            // Use callout position from API
+            // X: padding + horizontal offset + position within map
+            const markerAbsoluteX = containerPadding + mapOffsetX + screenCoords[0];
+            
+            // Convert to percentage for responsive positioning
+            const markerX = (markerAbsoluteX / containerWidth) * 100;
+            const markerY = (markerAbsoluteY / containerHeight) * 100;
+            
+            // Callout positions are already in percentage
             const calloutX = location.calloutPosition.x;
             const calloutY = location.calloutPosition.y;
-            
-            const color = getMarketColor(location.market);
             
             return (
               <line
@@ -258,17 +766,17 @@ export default function RevenueForcastMap() {
                 y1={`${markerY}%`}
                 x2={`${calloutX}%`}
                 y2={`${calloutY}%`}
-                stroke={color}
+                stroke="#6B7280"
                 strokeWidth="1.5"
-                strokeDasharray="3,3"
-                opacity="0.4"
+                strokeDasharray="4,3"
+                opacity="0.5"
               />
             );
           })}
         </svg>
 
-        {/* Map Container - Centered with more space around */}
-        <div className="absolute inset-6 flex items-center justify-center">
+        {/* Map Container - Centered */}
+        <div className="absolute inset-4 flex items-center justify-center">
           <div className="relative" style={{ width: `${mapWidth}px`, height: `${mapHeight}px` }}>
             {/* US Map */}
             <ComposableMap
@@ -276,7 +784,7 @@ export default function RevenueForcastMap() {
               width={mapWidth}
               height={mapHeight}
               projectionConfig={{
-                scale: 675
+                scale: 620
               }}
               className="w-full h-full"
             >
@@ -308,142 +816,120 @@ export default function RevenueForcastMap() {
                 }
               </Geographies>
               
-              {/* Location Markers */}
-              {locations.map((location) => (
-                <Marker key={location.id} coordinates={location.coordinates}>
-                  <circle
-                    r={8}
-                    fill={getMarketColor(location.market)}
-                    stroke="white"
-                    strokeWidth={2}
-                    style={{
-                      filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))"
-                    }}
-                  />
-                </Marker>
-              ))}
+              {/* Location Markers - Different styles for hubs vs nodes */}
+              {filteredLocations.map((location) => {
+                const color = getMarketColor(location.market);
+                return (
+                  <Marker key={location.id} coordinates={location.coordinates}>
+                    {location.locationType === 'hub' ? (
+                      // Hub marker: square
+                      <rect
+                        x={-5}
+                        y={-5}
+                        width={10}
+                        height={10}
+                        fill={color}
+                        stroke="white"
+                        strokeWidth={2}
+                        style={{
+                          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))"
+                        }}
+                      />
+                    ) : (
+                      // Node marker: small tight circle
+                      <circle
+                        r={4}
+                        fill={color}
+                        stroke="white"
+                        strokeWidth={1.5}
+                        style={{
+                          filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))"
+                        }}
+                      />
+                    )}
+                  </Marker>
+                );
+              })}
             </ComposableMap>
           </div>
         </div>
 
-        {/* Edge Callout Boxes */}
-        {locations.map((location) => {
-          const breakdown = getRevenueBreakdown(location);
+        {/* Callout Boxes - Larger and clearer */}
+        {filteredLocations.map((location) => {
+          const displayData = getDisplayValue(location);
           const color = getMarketColor(location.market);
           
           return (
             <motion.div
               key={location.id}
               whileHover={{ boxShadow: "0 8px 20px rgba(0,0,0,0.12)" }}
-              className="absolute bg-white rounded-lg p-4 border-l-4 shadow-sm transition-all duration-200"
+              className="absolute bg-white rounded-lg border-l-4 shadow-md"
               style={{
                 left: `${location.calloutPosition.x}%`,
                 top: `${location.calloutPosition.y}%`,
                 transform: 'translate(-50%, -50%)',
-                width: '180px',
+                width: '175px',
                 borderColor: color,
                 zIndex: 20
               }}
             >
-              {/* Header with Location + Total */}
-              <div className="flex items-center justify-between mb-0.5">
-                <div className="flex items-center gap-1.5">
-                  <div 
-                    className="w-2.5 h-2.5 rounded-full" 
-                    style={{ backgroundColor: color }}
-                  />
-                  <h3 className="text-sm font-semibold text-gray-800" title={location.metadata?.dbLocationName}>
+              <div className="p-3">
+                {/* Type indicator and location name with duration */}
+                <div className="flex items-center gap-2 mb-1.5">
+                  {location.locationType === 'hub' ? (
+                    <div className="w-3 h-3" style={{ backgroundColor: color }} />
+                  ) : (
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+                  )}
+                  <h3 className="text-sm font-bold text-gray-900 flex-1" title={location.metadata?.dbLocationName}>
                     {location.name}
                   </h3>
-                </div>
-                <div 
-                  className="text-base font-bold font-mono"
-                  style={{ 
-                    color: color,
-                    fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace"
-                  }}
-                >
-                  ${breakdown.total}
-                </div>
-              </div>
-              
-              {/* Region */}
-              <div className="text-[10px] text-gray-500 mb-2">{location.region}</div>
-              
-              {/* Divider */}
-              <div className="border-t border-gray-100 mb-2" />
-              
-              {/* Energy Arbitrage - Featured */}
-              <div className="bg-gray-50 rounded-md p-2 mb-2">
-                <div className="text-[10px] uppercase tracking-wider font-medium text-gray-500 mb-0.5">
-                  ENERGY ARBITRAGE (4h)
-                </div>
-                <div className="mb-0.5">
-                  <div 
-                    className="text-base font-bold font-mono text-gray-900"
-                    style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}
-                  >
-                    ${breakdown.energyArb}
-                  </div>
-                </div>
-                <div className="text-[10px] text-gray-600">$/kW-month</div>
-              </div>
-              
-              {/* AS & Capacity Grid */}
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                <div className="bg-gray-50 rounded-md p-1.5">
-                  <div className="text-[9px] uppercase tracking-wider font-medium text-gray-500 mb-0.5">
-                    AS
-                  </div>
-                  <div 
-                    className="text-xs font-bold font-mono text-gray-900"
-                    style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}
-                  >
-                    ${breakdown.as}
-                  </div>
-                  <div className="text-[9px] text-gray-600">$/kW-mo</div>
+                  <span className="text-[9px] text-gray-500 font-semibold">
+                    {location.standardDuration}
+                  </span>
                 </div>
                 
-                <div className="bg-gray-50 rounded-md p-1.5">
-                  <div className="text-[9px] uppercase tracking-wider font-medium text-gray-500 mb-0.5">
-                    CAPACITY
-                  </div>
+                {/* Region */}
+                <div className="text-xs text-gray-600 mb-2">{location.region}</div>
+                
+                {/* Value with inline units */}
+                <div className="mb-2">
                   <div 
-                    className="text-xs font-bold font-mono text-gray-900"
-                    style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}
-                  >
-                    ${breakdown.capacity}
-                  </div>
-                  <div className="text-[9px] text-gray-600">$/kW-mo</div>
-                </div>
-              </div>
-              
-              {/* Total Section */}
-              <div className="border-t-2 border-gray-200 pt-2 mb-1">
-                <div className="flex items-center justify-between">
-                  <div className="text-[10px] uppercase tracking-wider font-semibold text-gray-600">
-                    TOTAL
-                  </div>
-                  <div 
-                    className="text-base font-bold font-mono"
+                    className="text-xl font-bold font-mono leading-none mb-0.5"
                     style={{ 
                       color: color,
                       fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace"
                     }}
                   >
-                    ${breakdown.total}
+                    ${displayData.value} <span className="text-xs text-gray-500 font-normal">/ kW-mo</span>
+                  </div>
+                  {revenueComponent !== 'total' && (
+                    <div className="text-[9px] text-gray-400 mt-1 uppercase font-semibold">
+                      {displayData.label}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Curve Run Date */}
+                <div className="border-t border-gray-100 pt-1.5">
+                  <div className="text-[8px] text-gray-400 uppercase tracking-wide">Curve Run Date</div>
+                  <div className="text-[10px] text-gray-600 font-medium mt-0.5">
+                    {location.curveSource === 'GridStor P50' ? 'Oct 2025' : 
+                     location.curveSource === 'Aurora Base' ? 'Sep 2025' : 'Aug 2025'}
                   </div>
                 </div>
-              </div>
-              
-              {/* Curve Source Indicator */}
-              <div className="text-[9px] text-gray-500 text-center pt-1 border-t border-gray-100">
-                {location.curveSource}
               </div>
             </motion.div>
           );
         })}
       </div>
+      ) : (
+        <div className="p-4">
+          <div className="bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <RevenueTable />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
