@@ -21,16 +21,32 @@ interface LocationData {
   region: string;
   coordinates: [number, number];
   calloutPosition: { x: number; y: number }; // Position as percentage of container
+  locationType: 'hub' | 'node'; // Location type for visual distinction
+  standardDuration: string; // Standard battery duration for market
   curves: {
     energyArbitrage: number; // Single value for default duration (4h)
     ancillaryServices: number; // Fixed AS value
     capacity: number; // Fixed capacity value
   };
   curveSource: 'GridStor P50' | 'Aurora Base' | 'ASCEND'; // Which curve is being used
+  duration?: string; // Optional duration label (e.g., "4h", "2.6 h")
   metadata?: {
     dbLocationName?: string; // Original database location name
     aliases?: string[]; // Alternative names
   };
+  dataFreshness?: {
+    lastUpdated: string;
+    daysOld: number;
+  };
+}
+
+// Query parameters for filtering
+interface QueryParams {
+  market?: string;
+  curveSource?: 'GridStor' | 'Aurora' | 'Ascend' | 'all';
+  startYear?: number;
+  endYear?: number;
+  years?: number; // Number of years from current (1, 5, 10, or 'lifetime')
 }
 
 // Location mapping with coordinates and display info
@@ -42,15 +58,31 @@ const LOCATION_MAP: Record<string, {
   coordinates: [number, number];
   calloutPosition: { x: number; y: number };
   capacity: number;
+  duration?: string;
+  locationType: 'hub' | 'node';
+  standardDuration: string;
 }> = {
+  'NP15': {
+    displayName: 'NP15',
+    dbName: 'NP15',
+    market: 'CAISO',
+    region: 'Northern California',
+    coordinates: [-121.4687, 38.5816],
+    calloutPosition: { x: 15, y: 15 },
+    capacity: 7.0,
+    locationType: 'node',
+    standardDuration: '4h'
+  },
   'SP15': {
     displayName: 'SP15',
     dbName: 'SP15',
     market: 'CAISO',
     region: 'Southern California',
     coordinates: [-118.2437, 34.0522],
-    calloutPosition: { x: 10, y: 83 },
-    capacity: 7.0
+    calloutPosition: { x: 15, y: 80 },
+    capacity: 7.0,
+    locationType: 'node',
+    standardDuration: '4h'
   },
   'Goleta': {
     displayName: 'Goleta',
@@ -58,8 +90,11 @@ const LOCATION_MAP: Record<string, {
     market: 'CAISO',
     region: 'Santa Barbara',
     coordinates: [-119.8276, 34.4208],
-    calloutPosition: { x: 10, y: 50 },
-    capacity: 7.0
+    calloutPosition: { x: 15, y: 45 },
+    capacity: 7.0,
+    duration: '2.6 h',
+    locationType: 'node',
+    standardDuration: '2.6h'
   },
   'Houston': {
     displayName: 'Houston',
@@ -67,8 +102,10 @@ const LOCATION_MAP: Record<string, {
     market: 'ERCOT',
     region: 'Houston Hub',
     coordinates: [-95.3698, 29.7604],
-    calloutPosition: { x: 90, y: 17 },
-    capacity: 0
+    calloutPosition: { x: 85, y: 15 },
+    capacity: 0,
+    locationType: 'hub',
+    standardDuration: '2h'
   },
   'Hidden Lakes': {
     displayName: 'Hidden Lakes',
@@ -76,8 +113,10 @@ const LOCATION_MAP: Record<string, {
     market: 'ERCOT',
     region: 'South of Houston',
     coordinates: [-94.7977, 29.2733],
-    calloutPosition: { x: 90, y: 50 },
-    capacity: 0
+    calloutPosition: { x: 85, y: 41 },
+    capacity: 0,
+    locationType: 'node',
+    standardDuration: '2h'
   },
   'Gunnar': {
     displayName: 'Gunnar',
@@ -85,8 +124,21 @@ const LOCATION_MAP: Record<string, {
     market: 'ERCOT',
     region: 'South Central Texas',
     coordinates: [-97.0633, 28.0367],
-    calloutPosition: { x: 90, y: 83 },
-    capacity: 0
+    calloutPosition: { x: 85, y: 67 },
+    capacity: 0,
+    locationType: 'node',
+    standardDuration: '2h'
+  },
+  'South Hub ERCOT': {
+    displayName: 'South Hub',
+    dbName: 'South Hub',
+    market: 'ERCOT',
+    region: 'Southern Texas',
+    coordinates: [-98.2300, 26.2034],
+    calloutPosition: { x: 58, y: 88 },
+    capacity: 0,
+    locationType: 'hub',
+    standardDuration: '2h'
   },
   'North Hub': {
     displayName: 'North Hub',
@@ -94,8 +146,10 @@ const LOCATION_MAP: Record<string, {
     market: 'SPP',
     region: 'Kansas/Northern SPP',
     coordinates: [-98.3834, 39.0473],
-    calloutPosition: { x: 35, y: 10 },
-    capacity: 5.0
+    calloutPosition: { x: 42, y: 12 },
+    capacity: 5.0,
+    locationType: 'hub',
+    standardDuration: '4h'
   },
   'South Hub': {
     displayName: 'South Hub SPP',
@@ -103,14 +157,37 @@ const LOCATION_MAP: Record<string, {
     market: 'SPP',
     region: 'Oklahoma/Southern SPP',
     coordinates: [-97.5164, 35.4676],
-    calloutPosition: { x: 65, y: 10 },
-    capacity: 5.0
+    calloutPosition: { x: 62, y: 12 },
+    capacity: 5.0,
+    locationType: 'hub',
+    standardDuration: '4h'
   }
 };
 
 // Fetch curve data from database with hierarchy: GridStor > Aurora > Ascend
-const getLocationsFromDB = async (): Promise<LocationData[]> => {
+const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationData[]> => {
   try {
+    // Calculate year range
+    const currentYear = new Date().getFullYear();
+    let startYear = params.startYear || currentYear;
+    let endYear = params.endYear || currentYear;
+    
+    // Handle 'years' parameter (1, 5, 10, or 'all' for lifetime)
+    if (params.years) {
+      startYear = currentYear;
+      if (params.years === 999) { // lifetime indicator
+        endYear = currentYear + 30; // 30 years is typical project lifetime
+      } else {
+        endYear = currentYear + params.years - 1;
+      }
+    }
+    
+    // Build WHERE clause for curve source filter
+    let curveSourceFilter = '';
+    if (params.curveSource && params.curveSource !== 'all') {
+      curveSourceFilter = `AND cd."createdBy" = '${params.curveSource}'`;
+    }
+    
     // Query database for latest curves with priority
     const query = `
       WITH latest_curves AS (
@@ -136,7 +213,9 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
         WHERE cd.product = 'Revenue'
           AND cd."isActive" = true
           AND ci.status = 'ACTIVE'
-          AND EXTRACT(YEAR FROM cdata.timestamp) = 2026
+          AND EXTRACT(YEAR FROM cdata.timestamp) >= ${startYear}
+          AND EXTRACT(YEAR FROM cdata.timestamp) <= ${endYear}
+          ${curveSourceFilter}
         GROUP BY cd.location, cd.market, cd."batteryDuration", cd."createdBy"
       )
       SELECT 
@@ -176,12 +255,15 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
         region: locInfo.region,
         coordinates: locInfo.coordinates,
         calloutPosition: locInfo.calloutPosition,
+        locationType: locInfo.locationType,
+        standardDuration: locInfo.standardDuration,
         curves: {
           energyArbitrage,
           ancillaryServices: Number(ancillaryServices.toFixed(2)),
           capacity
         },
         curveSource,
+        duration: locInfo.duration,
         metadata: {
           dbLocationName: locInfo.dbName,
           aliases: [locInfo.region]
@@ -201,10 +283,12 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
       market: 'CAISO',
       region: 'Northern California',
       coordinates: [-121.4687, 38.5816],
-      calloutPosition: { x: 10, y: 17 }, // Far left, top
+      calloutPosition: { x: 15, y: 15 },
+      locationType: 'node',
+      standardDuration: '4h',
       curves: {
-        energyArbitrage: 9.12, // 4h duration
-        ancillaryServices: 1.08, // Fixed AS value
+        energyArbitrage: 9.12,
+        ancillaryServices: 1.08,
         capacity: 7.0
       },
       curveSource: 'GridStor P50',
@@ -219,9 +303,11 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
       market: 'CAISO',
       region: 'Southern California',
       coordinates: [-118.2437, 34.0522],
-      calloutPosition: { x: 10, y: 83 }, // Far left, bottom
+      calloutPosition: { x: 15, y: 80 },
+      locationType: 'node',
+      standardDuration: '4h',
       curves: {
-        energyArbitrage: 9.34, // 4h duration
+        energyArbitrage: 9.34,
         ancillaryServices: 1.10,
         capacity: 7.0
       },
@@ -237,13 +323,16 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
       market: 'CAISO',
       region: 'Santa Barbara',
       coordinates: [-119.8276, 34.4208],
-      calloutPosition: { x: 10, y: 50 }, // Far left, middle
+      calloutPosition: { x: 15, y: 45 },
+      locationType: 'node',
+      standardDuration: '2.6h',
       curves: {
-        energyArbitrage: 8.89, // 4h duration
+        energyArbitrage: 8.89,
         ancillaryServices: 1.05,
         capacity: 7.0
       },
       curveSource: 'GridStor P50',
+      duration: '2.6 h',
       metadata: {
         dbLocationName: 'GOLETA',
         aliases: ['Santa Barbara', 'Goleta CAISO']
@@ -255,9 +344,11 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
       market: 'ERCOT',
       region: 'Houston Hub',
       coordinates: [-95.3698, 29.7604],
-      calloutPosition: { x: 90, y: 17 }, // Far right, top
+      calloutPosition: { x: 85, y: 15 },
+      locationType: 'hub',
+      standardDuration: '2h',
       curves: {
-        energyArbitrage: 10.12, // 4h duration
+        energyArbitrage: 10.12,
         ancillaryServices: 1.19,
         capacity: 0
       },
@@ -273,9 +364,11 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
       market: 'ERCOT',
       region: 'South of Houston',
       coordinates: [-94.7977, 29.2733],
-      calloutPosition: { x: 90, y: 50 }, // Far right, middle
+      calloutPosition: { x: 85, y: 41 },
+      locationType: 'node',
+      standardDuration: '2h',
       curves: {
-        energyArbitrage: 9.89, // 4h duration
+        energyArbitrage: 9.89,
         ancillaryServices: 1.17,
         capacity: 0
       },
@@ -291,9 +384,11 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
       market: 'ERCOT',
       region: 'South Central Texas',
       coordinates: [-97.0633, 28.0367],
-      calloutPosition: { x: 90, y: 83 }, // Far right, bottom
+      calloutPosition: { x: 85, y: 67 },
+      locationType: 'node',
+      standardDuration: '2h',
       curves: {
-        energyArbitrage: 9.23, // 4h duration
+        energyArbitrage: 9.23,
         ancillaryServices: 1.09,
         capacity: 0
       },
@@ -309,9 +404,11 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
       market: 'ERCOT',
       region: 'Southern Texas',
       coordinates: [-98.2300, 26.2034],
-      calloutPosition: { x: 50, y: 90 }, // Bottom edge, center
+      calloutPosition: { x: 58, y: 88 },
+      locationType: 'hub',
+      standardDuration: '2h',
       curves: {
-        energyArbitrage: 9.45, // 4h duration
+        energyArbitrage: 9.45,
         ancillaryServices: 1.12,
         capacity: 0
       },
@@ -327,9 +424,11 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
       market: 'SPP',
       region: 'Kansas/Northern SPP',
       coordinates: [-98.3834, 39.0473],
-      calloutPosition: { x: 35, y: 10 }, // Top edge, left-center
+      calloutPosition: { x: 42, y: 12 },
+      locationType: 'hub',
+      standardDuration: '4h',
       curves: {
-        energyArbitrage: 7.12, // 4h duration
+        energyArbitrage: 7.12,
         ancillaryServices: 0.84,
         capacity: 5.0
       },
@@ -345,9 +444,11 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
       market: 'SPP',
       region: 'Oklahoma/Southern SPP',
       coordinates: [-97.5164, 35.4676],
-      calloutPosition: { x: 65, y: 10 }, // Top edge, right-center
+      calloutPosition: { x: 62, y: 12 },
+      locationType: 'hub',
+      standardDuration: '4h',
       curves: {
-        energyArbitrage: 7.45, // 4h duration
+        energyArbitrage: 7.45,
         ancillaryServices: 0.88,
         capacity: 5.0
       },
@@ -364,15 +465,23 @@ const getLocationsFromDB = async (): Promise<LocationData[]> => {
 export const GET: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
-    const market = url.searchParams.get('market'); // Optional filter by market
     
-    // Fetch locations from database
-    let locations = await getLocationsFromDB();
+    // Parse query parameters
+    const queryParams: QueryParams = {
+      market: url.searchParams.get('market') || undefined,
+      curveSource: (url.searchParams.get('curveSource') as 'GridStor' | 'Aurora' | 'Ascend' | 'all') || 'all',
+      startYear: url.searchParams.get('startYear') ? parseInt(url.searchParams.get('startYear')!) : undefined,
+      endYear: url.searchParams.get('endYear') ? parseInt(url.searchParams.get('endYear')!) : undefined,
+      years: url.searchParams.get('years') ? parseInt(url.searchParams.get('years')!) : undefined,
+    };
     
-    // Filter by market if specified
-    if (market) {
+    // Fetch locations from database with filters
+    let locations = await getLocationsFromDB(queryParams);
+    
+    // Filter by market if specified (additional client-side filter)
+    if (queryParams.market) {
       locations = locations.filter(loc => 
-        loc.market.toLowerCase() === market.toLowerCase()
+        loc.market.toLowerCase() === queryParams.market!.toLowerCase()
       );
     }
     
@@ -382,13 +491,14 @@ export const GET: APIRoute = async ({ request }) => {
       metadata: {
         total: locations.length,
         timestamp: new Date().toISOString(),
-        source: 'curve_database' // Will be updated when connected to real DB
+        source: 'curve_database',
+        filters: queryParams
       }
     }), {
       status: 200,
       headers: { 
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=300' // Cache for 5 minutes
+        'Cache-Control': 'public, max-age=60' // Cache for 1 minute (shorter due to filters)
       }
     });
 

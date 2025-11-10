@@ -31,18 +31,24 @@ interface PerformanceData {
 interface LocationPerformance {
   name: string;
   locationId: string;
+  market: string;
+  locationType: 'hub' | 'node'; // Hub or Node designation
+  duration: string;             // Battery duration (e.g., "2.6h", "4h")
   
   // Year-to-date actuals
   ytdTB4: number;              // YTD average TBx value ($/kW-month)
   ytdDaysCount: number;        // Number of days in YTD calculation
   
-  // Forecasts
-  yearAheadForecast: number;   // Original forecast for the year
-  pValue: string;              // e.g., "P35" - where actuals fall in distribution
-  pValueAmount: number;        // Difference from forecast
+  // Year-to-date forecast (prorated portion)
+  ytdForecast: number;          // Prorated forecast for YTD period
+  ytdPValue: string;            // P-value comparing YTD actual vs YTD forecast (e.g., "P35")
+  ytdPValueAmount: number;      // YTD actual - YTD forecast
+  
+  // Full year forecast
+  yearAheadForecast: number;    // Original P50 forecast for the full year
   
   // Balance of year
-  boyForecast: number;         // Remaining months forecast
+  boyForecast: number;          // BOY energy arbitrage forecast
   boyDaysRemaining: number;
   
   // Performance targets
@@ -50,11 +56,12 @@ interface LocationPerformance {
   neededPValue: string;        // Target P-value
   
   // Projections
-  projectedTotal: number;      // (YTD weighted + BOY weighted)
-  yoyChange: string;           // vs last year same period
+  projectedTotal: number;       // (YTD weighted + BOY weighted) energy arbitrage
+  yoyChange: string;            // vs last year same period
   
   // Ancillary services
-  asProportion: number;        // Multiplier for total revenue (e.g., 1.1 = 110%)
+  asProportion: number;         // Multiplier for total revenue (e.g., 1.1 = 110%)
+  totalWithAS: number;          // Projected total including AS
 }
 
 // Calculate P-value (percentile in forecast distribution)
@@ -125,17 +132,20 @@ async function getMarketPerformanceDataReal(
         // Get forecast from config (or default)
         const yearAheadForecast = config?.yearAheadForecast || ytdTB4;
         
-        // Calculate P-value
-        const pValueNum = calculatePValue(ytdTB4, yearAheadForecast);
-        const pValue = `P${pValueNum}`;
-        const pValueAmount = ytdTB4 - yearAheadForecast;
+        // Calculate YTD forecast (prorated portion of full-year forecast)
+        const ytdWeight = dayOfYear / daysInYear;
+        const boyWeight = (daysInYear - dayOfYear) / daysInYear;
+        const ytdForecast = yearAheadForecast * ytdWeight;
+        
+        // Calculate YTD P-value
+        const ytdPValueNum = calculatePValue(ytdTB4, ytdForecast);
+        const ytdPValue = `P${ytdPValueNum}`;
+        const ytdPValueAmount = ytdTB4 - ytdForecast;
         
         // BOY projection (simplified: assume YTD trend continues)
         const boyForecast = ytdTB4;
         
         // Weighted projection
-        const ytdWeight = dayOfYear / daysInYear;
-        const boyWeight = daysRemaining / daysInYear;
         const projectedTotal = (ytdTB4 * ytdWeight) + (boyForecast * boyWeight);
         
         // Target P-value
@@ -152,21 +162,33 @@ async function getMarketPerformanceDataReal(
         // AS proportion
         const asProportion = config?.asProportion || marketConfig.asProportion;
         
+        // Total with AS
+        const totalWithAS = projectedTotal * asProportion;
+        
+        // Location metadata
+        const locationType = (config?.locationType || 'node') as 'hub' | 'node';
+        const duration = config?.duration || '4h';
+        
         return {
           name: config?.displayName || record.Asset,
           locationId: `${mkt.toLowerCase()}_${record.Asset.toLowerCase().replace(/\s+/g, '_')}`,
+          market: mkt,
+          locationType,
+          duration,
           ytdTB4: parseFloat(ytdTB4.toFixed(2)),
           ytdDaysCount: dayOfYear,
+          ytdForecast: parseFloat(ytdForecast.toFixed(2)),
+          ytdPValue,
+          ytdPValueAmount: parseFloat(ytdPValueAmount.toFixed(2)),
           yearAheadForecast: parseFloat(yearAheadForecast.toFixed(2)),
-          pValue,
-          pValueAmount: parseFloat(pValueAmount.toFixed(2)),
           boyForecast: parseFloat(boyForecast.toFixed(2)),
           boyDaysRemaining: daysRemaining,
           neededToMeet: parseFloat(neededToMeet.toFixed(2)),
           neededPValue,
           projectedTotal: parseFloat(projectedTotal.toFixed(2)),
           yoyChange,
-          asProportion
+          asProportion,
+          totalWithAS: parseFloat(totalWithAS.toFixed(2))
         };
       });
       
@@ -248,4 +270,3 @@ export const GET: APIRoute = async ({ request }) => {
     });
   }
 };
-

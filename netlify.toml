@@ -214,6 +214,57 @@
 
 # New Navigation Structure
 # Long Term Outlook - Revenue Forecasts & Fundamentals
+
+# Specific Long Term Outlook dropdown menu items
+[[redirects]]
+  from = "/long-term-outlook/revenue-forecasts"
+  to = "https://gridstor.netlify.app/revenue-forecasts/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/revenue-forecasts/*"
+  to = "https://gridstor.netlify.app/revenue-forecasts/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/curve-schedule"
+  to = "https://gridstor.netlify.app/curve-schedule/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/curve-schedule/*"
+  to = "https://gridstor.netlify.app/curve-schedule/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/curve-tracker"
+  to = "https://gridstor.netlify.app/curve-tracker/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/curve-tracker/*"
+  to = "https://gridstor.netlify.app/curve-tracker/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/fundamentals"
+  to = "https://gst-fundamentals.netlify.app/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/long-term-outlook/fundamentals/*"
+  to = "https://gst-fundamentals.netlify.app/:splat"
+  status = 200
+  force = true
+
+# Default Long Term Outlook (Overview)
 [[redirects]]
   from = "/long-term-outlook"
   to = "https://gridstor.netlify.app/revenue-forecasts/"
@@ -227,6 +278,33 @@
   force = true
 
 # Short Term Outlook
+
+# Specific Short Term Outlook dropdown menu items
+[[redirects]]
+  from = "/short-term-outlook/market-ops"
+  to = "https://gridstordayzer.netlify.app/market-ops"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/short-term-outlook/market-ops/*"
+  to = "https://gridstordayzer.netlify.app/market-ops/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/short-term-outlook/performance"
+  to = "https://gridstordayzer.netlify.app/performance"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/short-term-outlook/performance/*"
+  to = "https://gridstordayzer.netlify.app/performance/:splat"
+  status = 200
+  force = true
+
+# Default Short Term Outlook (Overview)
 [[redirects]]
   from = "/short-term-outlook"
   to = "https://gridstordayzer.netlify.app/short-term-outlook"
