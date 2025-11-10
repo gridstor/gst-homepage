@@ -43,6 +43,15 @@ const LOCATION_MAP: Record<string, {
   calloutPosition: { x: number; y: number };
   capacity: number;
 }> = {
+  'NP15': {
+    displayName: 'NP15',
+    dbName: 'NP15',
+    market: 'CAISO',
+    region: 'Northern California',
+    coordinates: [-121.4687, 38.5816],
+    calloutPosition: { x: 10, y: 17 },
+    capacity: 7.0
+  },
   'SP15': {
     displayName: 'SP15',
     dbName: 'SP15',
@@ -88,6 +97,15 @@ const LOCATION_MAP: Record<string, {
     calloutPosition: { x: 90, y: 83 },
     capacity: 0
   },
+  'ERCOT South Hub': {
+    displayName: 'South Hub',
+    dbName: 'South Hub',
+    market: 'ERCOT',
+    region: 'South Zone',
+    coordinates: [-98.0000, 28.0000],
+    calloutPosition: { x: 75, y: 70 },
+    capacity: 0
+  },
   'North Hub': {
     displayName: 'North Hub',
     dbName: 'North Hub',
@@ -97,7 +115,7 @@ const LOCATION_MAP: Record<string, {
     calloutPosition: { x: 35, y: 10 },
     capacity: 5.0
   },
-  'South Hub': {
+  'SPP South Hub': {
     displayName: 'South Hub SPP',
     dbName: 'South Hub',
     market: 'SPP',

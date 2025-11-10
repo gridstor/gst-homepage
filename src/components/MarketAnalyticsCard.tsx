@@ -12,6 +12,7 @@ interface MarketAnalyticsCardProps {
 interface LocationPerformance {
   name: string;
   locationId: string;
+  tbType: string;
   ytdTB4: number;
   ytdDaysCount: number;
   yearAheadForecast: number;
@@ -162,9 +163,6 @@ export default function MarketAnalyticsCard({
           <h3 className="text-xl font-bold text-gray-800" style={{ fontSize: '1.25rem', fontWeight: '600' }}>
             {market}
           </h3>
-          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">
-            {performanceData.tbType}
-          </span>
         </div>
         <div className={`flex items-center gap-1 text-sm font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
           {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
@@ -192,7 +190,7 @@ export default function MarketAnalyticsCard({
       <div className="grid grid-cols-2 gap-4 mb-6">
         {/* YTD TB */}
         <div className="bg-gray-50 rounded-md p-3">
-          <div className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD {performanceData.tbType}</div>
+          <div className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-medium">YTD {currentLocationData.tbType}</div>
           <div className="text-lg font-bold text-gray-900 font-mono" style={{ fontFamily: "'JetBrains Mono', 'Consolas', 'Monaco', monospace" }}>
             ${currentLocationData.ytdTB4.toFixed(2)}
           </div>

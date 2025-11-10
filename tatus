@@ -1,3 +1,5 @@
- README.md    | 14 [32m+++++++[m[31m-------[m
- netlify.toml |  6 [32m+++[m[31m---[m
- 2 files changed, 10 insertions(+), 10 deletions(-)
+[33m6426c9a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #4 from nicholas-seah/main
+[33m722c5da[m Connect Market Performance cards to Analytics Workspace database
+[33me95cf28[m Merge pull request #3 from gridstor/fix-disable-api-redirect-c18ec
+[33mab0bcbd[m Disable general API routes fallback in netlify.toml to support local Astro API routes; added comments for clarity.
+[33m36e98cb[m Refactor market-performance API to use Prisma for database queries

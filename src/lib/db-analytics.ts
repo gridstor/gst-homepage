@@ -9,10 +9,16 @@ const globalForAnalytics = globalThis as unknown as {
   analyticsDb: PrismaClient | undefined;
 };
 
+// Configure SSL to accept self-signed certificates
+// For PostgreSQL with self-signed certs, we need to disable SSL verification
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+const analyticsUrl = process.env.DATABASE_URL_ANALYTICSWORKSPACE || '';
+
 export const analyticsDb = globalForAnalytics.analyticsDb ?? new PrismaClient({
   datasources: {
     db: {
-      url: process.env.DATABASE_URL_ANALYTICSWORKSPACE
+      url: analyticsUrl
     }
   },
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
@@ -65,5 +71,48 @@ export async function getLatestYTDData(iso?: string, asset?: string): Promise<Ho
 
 export async function getAllYTDData(): Promise<HomepageYTDTBx[]> {
   return getLatestYTDData();
+}
+
+/**
+ * Get historical YTD data from a specific year for YoY comparisons
+ */
+export async function getHistoricalYTDData(iso?: string, asset?: string, year?: number): Promise<HomepageYTDTBx[]> {
+  const whereConditions = [];
+  const params: any[] = [];
+  let paramIndex = 1;
+
+  if (iso) {
+    whereConditions.push(`"ISO" = $${paramIndex}`);
+    params.push(iso.toUpperCase());
+    paramIndex++;
+  }
+
+  if (asset) {
+    whereConditions.push(`"Asset" = $${paramIndex}`);
+    params.push(asset);
+    paramIndex++;
+  }
+
+  if (year) {
+    whereConditions.push(`EXTRACT(YEAR FROM "Run Date") = $${paramIndex}`);
+    params.push(year);
+    paramIndex++;
+  }
+
+  const whereClause = whereConditions.length > 0 
+    ? `WHERE ${whereConditions.join(' AND ')}` 
+    : '';
+
+  // Get the most recent Run Date for each Asset/ISO combination for the specified year
+  const query = `
+    SELECT DISTINCT ON ("Asset", "ISO") 
+      "Asset", "ISO", "TBx", "YTD TBx", "Run Date"
+    FROM "Homepage_YTD_TBx"
+    ${whereClause}
+    ORDER BY "Asset", "ISO", "Run Date" DESC
+  `;
+
+  const results = await analyticsDb.$queryRawUnsafe<HomepageYTDTBx[]>(query, ...params);
+  return results;
 }
 
