@@ -23,6 +23,8 @@ interface LocationData {
     capacity: number;
   };
   curveSource: 'GridStor P50' | 'Aurora Base' | 'ASCEND';
+  curveRunDate?: string; // Date when curve was generated
+  freshThru?: string; // Date through which data is fresh
   duration?: string; // Optional duration label (e.g., "4h", "2.6 h")
   metadata?: {
     dbLocationName?: string;
@@ -807,23 +809,25 @@ export default function RevenueForcastMap() {
                 left: `${location.calloutPosition.x}%`,
                 top: `${location.calloutPosition.y}%`,
                 transform: 'translate(-50%, -50%)',
-                width: '175px',
+                width: '160px',
                 borderColor: color,
                 zIndex: 20
               }}
             >
               <div className="p-3">
                 {/* Type indicator and location name with duration */}
-                <div className="flex items-center gap-2 mb-1.5">
-                  {location.locationType === 'hub' ? (
-                    <div className="w-3 h-3" style={{ backgroundColor: color }} />
-                  ) : (
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
-                  )}
-                  <h3 className="text-sm font-bold text-gray-900 flex-1" title={location.metadata?.dbLocationName}>
-                    {location.name}
-                  </h3>
-                  <span className="text-[9px] text-gray-500 font-semibold">
+                <div className="flex items-start justify-between gap-2 mb-1.5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {location.locationType === 'hub' ? (
+                      <div className="w-3 h-3 shrink-0" style={{ backgroundColor: color }} />
+                    ) : (
+                      <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                    )}
+                    <h3 className="text-sm font-bold text-gray-900 truncate" title={location.metadata?.dbLocationName}>
+                      {location.name}
+                    </h3>
+                  </div>
+                  <span className="text-[9px] text-gray-500 font-semibold shrink-0 mt-0.5">
                     {location.standardDuration}
                   </span>
                 </div>
@@ -849,13 +853,26 @@ export default function RevenueForcastMap() {
                   )}
                 </div>
                 
-                {/* Curve Run Date */}
+                {/* Curve Dates */}
                 <div className="border-t border-gray-100 pt-1.5">
-                  <div className="text-[8px] text-gray-400 uppercase tracking-wide">Curve Run Date</div>
-                  <div className="text-[10px] text-gray-600 font-medium mt-0.5">
-                    {location.curveSource === 'GridStor P50' ? 'Oct 2025' : 
-                     location.curveSource === 'Aurora Base' ? 'Sep 2025' : 'Aug 2025'}
+                  <div className="text-[8px] text-gray-400 uppercase tracking-wide">
+                    Curve Run Date: <span className="text-gray-600 font-medium">
+                      {location.curveRunDate ? (() => {
+                        const date = new Date(location.curveRunDate);
+                        return `${date.toLocaleDateString('en-US', { month: 'short' })} ${date.getFullYear()}`;
+                      })() : 'Oct 2025'}
+                    </span>
                   </div>
+                  {location.freshThru && (
+                    <div className="text-[8px] text-gray-400 uppercase tracking-wide mt-0.5">
+                      Fresh Thru: <span className="text-gray-600 font-medium">
+                        {(() => {
+                          const date = new Date(location.freshThru);
+                          return `${date.toLocaleDateString('en-US', { month: 'short' })} ${date.getDate()} ${date.getFullYear()}`;
+                        })()}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>

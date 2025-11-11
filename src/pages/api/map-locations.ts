@@ -40,6 +40,8 @@ interface LocationData {
     capacity: number; // Fixed capacity value
   };
   curveSource: 'GridStor P50' | 'Aurora Base' | 'ASCEND'; // Which curve is being used
+  curveRunDate?: string; // Date when curve was generated
+  freshThru?: string; // Date through which data is fresh
   duration?: string; // Optional duration label (e.g., "4h", "2.6 h")
   metadata?: {
     dbLocationName?: string; // Original database location name
@@ -216,6 +218,7 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
           cd.market,
           cd."batteryDuration",
           cd."createdBy",
+          cd."createdAt",
           AVG(cdata.value) as avg_value,
           ROW_NUMBER() OVER (
             PARTITION BY cd.location
@@ -236,13 +239,14 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
           AND EXTRACT(YEAR FROM cdata.timestamp) >= ${startYear}
           AND EXTRACT(YEAR FROM cdata.timestamp) <= ${endYear}
           ${curveSourceFilter}
-        GROUP BY cd.location, cd.market, cd."batteryDuration", cd."createdBy"
+        GROUP BY cd.location, cd.market, cd."batteryDuration", cd."createdBy", cd."createdAt"
       )
       SELECT 
         location,
         market,
         "batteryDuration" as battery_duration,
         "createdBy" as created_by,
+        "createdAt" as created_at,
         avg_value
       FROM latest_curves
       WHERE priority_rank = 1;
@@ -268,6 +272,19 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
           : 'ASCEND')
         : 'GridStor P50';
 
+      // Calculate curve dates
+      let curveRunDate: string | undefined;
+      let freshThru: string | undefined;
+      
+      if (dbData && dbData.created_at) {
+        const runDate = new Date(dbData.created_at);
+        curveRunDate = runDate.toISOString();
+        
+        // Calculate freshThru as first day of next month from run date
+        const freshThruDate = new Date(runDate.getFullYear(), runDate.getMonth() + 1, 1);
+        freshThru = freshThruDate.toISOString();
+      }
+
       locations.push({
         id: `${locInfo.market.toLowerCase()}_${locKey.replace(/ /g, '_').toLowerCase()}`,
         name: locInfo.displayName,
@@ -283,6 +300,8 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
           capacity
         },
         curveSource,
+        curveRunDate,
+        freshThru,
         duration: locInfo.duration,
         metadata: {
           dbLocationName: locInfo.dbName,
@@ -295,6 +314,11 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
     
   } catch (error) {
     console.error('Database query failed:', error);
+    
+    // Calculate default dates for fallback data
+    const defaultRunDate = new Date(2025, 9, 10); // Oct 10, 2025
+    const defaultFreshThru = new Date(defaultRunDate.getFullYear(), defaultRunDate.getMonth() + 1, 1); // Nov 1, 2025
+    
     // Return fallback mock data if database fails
     return [
     {
@@ -312,6 +336,8 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
         capacity: 7.0
       },
       curveSource: 'GridStor P50',
+      curveRunDate: defaultRunDate.toISOString(),
+      freshThru: defaultFreshThru.toISOString(),
       metadata: {
         dbLocationName: 'TH_NP15_GEN',
         aliases: ['Northern California', 'NP-15']
@@ -332,6 +358,8 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
         capacity: 7.0
       },
       curveSource: 'GridStor P50',
+      curveRunDate: defaultRunDate.toISOString(),
+      freshThru: defaultFreshThru.toISOString(),
       metadata: {
         dbLocationName: 'TH_SP15_GEN',
         aliases: ['Southern California', 'SP-15', 'Los Angeles']
@@ -352,6 +380,8 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
         capacity: 7.0
       },
       curveSource: 'GridStor P50',
+      curveRunDate: defaultRunDate.toISOString(),
+      freshThru: defaultFreshThru.toISOString(),
       duration: '2.6 h',
       metadata: {
         dbLocationName: 'GOLETA',
@@ -373,6 +403,8 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
         capacity: 0
       },
       curveSource: 'GridStor P50',
+      curveRunDate: defaultRunDate.toISOString(),
+      freshThru: defaultFreshThru.toISOString(),
       metadata: {
         dbLocationName: 'HOUSTON',
         aliases: ['Houston Hub', 'HB_HOUSTON']
@@ -393,6 +425,8 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
         capacity: 0
       },
       curveSource: 'GridStor P50',
+      curveRunDate: defaultRunDate.toISOString(),
+      freshThru: defaultFreshThru.toISOString(),
       metadata: {
         dbLocationName: 'HIDDEN_LAKES',
         aliases: ['Hidden Lakes ERCOT']
@@ -413,6 +447,8 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
         capacity: 0
       },
       curveSource: 'GridStor P50',
+      curveRunDate: defaultRunDate.toISOString(),
+      freshThru: defaultFreshThru.toISOString(),
       metadata: {
         dbLocationName: 'GUNNAR',
         aliases: ['Gunnar ERCOT']
@@ -433,6 +469,8 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
         capacity: 0
       },
       curveSource: 'GridStor P50',
+      curveRunDate: defaultRunDate.toISOString(),
+      freshThru: defaultFreshThru.toISOString(),
       metadata: {
         dbLocationName: 'SOUTH_HUB',
         aliases: ['South Hub ERCOT', 'HB_SOUTH']
@@ -453,6 +491,8 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
         capacity: 5.0
       },
       curveSource: 'GridStor P50',
+      curveRunDate: defaultRunDate.toISOString(),
+      freshThru: defaultFreshThru.toISOString(),
       metadata: {
         dbLocationName: 'NORTH_HUB',
         aliases: ['North Hub SPP', 'SPP North']
@@ -473,6 +513,8 @@ const getLocationsFromDB = async (params: QueryParams = {}): Promise<LocationDat
         capacity: 5.0
       },
       curveSource: 'GridStor P50',
+      curveRunDate: defaultRunDate.toISOString(),
+      freshThru: defaultFreshThru.toISOString(),
       metadata: {
         dbLocationName: 'SOUTH_HUB_SPP',
         aliases: ['South Hub SPP', 'SPP South']

@@ -91,13 +91,15 @@ function LocationCard({ location }: { location: LocationPerformance }) {
     >
       {/* Header: Market, Location, Hub/Node, Duration */}
       <div className="mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-3 text-base">
-          <span className={`font-semibold ${colors.text}`}>{location.market}</span>
-          <span className="font-bold text-gray-900 dark:text-gray-100">{location.name}</span>
-          <span className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2.5 py-1 rounded font-medium capitalize">
-            {location.locationType}
-          </span>
-          <span className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2.5 py-1 rounded font-mono">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2 text-base flex-wrap">
+            <span className={`font-semibold ${colors.text}`}>{location.market}</span>
+            <span className="font-bold text-gray-900 dark:text-gray-100">{location.name}</span>
+            <span className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2.5 py-1 rounded font-medium capitalize">
+              {location.locationType}
+            </span>
+          </div>
+          <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded font-mono shrink-0">
             {location.duration}
           </span>
         </div>
@@ -178,7 +180,7 @@ function LocationCard({ location }: { location: LocationPerformance }) {
       </div>
 
       {/* Annual Revenue Projection Section */}
-      <div className="bg-gray-50 dark:bg-[#1A1A1A] rounded-md p-3 border border-gray-200 dark:border-gray-700 mb-3">
+      <div className="bg-gray-50 dark:bg-[#1A1A1A] rounded-md p-3 border border-gray-200 dark:border-gray-700">
         <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-3">
           Annual Revenue Projection (YTD + BOY)
         </h4>
@@ -243,22 +245,6 @@ function LocationCard({ location }: { location: LocationPerformance }) {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Curve Dates Section */}
-      <div className="text-center text-xs text-gray-500 dark:text-gray-400 space-y-0.5">
-        <div className="uppercase tracking-wide">
-          <span className="font-semibold">Curve Run Date:</span> {(() => {
-            const date = new Date(location.curveRunDate);
-            return `${date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()} ${date.getDate()} ${date.getFullYear()}`;
-          })()}
-        </div>
-        <div className="uppercase tracking-wide">
-          <span className="font-semibold">Fresh Thru:</span> {(() => {
-            const date = new Date(location.freshThru);
-            return `${date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()} ${date.getDate()} ${date.getFullYear()}`;
-          })()}
         </div>
       </div>
     </motion.div>
@@ -674,7 +660,7 @@ export default function MarketAnalyticsCard({
       
       {/* Content - Cards or Table */}
       {viewMode === 'cards' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {filteredLocations.map((location) => (
             <LocationCard key={location.locationId} location={location} />
           ))}

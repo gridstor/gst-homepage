@@ -150,12 +150,12 @@ async function getMarketPerformanceDataReal(
         const config = getLocationConfig(record.Asset, mkt);
         
         // Calculate curve dates
-        const curveRunDate = record["Run Date"].toISOString();
+        const runDate = new Date(record["Run Date"]);
+        const curveRunDate = runDate.toISOString();
         
-        // Calculate freshThru date - first day of next month from current date
-        const today = new Date();
-        const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-        const freshThru = nextMonth.toISOString();
+        // Calculate freshThru date - first day of next month from the curve run date
+        const freshThruDate = new Date(runDate.getFullYear(), runDate.getMonth() + 1, 1);
+        const freshThru = freshThruDate.toISOString();
         
         // YTD TBx value is already in $/kW-month (no conversion needed)
         const ytdTB4 = record["YTD TBx"];
