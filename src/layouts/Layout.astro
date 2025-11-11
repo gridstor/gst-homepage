@@ -46,17 +46,17 @@ const currentPath = Astro.url.pathname;
 						role="navigation"
 						aria-label="Primary"
 					>
-						<!-- Long-term outlook Dropdown -->
+						<!-- Long-Term Outlook Dropdown -->
 						<div class="relative group">
 							<button 
 								class={`text-white hover:text-gray-300 transition-colors font-medium flex items-center gap-1 ${currentPath.startsWith('/revenue-forecasts') || currentPath.startsWith('/futures-market') || currentPath.startsWith('/long-term-outlook') ? 'text-gray-300' : ''}`}
 							>
-								Long-term outlook
+								Long-Term Outlook
 								<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 								</svg>
 							</button>
-							<div class="absolute left-0 mt-1 pt-1 w-64 group-hover:block z-50">
+							<div class="absolute left-0 mt-0 pt-2 w-64 group-hover:block z-50">
 								<div class="bg-white rounded-lg shadow-xl border border-gray-200">
 									<!-- Revenue Forecast nested submenu -->
 									<div class="relative submenu-group">
@@ -71,7 +71,7 @@ const currentPath = Astro.url.pathname;
 												</svg>
 											</div>
 										</div>
-										<div class="absolute left-full top-0 ml-1 pt-1 w-64 submenu-hover:block z-50">
+										<div class="absolute left-full top-0 ml-0 pl-2 w-64 submenu-hover:block z-50">
 											<div class="bg-white rounded-lg shadow-xl border border-gray-200">
 												<a href="/long-term-outlook/revenue-forecasts" class={`block px-4 py-3 text-sm transition-colors rounded-t-lg ${currentPath.startsWith('/long-term-outlook/revenue-forecasts') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
 													<div class="font-medium">Revenue Forecast Grapher</div>
@@ -105,22 +105,70 @@ const currentPath = Astro.url.pathname;
 							</div>
 						</div>
 
-						<!-- Short-term outlook Link -->
-						<a 
-							href="/short-term-outlook" 
-							class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/short-term-outlook') ? 'text-gray-300' : ''}`}
-							aria-current={currentPath.startsWith('/short-term-outlook') ? 'page' : undefined}
-						>
-							Short-term outlook
-						</a>
+						<!-- Short-Term Outlook Dropdown -->
+						<div class="relative group">
+							<button 
+								class={`text-white hover:text-gray-300 transition-colors font-medium flex items-center gap-1 ${currentPath.startsWith('/short-term-outlook') ? 'text-gray-300' : ''}`}
+							>
+								Short-Term Outlook
+								<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+								</svg>
+							</button>
+							<div class="absolute left-0 mt-1 pt-1 w-64 group-hover:block z-50">
+								<div class="bg-white rounded-lg shadow-xl border border-gray-200">
+									<!-- Homepage -->
+									<a href="/short-term-outlook" class={`block px-4 py-3 text-sm transition-colors rounded-t-lg ${currentPath === '/short-term-outlook' || currentPath === '/short-term-outlook/' ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'}`}>
+										<div class="font-medium">Homepage</div>
+										<div class="text-xs text-gray-500 mt-0.5">Market pricing and fundamentals overview</div>
+									</a>
+									<!-- CAISO nested submenu -->
+									<div class="relative submenu-group">
+										<div class={`block px-4 py-3 text-sm transition-colors border-t border-gray-100 ${currentPath.startsWith('/short-term-outlook/caiso') || currentPath.startsWith('/short-term-outlook/goleta') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'}`}>
+											<div class="flex justify-between items-center">
+												<div>
+													<div class="font-medium">CAISO</div>
+													<div class="text-xs text-gray-500 mt-0.5">California ISO markets</div>
+												</div>
+												<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+												</svg>
+											</div>
+										</div>
+										<div class="absolute left-full top-0 ml-0 pl-2 w-64 submenu-hover:block z-50">
+											<div class="bg-white rounded-lg shadow-xl border border-gray-200">
+												<a href="/short-term-outlook/caiso-system" class={`block px-4 py-3 text-sm transition-colors rounded-t-lg ${currentPath.startsWith('/short-term-outlook/caiso-system') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
+													<div class="font-medium">CAISO System</div>
+													<div class="text-xs text-gray-500 mt-0.5">System-wide fundamentals</div>
+												</a>
+												<a href="/short-term-outlook/goleta" class={`block px-4 py-3 text-sm transition-colors border-t border-gray-100 rounded-b-lg ${currentPath.startsWith('/short-term-outlook/goleta') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
+													<div class="font-medium">Goleta</div>
+													<div class="text-xs text-gray-500 mt-0.5">Location-specific pricing</div>
+												</a>
+											</div>
+										</div>
+									</div>
+									<!-- Weekly Insight -->
+									<a href="/short-term-outlook/weekly-insight" class={`block px-4 py-3 text-sm transition-colors border-t border-gray-100 ${currentPath.startsWith('/short-term-outlook/weekly-insight') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
+										<div class="font-medium">Weekly Insight</div>
+										<div class="text-xs text-gray-500 mt-0.5">Weekly market insights and analysis</div>
+									</a>
+									<!-- Likeday Tool -->
+									<a href="/short-term-outlook/likeday" class={`block px-4 py-3 text-sm transition-colors border-t border-gray-100 rounded-b-lg ${currentPath.startsWith('/short-term-outlook/likeday') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'}`}>
+										<div class="font-medium">Likeday Tool</div>
+										<div class="text-xs text-gray-500 mt-0.5">Find similar historical days</div>
+									</a>
+								</div>
+							</div>
+						</div>
 
-						<!-- Risk and structuring Link -->
+						<!-- Risk and Structuring Link -->
 						<a 
 							href="/risk-structuring" 
 							class={`text-white hover:text-gray-300 transition-colors font-medium ${currentPath.startsWith('/risk-structuring') ? 'text-gray-300' : ''}`}
 							aria-current={currentPath.startsWith('/risk-structuring') ? 'page' : undefined}
 						>
-							Risk and structuring
+							Risk and Structuring
 						</a>
 					</nav>
 					</div>
@@ -152,7 +200,8 @@ const currentPath = Astro.url.pathname;
 		display: none;
 	}
 	
-	.group:hover .group-hover\:block {
+	.group:hover .group-hover\:block,
+	.group-hover\:block:hover {
 		display: block;
 	}
 	
@@ -174,7 +223,7 @@ const currentPath = Astro.url.pathname;
 	
 	/* Keep dropdown visible with a bridge between button and menu */
 	.group .group-hover\:block {
-		/* The pt-1 class creates a bridge area that keeps hover active */
+		/* The pt-2 class creates a bridge area that keeps hover active */
 	}
 	
 	/* Nested submenu styles */
@@ -186,7 +235,8 @@ const currentPath = Astro.url.pathname;
 		display: none;
 	}
 	
-	.submenu-group:hover .submenu-hover\:block {
+	.submenu-group:hover .submenu-hover\:block,
+	.submenu-hover\:block:hover {
 		display: block;
 	}
 	
