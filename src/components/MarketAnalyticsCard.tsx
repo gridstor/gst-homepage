@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Clock, TrendingUp, TrendingDown, Loader2, AlertCircle, LayoutGrid, Table, Filter, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Clock, TrendingUp, TrendingDown, Loader2, AlertCircle, LayoutGrid, Table, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 interface MarketAnalyticsCardProps {
   market: string;
@@ -15,6 +14,10 @@ interface LocationPerformance {
   market: string;
   locationType: 'hub' | 'node';
   duration: string;
+  
+  // Curve dates
+  curveRunDate: string;
+  freshThru: string;
   
   // Year-to-date actuals - Energy Arbitrage Revenue
   ytdEnergyRevenue: number;
@@ -175,7 +178,7 @@ function LocationCard({ location }: { location: LocationPerformance }) {
       </div>
 
       {/* Annual Revenue Projection Section */}
-      <div className="bg-gray-50 dark:bg-[#1A1A1A] rounded-md p-3 border border-gray-200 dark:border-gray-700">
+      <div className="bg-gray-50 dark:bg-[#1A1A1A] rounded-md p-3 border border-gray-200 dark:border-gray-700 mb-3">
         <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-3">
           Annual Revenue Projection (YTD + BOY)
         </h4>
@@ -240,6 +243,22 @@ function LocationCard({ location }: { location: LocationPerformance }) {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Curve Dates Section */}
+      <div className="text-center text-xs text-gray-500 dark:text-gray-400 space-y-0.5">
+        <div className="uppercase tracking-wide">
+          <span className="font-semibold">Curve Run Date:</span> {(() => {
+            const date = new Date(location.curveRunDate);
+            return `${date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()} ${date.getDate()} ${date.getFullYear()}`;
+          })()}
+        </div>
+        <div className="uppercase tracking-wide">
+          <span className="font-semibold">Fresh Thru:</span> {(() => {
+            const date = new Date(location.freshThru);
+            return `${date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()} ${date.getDate()} ${date.getFullYear()}`;
+          })()}
         </div>
       </div>
     </motion.div>
@@ -460,7 +479,6 @@ export default function MarketAnalyticsCard({
   const [error, setError] = useState<string | null>(null);
   const [selectedMarket, setSelectedMarket] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   
   // Fetch performance data from API
@@ -470,7 +488,7 @@ export default function MarketAnalyticsCard({
         setLoading(true);
         setError(null);
         
-        const response = await fetch('/api/market-performance');
+        const response = await fetch('/api/market-performance-real');
         const result = await response.json();
         
         if (!result.success) {
@@ -502,7 +520,7 @@ export default function MarketAnalyticsCard({
     return () => clearInterval(interval);
   }, []);
   
-  // Filter locations by selected market, type, and search query
+  // Filter locations by selected market and type
   const filteredLocations = allLocations.filter(loc => {
     // Market filter
     const marketMatch = selectedMarket === 'all' || loc.market === selectedMarket;
@@ -511,12 +529,7 @@ export default function MarketAnalyticsCard({
     const locationType = getLocationType(loc.name);
     const typeMatch = selectedType === 'all' || locationType === selectedType;
     
-    // Search filter
-    const searchMatch = searchQuery === '' || 
-      loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      loc.market.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return marketMatch && typeMatch && searchMatch;
+    return marketMatch && typeMatch;
   });
   
   // Loading state
@@ -573,96 +586,69 @@ export default function MarketAnalyticsCard({
   return (
     <div>
       {/* Filters and View Toggle */}
-      <div className="flex flex-col gap-4 mb-6">
-        {/* Top Row: Filters */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          <Filter size={16} className="text-gray-500 dark:text-gray-400" />
-          
-          {/* Market/Region Filter */}
-          <Select value={selectedMarket} onValueChange={setSelectedMarket}>
-            <SelectTrigger className="w-[160px] bg-white dark:bg-[#2A2A2A] border-gray-200 dark:border-gray-700">
-              <SelectValue placeholder="Region" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Regions</SelectItem>
-              <SelectItem value="CAISO">CAISO</SelectItem>
-              <SelectItem value="ERCOT">ERCOT</SelectItem>
-              <SelectItem value="SPP">SPP</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Type Filter */}
-          <Select value={selectedType} onValueChange={setSelectedType}>
-            <SelectTrigger className="w-[160px] bg-white dark:bg-[#2A2A2A] border-gray-200 dark:border-gray-700">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types ({typeCounts.all})</SelectItem>
-              <SelectItem value="hub">Hubs ({typeCounts.hub})</SelectItem>
-              <SelectItem value="node">Nodes ({typeCounts.node})</SelectItem>
-              <SelectItem value="location">Locations ({typeCounts.location})</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Search Filter */}
-          <div className="relative flex-1 min-w-[200px]">
-            <input
-              type="text"
-              placeholder="Search locations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 pl-9 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-[#2A2A2A] text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-            />
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Bottom Row: Quick Filters & View Toggle */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          {/* Quick Filter Chips */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400">Quick:</span>
+      <div className="flex flex-col gap-3 p-4 border-b border-gray-200 dark:border-gray-700 mb-6 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm">
+        {/* Quick Filters & View Toggle */}
+        <div className="flex justify-between items-center">
+          {/* Quick Filter Buttons */}
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Quick:</span>
             <button
               onClick={() => { setSelectedMarket('CAISO'); setSelectedType('all'); }}
-              className="text-xs px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+                selectedMarket === 'CAISO' && selectedType === 'all'
+                  ? 'bg-blue-500 text-white font-medium'
+                  : 'bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+              }`}
             >
               CAISO All
             </button>
             <button
               onClick={() => { setSelectedMarket('ERCOT'); setSelectedType('all'); }}
-              className="text-xs px-2.5 py-1 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+                selectedMarket === 'ERCOT' && selectedType === 'all'
+                  ? 'bg-red-500 text-white font-medium'
+                  : 'bg-gray-100 dark:bg-gray-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'
+              }`}
             >
               ERCOT All
             </button>
             <button
               onClick={() => { setSelectedMarket('SPP'); setSelectedType('all'); }}
-              className="text-xs px-2.5 py-1 rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+                selectedMarket === 'SPP' && selectedType === 'all'
+                  ? 'bg-green-500 text-white font-medium'
+                  : 'bg-gray-100 dark:bg-gray-700 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'
+              }`}
             >
               SPP All
             </button>
             <button
               onClick={() => { setSelectedMarket('all'); setSelectedType('hub'); }}
-              className="text-xs px-2.5 py-1 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+                selectedMarket === 'all' && selectedType === 'hub'
+                  ? 'bg-gray-700 text-white font-medium'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
             >
-              All Hubs
+              Hubs Only
             </button>
-            {(selectedMarket !== 'all' || selectedType !== 'all' || searchQuery !== '') && (
-              <button
-                onClick={() => { setSelectedMarket('all'); setSelectedType('all'); setSearchQuery(''); }}
-                className="text-xs px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              >
-                Clear Filters
-              </button>
-            )}
+            <button
+              onClick={() => { setSelectedMarket('all'); setSelectedType('node'); }}
+              className={`text-sm px-3 py-1.5 rounded-md transition-colors ${
+                selectedMarket === 'all' && selectedType === 'node'
+                  ? 'bg-gray-700 text-white font-medium'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              Nodes Only
+            </button>
           </div>
 
           {/* View Toggle */}
           <div className="flex items-center gap-2 bg-gray-100 dark:bg-[#1A1A1A] rounded-lg p-1">
             <button
               onClick={() => setViewMode('cards')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${
                 viewMode === 'cards'
                   ? 'bg-white dark:bg-[#2A2A2A] shadow-sm text-gray-900 dark:text-gray-100'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
@@ -673,7 +659,7 @@ export default function MarketAnalyticsCard({
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${
                 viewMode === 'table'
                   ? 'bg-white dark:bg-[#2A2A2A] shadow-sm text-gray-900 dark:text-gray-100'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'

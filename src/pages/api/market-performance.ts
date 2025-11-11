@@ -35,6 +35,10 @@ interface LocationPerformance {
   locationType: 'hub' | 'node'; // Hub or Node designation
   duration: string;             // Battery duration (e.g., "2.6h", "4h")
   
+  // Curve dates
+  curveRunDate: string;         // Date when curve was generated
+  freshThru: string;            // Date through which data is fresh (defaults to first of next month)
+  
   // Year-to-date actuals - Energy Arbitrage Revenue
   ytdEnergyRevenue: number;     // YTD average TBx value ($/kW-month)
   ytdDaysCount: number;        // Number of days in YTD calculation
@@ -145,6 +149,14 @@ async function getMarketPerformanceDataReal(
         // Get location configuration
         const config = getLocationConfig(record.Asset, mkt);
         
+        // Calculate curve dates
+        const curveRunDate = record["Run Date"].toISOString();
+        
+        // Calculate freshThru date - first day of next month from current date
+        const today = new Date();
+        const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+        const freshThru = nextMonth.toISOString();
+        
         // YTD TBx value is already in $/kW-month (no conversion needed)
         const ytdTB4 = record["YTD TBx"];
         
@@ -205,6 +217,8 @@ async function getMarketPerformanceDataReal(
           market: mkt,
           locationType,
           duration,
+          curveRunDate,
+          freshThru,
           ytdEnergyRevenue: parseFloat(ytdTB4.toFixed(2)),
           ytdDaysCount: dayOfYear,
           ytdForecast: parseFloat(ytdForecast.toFixed(2)),
